@@ -1,0 +1,39 @@
+{% load wagtailcore_tags %}
+<header class="site-header" id="site-header">
+  <div class="header__inner">
+    <a href="/" class="header__logo" aria-label="Meadow Shore — на главную">
+      <span class="header__logo-word">Meadow</span>
+      <span class="header__logo-sep"> </span>
+      <span class="header__logo-word">Shore</span>
+    </a>
+
+    <nav class="header__nav" id="main-nav" aria-label="Основная навигация">
+      <ul class="header__nav-list">
+        <li><a href="/" class="header__nav-link">Главная</a></li>
+        <li><a href="/about/" class="header__nav-link">О бренде</a></li>
+        <li><a href="/collection/" class="header__nav-link">Коллекция</a></li>
+        <li><a href="/contact/" class="header__nav-link">Контакт</a></li>
+      </ul>
+    </nav>
+
+    <a href="/collection/" class="btn btn--header">Explore Collection</a>
+
+    <button class="header__burger" id="burger-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Открыть меню">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<div class="header__mobile-menu" id="mobile-menu" aria-hidden="true">
+  <nav aria-label="Мобильная навигация">
+    <ul>
+      <li><a href="/" class="mobile-nav-link">Главная</a></li>
+      <li><a href="/about/" class="mobile-nav-link">О бренде</a></li>
+      <li><a href="/collection/" class="mobile-nav-link">Коллекция</a></li>
+      <li><a href="/contact/" class="mobile-nav-link">Контакт</a></li>
+    </ul>
+    <a href="/collection/" class="btn btn--primary">Explore Collection</a>
+  </nav>
+</div>

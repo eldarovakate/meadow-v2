@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}product-page{% endblock %}
+
+{% block content %}
+
+<section class="product-detail">
+  <div class="container">
+    <div class="product-detail__grid">
+
+      <div class="product-detail__gallery reveal">
+        <div class="product-detail__main-image">
+          <div class="product-gallery-placeholder">
+            <span>{{ page.title }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-detail__info reveal reveal--delay">
+        {% if page.collection_name %}
+        <span class="label">{{ page.collection_name }}</span>
+        {% endif %}
+        <h1 class="product-detail__title">{{ page.title }}</h1>
+        {% if page.short_description %}
+        <p class="product-detail__short-desc">{{ page.short_description }}</p>
+        {% endif %}
+        {% if page.price %}
+        <div class="product-detail__price">{{ page.price }}</div>
+        {% endif %}
+        <div class="product-detail__status product-status--{{ page.status }}">
+          {% if page.status == 'available' %}В наличии{% elif page.status == 'coming_soon' %}Скоро в продаже{% else %}Нет в наличии{% endif %}
+        </div>
+        <a href="/contact/" class="btn btn--primary product-detail__cta">Узнать подробнее</a>
+
+        {% if page.body %}
+        <div class="product-detail__body richtext">{{ page.body|richtext }}</div>
+        {% endif %}
+
+        {% if page.fabric_info %}
+        <div class="product-detail__fabric">
+          <h4>О ткани</h4>
+          <p>{{ page.fabric_info }}</p>
+        </div>
+        {% endif %}
+        {% if page.care_info %}
+        <div class="product-detail__care">
+          <h4>Уход</h4>
+          <p>{{ page.care_info }}</p>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

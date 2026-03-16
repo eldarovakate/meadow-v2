@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}about-page{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero__inner reveal">
+      {% if page.tagline %}
+      <span class="label">{{ page.tagline }}</span>
+      {% endif %}
+      <h1 class="page-hero__title">{{ page.hero_title }}</h1>
+      {% if page.hero_subtitle %}
+      <div class="page-hero__sub richtext">{{ page.hero_subtitle|richtext }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if page.story_body %}
+<section class="about-story">
+  <div class="container">
+    <div class="about-story__grid">
+      <div class="about-story__header reveal">
+        <h2 class="about-story__title">{{ page.story_title }}</h2>
+      </div>
+      <div class="about-story__body richtext reveal reveal--delay">
+        {{ page.story_body|richtext }}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if page.value_one_title %}
+<section class="about-values">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2 class="section-title">{{ page.values_title }}</h2>
+    </div>
+    <div class="values-grid">
+      {% if page.value_one_title %}
+      <div class="value-item reveal reveal--stagger" style="--stagger: 0">
+        <h3 class="value-item__title">{{ page.value_one_title }}</h3>
+        <p>{{ page.value_one_body }}</p>
+      </div>
+      {% endif %}
+      {% if page.value_two_title %}
+      <div class="value-item reveal reveal--stagger" style="--stagger: 1">
+        <h3 class="value-item__title">{{ page.value_two_title }}</h3>
+        <p>{{ page.value_two_body }}</p>
+      </div>
+      {% endif %}
+      {% if page.value_three_title %}
+      <div class="value-item reveal reveal--stagger" style="--stagger: 2">
+        <h3 class="value-item__title">{{ page.value_three_title }}</h3>
+        <p>{{ page.value_three_body }}</p>
+      </div>
+      {% endif %}
+      {% if page.value_four_title %}
+      <div class="value-item reveal reveal--stagger" style="--stagger: 3">
+        <h3 class="value-item__title">{{ page.value_four_title }}</h3>
+        <p>{{ page.value_four_body }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if page.closing_quote %}
+<section class="philosophy">
+  <div class="container">
+    <div class="philosophy__inner reveal">
+      <blockquote class="philosophy__quote">{{ page.closing_quote }}</blockquote>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

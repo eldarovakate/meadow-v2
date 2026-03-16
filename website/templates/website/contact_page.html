@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}contact-page{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero__inner reveal">
+      <span class="label">Контакт</span>
+      <h1 class="page-hero__title">{{ page.intro_title }}</h1>
+      {% if page.intro_body %}
+      <div class="page-hero__sub richtext">{{ page.intro_body|richtext }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <div class="contact-info reveal">
+        <h2 class="contact-info__title">Meadow Shore</h2>
+        <p class="contact-info__tagline">Одежда, в которой слышно природу.</p>
+        <div class="contact-info__details">
+          <div class="contact-info__item">
+            <span class="contact-info__label">Email</span>
+            <a href="mailto:info@meadowshore.ru" class="contact-info__value">info@meadowshore.ru</a>
+          </div>
+        </div>
+        <p class="contact-info__note">Мы отвечаем в течение рабочего дня. По вопросам заказов, сотрудничества и оптовых поставок.</p>
+      </div>
+
+      <div class="contact-form-wrap reveal reveal--delay">
+        {% if form %}
+        <form class="contact-form" method="post" action=".">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="form-error">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <button type="submit" class="btn btn--primary">Отправить</button>
+        </form>
+        {% else %}
+        <div class="contact-fallback">
+          <p>Напишите нам напрямую:</p>
+          <a href="mailto:info@meadowshore.ru" class="btn btn--primary">info@meadowshore.ru</a>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% if page.thank_you_text %}
+<section class="contact-thank-you" style="display:none" id="thank-you">
+  <div class="container">
+    <h2>{{ page.thank_you_title }}</h2>
+    <div class="richtext">{{ page.thank_you_text|richtext }}</div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

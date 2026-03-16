@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}catalog-page{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero__inner reveal">
+      <span class="label">Коллекция</span>
+      <h1 class="page-hero__title">{{ page.intro_title }}</h1>
+      {% if page.intro_body %}
+      <div class="page-hero__sub richtext">{{ page.intro_body|richtext }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="catalog-section">
+  <div class="container">
+    {% if products %}
+    <div class="products__grid">
+      {% for product in products %}
+      <article class="product-card reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
+        <a href="{{ product.url }}" class="product-card__image-wrap">
+          <div class="product-card__placeholder"></div>
+          {% if product.status == 'coming_soon' %}
+          <span class="product-card__tag">Скоро</span>
+          {% endif %}
+        </a>
+        <div class="product-card__body">
+          {% if product.collection_name %}
+          <span class="product-card__collection">{{ product.collection_name }}</span>
+          {% endif %}
+          <h3 class="product-card__name">
+            <a href="{{ product.url }}">{{ product.title }}</a>
+          </h3>
+          {% if product.price %}
+          <span class="product-card__price">{{ product.price }}</span>
+          {% endif %}
+          <a href="{{ product.url }}" class="product-card__cta">Подробнее</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="catalog-empty reveal">
+      <p class="catalog-empty__text">Коллекция формируется.<br>Следите за обновлениями.</p>
+      <a href="/contact/" class="btn btn--outline">Написать нам</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}
