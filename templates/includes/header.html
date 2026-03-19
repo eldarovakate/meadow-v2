@@ -1,8 +1,8 @@
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags static %}
 <header class="site-header" id="site-header">
   <div class="header__inner">
     <a href="/" class="header__logo" aria-label="Meadow Shore — на главную">
-      <img src="/static/images/logo-white.png" alt="Meadow Shore" class="header__logo-img">
+      <img src="{% static 'images/logo-white.png' %}" alt="Meadow Shore" class="header__logo-img">
     </a>
 
     <nav class="header__nav" id="main-nav" aria-label="Основная навигация">
