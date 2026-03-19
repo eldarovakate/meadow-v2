@@ -287,16 +287,16 @@ blockquote {
 
 .btn--header {
   background-color: transparent;
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
+  color: var(--color-ivory);
+  border: 1px solid rgba(248, 245, 239, 0.35);
   padding: 0.625rem 1.25rem;
   font-size: 0.75rem;
 }
 
 .btn--header:hover {
-  background-color: var(--color-brown);
+  background-color: rgba(248, 245, 239, 0.15);
   color: var(--color-ivory);
-  border-color: var(--color-brown);
+  border-color: rgba(248, 245, 239, 0.6);
 }
 
 /* ============================================================
@@ -325,20 +325,18 @@ blockquote {
   right: 0;
   z-index: 1000;
   height: var(--header-h);
-  transition: background-color var(--transition-base),
-              box-shadow var(--transition-base),
-              transform var(--transition-base);
+  background-color: var(--color-forest);
+  transition: background-color 0.4s ease,
+              box-shadow 0.4s ease;
 }
 
 .site-header.is-scrolled {
-  background-color: rgba(248, 245, 239, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--color-ivory);
   box-shadow: 0 1px 0 var(--color-border);
 }
 
 .site-header.is-hidden {
-  transform: translateY(-100%);
+  /* хедер всегда закреплён вверху */
 }
 
 .header__inner {
@@ -357,19 +355,60 @@ blockquote {
   font-size: 1.375rem;
   font-weight: 400;
   letter-spacing: 0.05em;
-  color: var(--color-text);
+  color: var(--color-ivory);
   text-decoration: none;
   flex-shrink: 0;
   line-height: 1;
 }
 
 .header__logo:hover {
-  color: var(--color-terracotta);
+  opacity: 0.8;
+}
+
+.header__logo-img {
+  height: 52px;
+  width: auto;
+  display: block;
 }
 
 .header__logo-sep {
   display: inline-block;
   width: 0.3em;
+}
+
+/* Логотип: белый → тёмный при скролле */
+.header__logo-img {
+  transition: filter 0.4s ease;
+}
+.site-header.is-scrolled .header__logo-img {
+  filter: brightness(0);
+}
+
+/* Ссылки при скролле */
+.site-header.is-scrolled .header__nav-link {
+  color: var(--color-text-muted);
+}
+.site-header.is-scrolled .header__nav-link:hover {
+  color: var(--color-text);
+}
+.site-header.is-scrolled .header__nav-link::after {
+  background-color: var(--color-terracotta);
+}
+
+/* Кнопка при скролле */
+.site-header.is-scrolled .btn--header {
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.site-header.is-scrolled .btn--header:hover {
+  background-color: var(--color-brown);
+  color: var(--color-ivory);
+  border-color: var(--color-brown);
+}
+
+/* Burger при скролле */
+.site-header.is-scrolled .header__burger span {
+  background-color: var(--color-text);
 }
 
 .header__nav {
@@ -387,7 +426,7 @@ blockquote {
   font-size: 0.8125rem;
   font-weight: 400;
   letter-spacing: 0.03em;
-  color: var(--color-text-muted);
+  color: rgba(248, 245, 239, 0.75);
   text-decoration: none;
   position: relative;
   transition: color var(--transition-fast);
@@ -400,12 +439,12 @@ blockquote {
   left: 0;
   width: 0;
   height: 1px;
-  background-color: var(--color-terracotta);
+  background-color: var(--color-sand);
   transition: width var(--transition-base);
 }
 
 .header__nav-link:hover {
-  color: var(--color-text);
+  color: var(--color-ivory);
 }
 
 .header__nav-link:hover::after {
@@ -431,7 +470,7 @@ blockquote {
   display: block;
   width: 100%;
   height: 1px;
-  background-color: var(--color-text);
+  background-color: var(--color-ivory);
   transition: transform var(--transition-base),
               opacity var(--transition-fast),
               width var(--transition-base);
