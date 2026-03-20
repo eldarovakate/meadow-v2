@@ -75,7 +75,13 @@ html {
   font-size: 16px;
 }
 
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 body {
+  animation: pageFadeIn 0.4s ease;
   font-family: var(--font-sans);
   font-weight: 400;
   color: var(--color-text);
@@ -285,19 +291,6 @@ blockquote {
   color: var(--color-ivory);
 }
 
-.btn--header {
-  background-color: transparent;
-  color: var(--color-ivory);
-  border: 1px solid rgba(248, 245, 239, 0.35);
-  padding: 0.625rem 1.25rem;
-  font-size: 0.75rem;
-}
-
-.btn--header:hover {
-  background-color: rgba(248, 245, 239, 0.15);
-  color: var(--color-ivory);
-  border-color: rgba(248, 245, 239, 0.6);
-}
 
 /* ============================================================
    6. LABEL STYLES
@@ -364,6 +357,10 @@ body:not(.home-page) .header__right .header__nav-link:hover {
   color: #b86b4b;
 }
 
+body:not(.home-page) .header__burger span {
+  background-color: var(--color-terracotta);
+}
+
 .site-header.is-scrolled {
   background: var(--color-ivory);
   backdrop-filter: none;
@@ -424,24 +421,6 @@ body:not(.home-page) .header__right .header__nav-link:hover {
   gap: var(--space-lg);
 }
 
-/* Кнопка скрыта по умолчанию, появляется при скролле */
-.btn--header {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.site-header.is-scrolled .btn--header {
-  visibility: visible;
-  opacity: 1;
-  color: var(--color-text);
-  border-color: var(--color-border);
-}
-.site-header.is-scrolled .btn--header:hover {
-  background-color: var(--color-brown);
-  color: var(--color-ivory);
-  border-color: var(--color-brown);
-}
 
 /* Burger при скролле */
 .site-header.is-scrolled .header__burger span {
@@ -450,6 +429,20 @@ body:not(.home-page) .header__right .header__nav-link:hover {
 
 .header__nav {
   display: none;
+}
+
+/* Мобайл: бренд явно в центральную колонку, правый блок скрыт */
+.header__brand {
+  grid-column: 2;
+}
+
+.header__right {
+  display: none;
+}
+
+.header__burger {
+  grid-column: 3;
+  justify-self: end;
 }
 
 .header__nav-list {
@@ -886,7 +879,7 @@ body:not(.home-page) .header__right .header__nav-link:hover {
    ============================================================ */
 
 .marquee-wrap {
-  padding: var(--space-md) 0;
+  padding: 0.65rem 0;
   background-color: var(--color-brown);
   overflow: hidden;
 }
@@ -905,7 +898,7 @@ body:not(.home-page) .header__right .header__nav-link:hover {
 
 @keyframes marquee {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(var(--marquee-move, -50%)); }
 }
 
 .marquee__item {
@@ -920,9 +913,12 @@ body:not(.home-page) .header__right .header__nav-link:hover {
 }
 
 .marquee__sep {
-  color: var(--color-terracotta);
-  font-size: 0.75rem;
   flex-shrink: 0;
+  width: 30px;
+  height: 60px;
+  object-fit: contain;
+  opacity: 0.9;
+  margin: 0 1.5rem;
 }
 
 .marquee-wrap:hover .marquee__track {
@@ -1391,8 +1387,8 @@ body:not(.home-page) .header__right .header__nav-link:hover {
 
 /* Delivery page */
 .delivery-hero {
-  padding-top: calc(var(--header-h) + var(--space-2xl));
-  padding-bottom: var(--space-2xl);
+  padding-top: calc(var(--header-h) + 7rem);
+  padding-bottom: 7rem;
   background-color: #5a6b57;
   position: relative;
   overflow: hidden;
@@ -1922,6 +1918,26 @@ body:not(.home-page) .header__right .header__nav-link:hover {
     display: none;
   }
 
+  /* Планшет: убираем мобильные переопределения */
+  .header__brand {
+    grid-column: auto;
+  }
+
+  .header__right {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  .header__burger {
+    grid-column: auto;
+    justify-self: auto;
+  }
+
+  /* Планшет: уменьшаем отступы чтобы меню не вылезало за экран */
+  .header__inner {
+    gap: var(--space-xs);
+  }
+
   /* Hero */
   .hero__inner {
     flex-direction: row;
@@ -2010,9 +2026,13 @@ body:not(.home-page) .header__right .header__nav-link:hover {
     --header-h: 80px;
   }
 
-  /* Header btn visible */
-  .btn--header {
-    display: inline-flex;
+  /* Десктоп: восстанавливаем нормальные отступы */
+  .header__inner {
+    gap: var(--space-md);
+  }
+
+  .header__right {
+    gap: var(--space-lg);
   }
 
   /* Hero full height layout */

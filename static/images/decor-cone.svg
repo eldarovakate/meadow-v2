@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 90" fill="none" stroke="#b5614a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Stem -->
+  <line x1="30" y1="4" x2="30" y2="14"/>
+  <!-- Outer shape -->
+  <ellipse cx="30" cy="54" rx="18" ry="26"/>
+  <!-- Row 1 (top) -->
+  <path d="M22,24 Q30,20 38,24"/>
+  <path d="M22,24 Q26,28 30,26 Q34,28 38,24"/>
+  <!-- Row 2 -->
+  <path d="M18,34 Q30,29 42,34"/>
+  <path d="M18,34 Q24,39 30,37 Q36,39 42,34"/>
+  <!-- Row 3 -->
+  <path d="M15,45 Q30,39 45,45"/>
+  <path d="M15,45 Q22.5,51 30,49 Q37.5,51 45,45"/>
+  <!-- Row 4 -->
+  <path d="M14,56 Q30,50 46,56"/>
+  <path d="M14,56 Q22,62 30,60 Q38,62 46,56"/>
+  <!-- Row 5 (bottom) -->
+  <path d="M16,66 Q30,61 44,66"/>
+  <path d="M16,66 Q23,71 30,70 Q37,71 44,66"/>
+  <!-- Bottom tip -->
+  <path d="M22,75 Q30,80 38,75"/>
+</svg>

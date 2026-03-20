@@ -65,6 +65,24 @@ if (burgerBtn && mobileMenu) {
   });
 }
 
+// === Marquee Auto-Clone ===
+function initMarquee() {
+  document.querySelectorAll('.marquee__track').forEach(track => {
+    const originalChildren = Array.from(track.children);
+    const oneSetWidth = track.scrollWidth;
+
+    // Клонируем пока трек не покрывает минимум 2× ширину экрана
+    while (track.scrollWidth < window.innerWidth * 2) {
+      originalChildren.forEach(child => track.appendChild(child.cloneNode(true)));
+    }
+
+    // Точная пиксельная анимация = ровно одна "копия" контента
+    track.style.setProperty('--marquee-move', `-${oneSetWidth}px`);
+  });
+}
+
+initMarquee();
+
 // === Close mobile menu on resize ===
 window.addEventListener('resize', () => {
   if (window.innerWidth >= 1024 && mobileMenu) {

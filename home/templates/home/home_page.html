@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block body_class %}home-page{% endblock %}
 
@@ -97,11 +97,7 @@
       <div class="marquee__track">
         {% for item in block.value.items %}
         <span class="marquee__item">{{ item.text }}</span>
-        <span class="marquee__sep" aria-hidden="true">&#10022;</span>
-        {% endfor %}
-        {% for item in block.value.items %}
-        <span class="marquee__item">{{ item.text }}</span>
-        <span class="marquee__sep" aria-hidden="true">&#10022;</span>
+        <img src="{% static 'images/decor-sprig.svg' %}" class="marquee__sep" aria-hidden="true" alt="">
         {% endfor %}
       </div>
     </div>
