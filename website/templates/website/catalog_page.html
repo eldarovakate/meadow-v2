@@ -24,7 +24,11 @@
       {% for product in products %}
       <article class="product-card reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
         <a href="{{ product.url }}" class="product-card__image-wrap">
-          <div class="product-card__placeholder"></div>
+          {% if product.main_image %}
+            {% image product.main_image fill-600x750 class="product-card__img" %}
+          {% else %}
+            <div class="product-card__placeholder"></div>
+          {% endif %}
           {% if product.status == 'coming_soon' %}
           <span class="product-card__tag">Скоро</span>
           {% endif %}

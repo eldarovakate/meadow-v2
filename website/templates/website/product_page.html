@@ -11,9 +11,13 @@
 
       <div class="product-detail__gallery reveal">
         <div class="product-detail__main-image">
+          {% if page.main_image %}
+            {% image page.main_image width-900 class="product-detail__img" %}
+          {% else %}
           <div class="product-gallery-placeholder">
             <span>{{ page.title }}</span>
           </div>
+          {% endif %}
         </div>
       </div>
 

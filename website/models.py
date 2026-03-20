@@ -79,6 +79,14 @@ class CatalogPage(Page):
 class ProductPage(Page):
     collection_name = models.CharField(max_length=100, blank=True)
     short_description = models.CharField(max_length=300, blank=True)
+    main_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name="Главное фото"
+    )
     body = RichTextField(blank=True)
     price = models.CharField(max_length=50, blank=True)
     fabric_info = models.TextField(blank=True, verbose_name="О ткани")
@@ -101,6 +109,7 @@ class ProductPage(Page):
             FieldPanel('price'),
             FieldPanel('status'),
         ], heading="Основное"),
+        FieldPanel('main_image'),
         FieldPanel('body'),
         MultiFieldPanel([
             FieldPanel('fabric_info'),

@@ -1121,6 +1121,18 @@ body:not(.home-page) .header__burger span {
   transform: scale(1.05);
 }
 
+.product-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-slow);
+}
+
+.product-card__image-wrap:hover .product-card__img {
+  transform: scale(1.05);
+}
+
 .product-card__placeholder {
   width: 100%;
   height: 100%;
@@ -1601,6 +1613,13 @@ body:not(.home-page) .header__burger span {
   border-radius: var(--radius-md);
   overflow: hidden;
   background-color: var(--color-beige);
+}
+
+.product-detail__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .product-gallery-placeholder {
