@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block body_class %}delivery-page{% endblock %}
+
+{% block content %}
+
+<section class="delivery-hero">
+  <div class="delivery-hero__pattern" aria-hidden="true">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:8%;  left:4%;   transform:rotate(-20deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:12%; left:18%;  transform:rotate(15deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:6%;  left:34%;  transform:rotate(40deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:10%; left:50%;  transform:rotate(-10deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:8%;  left:66%;  transform:rotate(25deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:12%; left:82%;  transform:rotate(-35deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:55%; left:6%;   transform:rotate(30deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:60%; left:22%;  transform:rotate(-15deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:58%; left:38%;  transform:rotate(45deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:62%; left:54%;  transform:rotate(-25deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:56%; left:70%;  transform:rotate(10deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:60%; left:86%;  transform:rotate(-40deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:30%; left:2%;   transform:rotate(20deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:32%; left:14%;  transform:rotate(-30deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:28%; left:28%;  transform:rotate(50deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:33%; left:42%;  transform:rotate(-5deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:30%; left:58%;  transform:rotate(35deg)">
+    <img src="{% static 'images/decor-branch.png' %}" class="decor-item" style="top:28%; left:74%;  transform:rotate(-20deg)">
+    <img src="{% static 'images/decor-leaf.png' %}"   class="decor-item" style="top:32%; left:90%;  transform:rotate(15deg)">
+  </div>
+  <div class="container">
+    <div class="delivery-hero__inner reveal">
+      <h1 class="delivery-hero__title">{{ page.headline }}</h1>
+      {% if page.intro %}
+      <div class="delivery-hero__sub richtext">{{ page.intro|richtext }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="delivery-content">
+  <div class="container">
+    <div class="delivery-content__inner reveal">
+      {% if page.body %}
+      <div class="delivery-content__block richtext">{{ page.body|richtext }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if page.bottom_image %}
+<div class="delivery-image">
+  {% image page.bottom_image width-1920 class="delivery-image__img" %}
+</div>
+{% endif %}
+
+{% endblock %}

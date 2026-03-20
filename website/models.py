@@ -141,3 +141,27 @@ class ContactPage(AbstractEmailForm):
 
     class Meta:
         verbose_name = 'Страница контактов'
+
+
+class DeliveryPage(Page):
+    headline = models.CharField(max_length=200, default="Доставка и возврат")
+    intro = RichTextField(blank=True, verbose_name="Первый абзац")
+    body = RichTextField(blank=True, verbose_name="Второй абзац")
+    bottom_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name="Изображение внизу"
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('headline'),
+        FieldPanel('intro'),
+        FieldPanel('body'),
+        FieldPanel('bottom_image'),
+    ]
+
+    class Meta:
+        verbose_name = 'Доставка и возврат'
