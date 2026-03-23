@@ -1,33 +1,37 @@
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags static %}
 <footer class="site-footer">
   <div class="container">
     <div class="footer__grid">
-      <div class="footer__brand">
-        <span class="footer__logo">Meadow Shore</span>
-        <p class="footer__tagline">Тактильная одежда с природным характером.<br>Тишина. Ткань. Лес.</p>
-        <p class="footer__nature-note">Одежда, в которой слышно природу.</p>
-      </div>
-
       <div class="footer__nav">
         <h4 class="footer__nav-title">Навигация</h4>
         <ul>
           <li><a href="/">Главная</a></li>
           <li><a href="/about/">О бренде</a></li>
           <li><a href="/collection/">Коллекция</a></li>
-          <li><a href="/contact/">Контакт</a></li>
+          <li><a href="/contact/">Контакты</a></li>
         </ul>
       </div>
 
+      <div class="footer__brand">
+        <div class="footer__logo-wrap">
+          <img src="{% static 'images/logo-white.png' %}" alt="Meadow Shore" class="footer__logo-img">
+        </div>
+        <p class="footer__nature-note">Одежда, в которой слышно природу.</p>
+      </div>
+
       <div class="footer__contact">
-        <h4 class="footer__nav-title">Контакт</h4>
-        <a href="mailto:info@meadowshore.ru" class="footer__email">info@meadowshore.ru</a>
-        <p class="footer__contact-note">По вопросам заказов и сотрудничества</p>
+        <h4 class="footer__nav-title">Связаться с нами</h4>
+        <a href="mailto:info@meadowshore.ru" class="footer__email">info@meadowshore.ru ↗</a>
+        <p class="footer__contact-note">По вопросам заказов, сотрудничества и поддержки мы отвечаем на почте в рабочие дни.</p>
+        <ul class="footer__social">
+          <li><a href="#" class="footer__social-link">Telegram</a></li>
+          <li><a href="#" class="footer__social-link">Instagram</a></li>
+        </ul>
       </div>
     </div>
 
     <div class="footer__bottom">
       <p class="footer__copy">&copy; {% now "Y" %} Meadow Shore. Все права защищены.</p>
-      <p class="footer__made">Дизайнерская одежда с природным характером</p>
     </div>
   </div>
 </footer>
