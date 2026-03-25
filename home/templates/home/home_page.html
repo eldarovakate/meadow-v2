@@ -22,7 +22,7 @@
       {% if block.value.subheadline %}
       <p class="hero__sub">{{ block.value.subheadline }}</p>
       {% endif %}
-      <a href="{{ block.value.cta_url|default:'/collection/' }}" class="btn btn--primary">
+      <a href="#collections" class="btn btn--primary">
         {{ block.value.cta_text }}
       </a>
       <div class="hero__scroll-hint">
@@ -62,7 +62,7 @@
   </section>
 
   {% elif block.block_type == 'collections' %}
-  <section class="collections" id="collections">
+  <section class="collections">
     <div class="container">
       {% if block.value.title %}
       <div class="section-header reveal">
@@ -107,14 +107,17 @@
   <section class="features">
     <div class="container">
       {% if block.value.title %}
-      <div class="section-header reveal">
+      <div class="section-header features__header reveal">
         <h2 class="section-title">{{ block.value.title }}</h2>
+        <div class="features__title-line"></div>
+        {% if block.value.subtitle %}
+        <p class="features__subtitle">{{ block.value.subtitle }}</p>
+        {% endif %}
       </div>
       {% endif %}
       <div class="features__grid">
         {% for item in block.value.items %}
         <div class="feature-item reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
-          <div class="feature-item__num">0{{ forloop.counter }}</div>
           <h3 class="feature-item__title">{{ item.title }}</h3>
           <p class="feature-item__desc">{{ item.description }}</p>
         </div>
@@ -168,7 +171,7 @@
   </section>
 
   {% elif block.block_type == 'featured_products' %}
-  <section class="featured-products">
+  <section class="featured-products" id="collections">
     <div class="container">
       {% if block.value.title %}
       <div class="section-header reveal">

@@ -92,6 +92,7 @@ class MarqueeSectionBlock(blocks.StructBlock):
 
 class FeaturesSectionBlock(blocks.StructBlock):
     title = blocks.CharBlock(max_length=200, label="Заголовок секции")
+    subtitle = blocks.CharBlock(max_length=300, required=False, label="Подзаголовок")
     items = blocks.ListBlock(FeatureItemBlock(), label="Преимущества")
 
     class Meta:
