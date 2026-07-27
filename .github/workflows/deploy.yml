@@ -13,12 +13,14 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 194.67.101.156
+          host: 89.104.71.175
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /root/meadow-v2
             source venv/bin/activate
+            export DJANGO_SETTINGS_MODULE=meadowshore.settings.production
             git pull
+            python manage.py migrate --noinput
             python manage.py collectstatic --noinput
             sudo systemctl restart meadowshore
