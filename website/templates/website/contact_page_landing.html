@@ -1,26 +1,47 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags static %}
 
 {% block body_class %}contact-page contact-page--landing{% endblock %}
 
 {% block content %}
 
-<section class="page-hero">
-  <div class="container">
-    <div class="page-hero__inner reveal">
-      <span class="label">Контакты</span>
-      <h1 class="page-hero__title">{{ page.thank_you_title }}</h1>
-      {% if page.thank_you_text %}
-      <div class="page-hero__sub richtext">{{ page.thank_you_text|richtext }}</div>
-      {% endif %}
-    </div>
+<section class="thank-you-hero">
+  <div class="thank-you-hero__critter thank-you-hero__critter--left" aria-hidden="true">
+    <img src="{% static 'images/decor-sprig.svg' %}" class="thank-you-hero__accent thank-you-hero__accent--sprig-1" alt="">
+    <img src="{% static 'images/decor-cone.svg' %}" class="thank-you-hero__accent thank-you-hero__accent--cone-1" alt="">
+    <img src="{% static 'images/critter-hedgehog.svg' %}" class="thank-you-hero__critter-img" alt="">
+    <img src="{% static 'images/decor-sprig.svg' %}" class="thank-you-hero__accent thank-you-hero__accent--sprig-2" alt="">
   </div>
-</section>
+  <div class="thank-you-hero__critter thank-you-hero__critter--right" aria-hidden="true">
+    <img src="{% static 'images/decor-cone.svg' %}" class="thank-you-hero__accent thank-you-hero__accent--cone-2" alt="">
+    <img src="{% static 'images/critter-hare.svg' %}" class="thank-you-hero__critter-img" alt="">
+    <img src="{% static 'images/decor-sprig.svg' %}" class="thank-you-hero__accent thank-you-hero__accent--sprig-3" alt="">
+  </div>
 
-<section class="contact-section">
   <div class="container">
-    <div class="contact-thank-you-actions reveal">
-      <a href="{{ page.url }}" class="btn btn--primary">Вернуться к контактам</a>
+    <div class="thank-you-hero__mirror reveal">
+      <div class="thank-you-hero__mobile-print" aria-hidden="true">
+        <img src="{% static 'images/critter-hedgehog.svg' %}" alt="">
+        <img src="{% static 'images/critter-hare.svg' %}" alt="">
+      </div>
+
+      <img src="{% static 'images/logo-brown.svg' %}" alt="Meadow Shore" class="thank-you-hero__logo">
+      <h1 class="thank-you-hero__title">{{ page.thank_you_title|default:"Ваше сообщение уже у нас" }}</h1>
+
+      <div class="thank-you-hero__text richtext">
+        {% if page.thank_you_text %}
+          {{ page.thank_you_text|richtext }}
+        {% else %}
+          <p>Спасибо, что связались с MEADOW SHORE.</p>
+          <p>Скоро мы вернёмся с ответом — он придёт на указанную вами почту.</p>
+          <p>А пока можно ещё немного побыть среди лесных принтов, природных оттенков и мягкого хлопка.</p>
+        {% endif %}
+      </div>
+
+      <div class="thank-you-hero__actions">
+        <a href="/collection/" class="btn btn--primary">Продолжить прогулку</a>
+        <a href="/" class="thank-you-hero__home-link">На главную</a>
+      </div>
     </div>
   </div>
 </section>
