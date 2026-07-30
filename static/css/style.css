@@ -635,6 +635,13 @@ body:not(.home-page) .header__burger span {
   width: 100%;
 }
 
+.hero__logo {
+  display: block;
+  width: clamp(140px, 22vw, 260px);
+  height: auto;
+  margin: 0 auto var(--space-md);
+}
+
 .hero__eyebrow {
   display: block;
   font-family: var(--font-serif);
