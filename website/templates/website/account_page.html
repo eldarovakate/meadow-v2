@@ -22,14 +22,18 @@
           <dt>Email</dt>
           <dd>{{ user.email }}</dd>
         </div>
+        {% if user.last_name or user.first_name %}
         <div class="account-profile__row">
           <dt>ФИО</dt>
           <dd>{{ user.last_name }} {{ user.first_name }} {{ user.profile.patronymic }}</dd>
         </div>
+        {% endif %}
+        {% if user.profile.phone %}
         <div class="account-profile__row">
           <dt>Телефон</dt>
           <dd>{{ user.profile.phone }}</dd>
         </div>
+        {% endif %}
       </dl>
       <a href="/account/logout/" class="btn btn--outline">Выйти</a>
     </div>

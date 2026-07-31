@@ -2752,7 +2752,7 @@ body:not(.home-page) .header__burger span {
   flex-direction: column;
   justify-content: space-between;
   gap: var(--space-lg);
-  padding: var(--space-lg) var(--space-md);
+  padding: calc(var(--header-h) + var(--space-md)) var(--space-md) var(--space-lg);
 }
 
 .auth-visual__top {
@@ -2834,7 +2834,7 @@ body:not(.home-page) .header__burger span {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xl) var(--space-md);
+  padding: calc(var(--header-h) + var(--space-xl)) var(--space-md) var(--space-xl);
   background-color: var(--color-ivory);
 }
 

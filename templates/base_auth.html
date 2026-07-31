@@ -19,6 +19,8 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
+  {% include "includes/header.html" %}
+
   {% block content %}{% endblock %}
 
   <script src="{% static 'js/main.js' %}" defer></script>
