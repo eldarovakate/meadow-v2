@@ -13,7 +13,12 @@ class RegistrationForm(UserCreationForm):
     last_name = forms.CharField(label="Фамилия", max_length=150, required=True)
     first_name = forms.CharField(label="Имя", max_length=150, required=True)
     patronymic = forms.CharField(label="Отчество", max_length=150, required=False)
-    phone = forms.CharField(label="Телефон", max_length=20, required=True)
+    phone = forms.CharField(
+        label="Телефон",
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(attrs={"type": "tel", "inputmode": "tel", "autocomplete": "tel"}),
+    )
     personal_data_consent = forms.BooleanField(
         label="Я согласен(-на) на обработку персональных данных и принимаю условия Пользовательского соглашения",
         required=True,
@@ -54,3 +59,7 @@ class EmailLoginForm(forms.Form):
     email = forms.EmailField(label="Email")
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput)
     remember_me = forms.BooleanField(label="Запомнить меня", required=False)
+
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(label="Email")

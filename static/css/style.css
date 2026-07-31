@@ -374,6 +374,14 @@ body:not(.home-page) .header__burger span {
   box-shadow: 0 1px 0 var(--color-border);
 }
 
+/* Хедер страниц входа/регистрации — всегда сплошной, без прозрачности и блюра */
+body.auth-page .site-header {
+  background: var(--color-ivory);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 0 var(--color-border);
+}
+
 .site-header.is-hidden {
   /* хедер всегда закреплён вверху */
 }
@@ -2278,6 +2286,16 @@ body:not(.home-page) .header__burger span {
   margin-bottom: var(--space-sm);
 }
 
+.form-group.has-error input,
+.form-group.has-error textarea,
+.form-group.has-error select {
+  border-color: #c0392b;
+}
+
+.form-group.has-error .auth-input svg {
+  color: #c0392b;
+}
+
 .form-checkbox {
   display: flex;
   align-items: flex-start;
@@ -2285,6 +2303,16 @@ body:not(.home-page) .header__burger span {
   font-size: 0.9375rem;
   color: var(--color-text-muted);
   cursor: pointer;
+}
+
+.auth-form__policy-link {
+  color: var(--color-terracotta);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.auth-form__policy-link:hover {
+  color: var(--color-terracotta-light);
 }
 
 .form-checkbox input[type="checkbox"] {
@@ -2729,6 +2757,13 @@ body:not(.home-page) .header__burger span {
   min-height: 100svh;
 }
 
+.auth-split__columns {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .auth-visual {
   position: relative;
   min-height: 42svh;
@@ -2748,29 +2783,11 @@ body:not(.home-page) .header__burger span {
   position: relative;
   z-index: 1;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  padding: calc(var(--header-h) + var(--space-md)) var(--space-md) var(--space-lg);
-}
-
-.auth-visual__top {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-}
-
-.auth-visual__logo {
-  width: clamp(160px, 22vw, 240px);
-  height: auto;
-  opacity: 0.95;
-}
-
-.auth-visual__est {
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  color: rgba(248, 245, 239, 0.6);
+  justify-content: center;
+  padding: calc(var(--header-h) + var(--space-lg)) var(--space-md) var(--space-lg);
 }
 
 .auth-visual__headline {
@@ -2796,43 +2813,59 @@ body:not(.home-page) .header__burger span {
   max-width: 380px;
 }
 
-.auth-visual__features {
-  display: flex;
-  flex-direction: column;
+.auth-visual__watermark {
+  position: absolute;
+  left: var(--space-md);
+  bottom: var(--space-sm);
+  z-index: 2;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: rgba(248, 245, 239, 0.55);
+}
+
+/* Плашка преимуществ — отдельная полноширинная полоса под колонками, цвет отличается от формы (ivory) и от фото */
+.auth-page-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-sm);
+  background: var(--color-terracotta);
+  padding: 0.875rem var(--space-sm);
 }
 
 .auth-visual__feature {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  color: var(--color-ivory);
+  text-align: center;
+  gap: 0.25rem;
 }
 
 .auth-visual__feature svg {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
-  opacity: 0.9;
+  color: var(--color-ivory);
 }
 
 .auth-visual__feature div {
   display: flex;
   flex-direction: column;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
 }
 
 .auth-visual__feature strong {
   font-weight: 500;
+  color: var(--color-ivory);
 }
 
 .auth-visual__feature span {
-  color: rgba(248, 245, 239, 0.65);
+  color: rgba(248, 245, 239, 0.75);
 }
 
 .auth-form-panel {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: calc(var(--header-h) + var(--space-xl)) var(--space-md) var(--space-xl);
   background-color: var(--color-ivory);
@@ -2926,15 +2959,43 @@ body:not(.home-page) .header__burger span {
   width: 100%;
 }
 
+.auth-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm) var(--space-md);
+}
+
+@media (max-width: 480px) {
+  .auth-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* На мобильной и планшетной версии фото убирается — форма сразу первым экраном */
+@media (max-width: 1023.98px) {
+  .auth-visual,
+  .auth-page-features {
+    display: none;
+  }
+
+  .auth-form-panel {
+    padding-top: calc(var(--header-h) + var(--space-sm));
+    padding-bottom: var(--space-lg);
+  }
+}
+
 @media (min-width: 1024px) {
   .auth-split {
-    flex-direction: row;
     height: 100svh;
+  }
+
+  .auth-split__columns {
+    flex-direction: row;
   }
 
   .auth-visual {
     width: 50%;
-    min-height: 100%;
+    height: 100%;
   }
 
   .auth-visual__content {

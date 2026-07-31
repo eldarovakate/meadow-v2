@@ -128,6 +128,95 @@ document.querySelectorAll('[data-password-toggle]').forEach(button => {
   });
 });
 
+// === Auth Forms Validation (login / register) ===
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+
+function getAuthFieldWrapper(input) {
+  return input.closest('.form-group');
+}
+
+function showAuthFieldError(input, message) {
+  const wrapper = getAuthFieldWrapper(input);
+  if (!wrapper) return;
+  wrapper.classList.add('has-error');
+  input.setAttribute('aria-invalid', 'true');
+  let error = wrapper.querySelector('.form-error');
+  if (!error) {
+    error = document.createElement('div');
+    error.className = 'form-error';
+    wrapper.appendChild(error);
+  }
+  error.textContent = message;
+}
+
+function clearAuthFieldError(input) {
+  const wrapper = getAuthFieldWrapper(input);
+  if (!wrapper) return;
+  wrapper.classList.remove('has-error');
+  input.removeAttribute('aria-invalid');
+  const error = wrapper.querySelector('.form-error');
+  if (error) error.remove();
+}
+
+function validateAuthField(input) {
+  if (input.type === 'checkbox') {
+    if (input.required && !input.checked) {
+      showAuthFieldError(input, 'Необходимо согласие для продолжения');
+      return false;
+    }
+    clearAuthFieldError(input);
+    return true;
+  }
+
+  const value = input.value.trim();
+
+  if (input.required && !value) {
+    showAuthFieldError(input, 'Это поле обязательно для заполнения');
+    return false;
+  }
+
+  if (input.type === 'email' && value && !EMAIL_RE.test(value)) {
+    showAuthFieldError(input, 'Введите корректный email, например name@example.com');
+    return false;
+  }
+
+  clearAuthFieldError(input);
+  return true;
+}
+
+document.querySelectorAll('.auth-form').forEach(form => {
+  const fields = form.querySelectorAll('input[required], input[type="email"]');
+
+  fields.forEach(input => {
+    input.addEventListener('blur', () => validateAuthField(input));
+    input.addEventListener('change', () => {
+      if (input.type === 'checkbox') validateAuthField(input);
+    });
+    input.addEventListener('input', () => {
+      if (getAuthFieldWrapper(input)?.classList.contains('has-error')) {
+        validateAuthField(input);
+      }
+    });
+  });
+
+  form.addEventListener('submit', (e) => {
+    let isValid = true;
+    let firstInvalid = null;
+
+    fields.forEach(input => {
+      if (!validateAuthField(input)) {
+        isValid = false;
+        if (!firstInvalid) firstInvalid = input;
+      }
+    });
+
+    if (!isValid) {
+      e.preventDefault();
+      firstInvalid.focus();
+    }
+  });
+});
+
 // === Close mobile menu on resize ===
 window.addEventListener('resize', () => {
   if (window.innerWidth >= 1024 && mobileMenu) {
