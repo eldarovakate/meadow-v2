@@ -27,17 +27,6 @@ class FeatureItemBlock(blocks.StructBlock):
         label = 'Преимущество'
 
 
-class FeaturedProductBlock(blocks.StructBlock):
-    name = blocks.CharBlock(max_length=100, label="Название")
-    collection = blocks.CharBlock(max_length=100, required=False, label="Коллекция")
-    price = blocks.CharBlock(max_length=50, required=False, label="Цена")
-    image = ImageChooserBlock(required=False, label="Изображение")
-    tag = blocks.CharBlock(max_length=50, required=False, label="Тег")
-
-    class Meta:
-        icon = 'tag'
-        label = 'Товар'
-
 
 class MarqueeItemBlock(blocks.StructBlock):
     text = blocks.CharBlock(max_length=100, label="Текст")
@@ -119,7 +108,10 @@ class FabricSectionBlock(blocks.StructBlock):
 
 class FeaturedProductsSectionBlock(blocks.StructBlock):
     title = blocks.CharBlock(max_length=200, label="Заголовок секции")
-    products = blocks.ListBlock(FeaturedProductBlock(), label="Товары")
+    products = blocks.ListBlock(
+        blocks.PageChooserBlock(page_type='website.ProductPage'),
+        label="Товары",
+    )
 
     class Meta:
         icon = 'tag'
@@ -169,4 +161,6 @@ class HomePage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
+        from website.favorites import get_favorite_ids
+        context['favorite_ids'] = get_favorite_ids(request)
         return context

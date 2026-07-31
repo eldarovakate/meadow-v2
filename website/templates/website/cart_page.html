@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Корзина — Meadow Shore{% endblock %}
+{% block body_class %}cart-page{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero__inner reveal">
+      <h1 class="page-hero__title">Корзина</h1>
+    </div>
+  </div>
+</section>
+
+<section class="empty-state-section">
+  <div class="container">
+    <div class="empty-state reveal">
+      <p class="empty-state__text">Ваша корзина пуста.</p>
+      <a href="/collection/" class="btn btn--outline">Смотреть каталог</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

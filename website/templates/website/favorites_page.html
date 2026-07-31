@@ -1,18 +1,15 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags favorite_tags %}
+{% load wagtailimages_tags %}
 
-{% block body_class %}catalog-page{% endblock %}
+{% block title %}Избранное — Meadow Shore{% endblock %}
+{% block body_class %}favorites-page{% endblock %}
 
 {% block content %}
 
 <section class="page-hero">
   <div class="container">
     <div class="page-hero__inner reveal">
-      <span class="label">Коллекция</span>
-      <h1 class="page-hero__title">{{ page.intro_title }}</h1>
-      {% if page.intro_body %}
-      <div class="page-hero__sub richtext">{{ page.intro_body|richtext }}</div>
-      {% endif %}
+      <h1 class="page-hero__title">Избранное</h1>
     </div>
   </div>
 </section>
@@ -29,11 +26,8 @@
           {% else %}
             <div class="product-card__placeholder"></div>
           {% endif %}
-          {% if product.status == 'coming_soon' %}
-          <span class="product-card__tag">Скоро</span>
-          {% endif %}
         </a>
-        {% include "includes/favorite_button.html" with product_id=product.id is_favorite=product.id|in_list:favorite_ids %}
+        {% include "includes/favorite_button.html" with product_id=product.id is_favorite=True %}
         <div class="product-card__body">
           {% if product.collection_name %}
           <span class="product-card__collection">{{ product.collection_name }}</span>
@@ -50,9 +44,9 @@
       {% endfor %}
     </div>
     {% else %}
-    <div class="catalog-empty reveal">
-      <p class="catalog-empty__text">Коллекция формируется.<br>Следите за обновлениями.</p>
-      <a href="/contact/" class="btn btn--outline">Написать нам</a>
+    <div class="empty-state reveal">
+      <p class="empty-state__text">Здесь пока пусто. Добавляйте товары в избранное, чтобы вернуться к ним позже.</p>
+      <a href="/collection/" class="btn btn--outline">Смотреть каталог</a>
     </div>
     {% endif %}
   </div>

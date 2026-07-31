@@ -83,6 +83,43 @@ function initMarquee() {
 
 initMarquee();
 
+// === Favorite Toggle ===
+document.querySelectorAll('[data-favorite-form]').forEach(form => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const button = form.querySelector('.favorite-toggle');
+    const formData = new FormData(form);
+
+    let data;
+    try {
+      const response = await fetch(form.getAttribute('action'), {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData,
+      });
+      if (!response.ok) throw new Error('Request failed');
+      data = await response.json();
+    } catch (err) {
+      form.submit();
+      return;
+    }
+
+    button.classList.toggle('is-active', data.is_favorite);
+    button.setAttribute('aria-pressed', String(data.is_favorite));
+    button.setAttribute('aria-label', data.is_favorite ? 'Убрать из избранного' : 'Добавить в избранное');
+
+    const label = form.parentElement.querySelector('.product-detail__favorite-label');
+    if (label) {
+      label.textContent = data.is_favorite ? 'В избранном' : 'Добавить в избранное';
+    }
+
+    if (!data.is_favorite && document.body.classList.contains('favorites-page')) {
+      form.closest('.product-card')?.remove();
+    }
+  });
+});
+
 // === Close mobile menu on resize ===
 window.addEventListener('resize', () => {
   if (window.innerWidth >= 1024 && mobileMenu) {

@@ -351,16 +351,16 @@ body:not(.home-page) .header__nav-link:hover {
   color: #b86b4b;
 }
 
-body:not(.home-page) .header__brand {
-  color: var(--color-terracotta);
-}
-
-body:not(.home-page) .header__right .header__nav-link {
+body:not(.home-page) .header__icon-link {
   color: #3a3128;
 }
 
-body:not(.home-page) .header__right .header__nav-link:hover {
+body:not(.home-page) .header__icon-link:hover {
   color: #b86b4b;
+}
+
+body:not(.home-page) .header__brand {
+  color: var(--color-terracotta);
 }
 
 body:not(.home-page) .header__burger span {
@@ -390,6 +390,9 @@ body:not(.home-page) .header__burger span {
 }
 
 .header__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-serif);
   font-size: 2.06rem;
   font-weight: 400;
@@ -399,6 +402,12 @@ body:not(.home-page) .header__burger span {
   white-space: nowrap;
   text-align: center;
   transition: color 0.4s ease, opacity 0.4s ease;
+}
+
+.header__brand-icon {
+  height: clamp(26px, 2.6vw, 38px);
+  width: auto;
+  flex-shrink: 0;
 }
 
 .header__brand:hover {
@@ -420,13 +429,12 @@ body:not(.home-page) .header__burger span {
   background-color: var(--color-terracotta);
 }
 
-.header__right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-lg);
+.site-header.is-scrolled .header__icon-link {
+  color: var(--color-text-muted);
 }
-
+.site-header.is-scrolled .header__icon-link:hover {
+  color: var(--color-text);
+}
 
 /* Burger при скролле */
 .site-header.is-scrolled .header__burger span {
@@ -440,10 +448,6 @@ body:not(.home-page) .header__burger span {
 /* Мобайл: бренд явно в центральную колонку, правый блок скрыт */
 .header__brand {
   grid-column: 2;
-}
-
-.header__right {
-  display: none;
 }
 
 .header__burger {
@@ -464,6 +468,7 @@ body:not(.home-page) .header__burger span {
   letter-spacing: 0.03em;
   color: rgba(248, 245, 239, 0.9);
   text-decoration: none;
+  white-space: nowrap;
   position: relative;
   transition: color var(--transition-fast);
 }
@@ -485,6 +490,27 @@ body:not(.home-page) .header__burger span {
 
 .header__nav-link:hover::after {
   width: 100%;
+}
+
+.header__icons {
+  display: none;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.header__icon-link {
+  display: flex;
+  color: rgba(248, 245, 239, 0.9);
+  transition: color var(--transition-fast);
+}
+
+.header__icon-link:hover {
+  color: var(--color-ivory);
+}
+
+.header__icon-link svg {
+  width: 20px;
+  height: 20px;
 }
 
 /* Burger button */
@@ -637,9 +663,10 @@ body:not(.home-page) .header__burger span {
 
 .hero__logo {
   display: block;
-  width: clamp(140px, 22vw, 260px);
+  width: clamp(70px, 11vw, 130px);
   height: auto;
   margin: 0 auto var(--space-md);
+  opacity: 0.85;
 }
 
 .hero__eyebrow {
@@ -697,6 +724,61 @@ body:not(.home-page) .header__burger span {
   height: 48px;
   background: linear-gradient(to bottom, var(--color-stone), transparent);
   animation: scrollLine 2s ease-in-out infinite;
+}
+
+.hero__badge {
+  position: absolute;
+  z-index: 2;
+  right: clamp(1rem, 5vw, 6rem);
+  bottom: clamp(6rem, 14vh, 9rem);
+  width: clamp(110px, 12vw, 156px);
+  height: clamp(110px, 12vw, 156px);
+}
+
+.hero__badge-svg {
+  width: 100%;
+  height: 100%;
+  animation: spin 22s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__badge-svg { animation: none; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hero__badge-ring {
+  fill: none;
+  stroke: rgba(248, 245, 239, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+}
+
+.hero__badge-core {
+  fill: rgba(181, 97, 74, 0.9);
+}
+
+.hero__badge-text {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  letter-spacing: 2px;
+  fill: var(--color-ivory);
+  text-transform: uppercase;
+}
+
+.hero__badge-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--color-ivory);
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .hero__badge { display: none; }
 }
 
 @keyframes scrollLine {
@@ -1138,6 +1220,7 @@ body:not(.home-page) .header__burger span {
    ============================================================ */
 
 .product-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: var(--color-white);
@@ -1201,6 +1284,69 @@ body:not(.home-page) .header__burger span {
   background-color: var(--color-terracotta);
   padding: 0.3rem 0.65rem;
   border-radius: var(--radius-sm);
+}
+
+.favorite-form {
+  display: inline-flex;
+}
+
+.product-card .favorite-form {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 2;
+}
+
+.favorite-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.favorite-toggle:hover {
+  transform: scale(1.08);
+}
+
+.favorite-toggle svg {
+  width: 18px;
+  height: 18px;
+  transition: fill var(--transition-fast);
+}
+
+.favorite-toggle.is-active {
+  color: var(--color-terracotta);
+}
+
+.favorite-toggle.is-active svg {
+  fill: var(--color-terracotta);
+}
+
+.product-detail__favorite {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.product-detail__favorite .favorite-toggle {
+  width: 44px;
+  height: 44px;
+  background-color: var(--color-beige);
+}
+
+.product-detail__favorite-label {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
 }
 
 .product-card__body {
@@ -1580,6 +1726,23 @@ body:not(.home-page) .header__burger span {
   font-size: 1.0625rem;
   color: var(--color-text-muted);
   line-height: 1.75;
+}
+
+.empty-state-section {
+  padding: var(--space-2xl) 0;
+}
+
+.empty-state {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.empty-state__text {
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  margin-bottom: var(--space-md);
 }
 
 /* ============================================================
@@ -2144,30 +2307,32 @@ body:not(.home-page) .header__burger span {
   /* Header nav */
   .header__nav {
     display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 6rem;
   }
 
   .header__burger {
     display: none;
   }
 
-  /* Планшет: убираем мобильные переопределения */
+  /* Десктоп: лого слева, меню справа, иконки в отдельной колонке у края */
+  .header__inner {
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-xs);
+  }
+
   .header__brand {
     grid-column: auto;
   }
 
-  .header__right {
+  .header__icons {
     display: flex;
-    gap: var(--space-sm);
   }
 
   .header__burger {
     grid-column: auto;
     justify-self: auto;
-  }
-
-  /* Планшет: уменьшаем отступы чтобы меню не вылезало за экран */
-  .header__inner {
-    gap: var(--space-xs);
   }
 
   /* Hero */
@@ -2293,8 +2458,8 @@ body:not(.home-page) .header__burger span {
     gap: var(--space-md);
   }
 
-  .header__right {
-    gap: var(--space-lg);
+  .header__nav-list {
+    gap: 4.5rem;
   }
 
   /* Hero full height layout */

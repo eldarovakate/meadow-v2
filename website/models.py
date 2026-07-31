@@ -9,6 +9,8 @@ from modelcluster.fields import ParentalKey
 from wagtail.contrib.forms.models import AbstractFormField, AbstractEmailForm
 from wagtail.contrib.forms.panels import FormSubmissionsPanel
 
+from .favorites import get_favorite_ids
+
 
 class AboutPage(Page):
     tagline = models.CharField(max_length=100, blank=True, default="О нас")
@@ -73,6 +75,7 @@ class CatalogPage(Page):
     def get_context(self, request):
         context = super().get_context(request)
         context['products'] = ProductPage.objects.child_of(self).live().order_by('-first_published_at')
+        context['favorite_ids'] = get_favorite_ids(request)
         return context
 
 
@@ -116,6 +119,11 @@ class ProductPage(Page):
             FieldPanel('care_info'),
         ], heading="О товаре"),
     ]
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context['is_favorite'] = self.id in get_favorite_ids(request)
+        return context
 
     class Meta:
         verbose_name = 'Товар'

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags static %}
+{% load wagtailcore_tags wagtailimages_tags static favorite_tags %}
 
 {% block body_class %}home-page{% endblock %}
 
@@ -15,6 +15,21 @@
     </div>
     {% endif %}
     <div class="hero__overlay"></div>
+    <div class="hero__badge reveal" aria-hidden="true">
+      <svg viewBox="0 0 200 200" class="hero__badge-svg">
+        <defs>
+          <path id="heroBadgeCircle" d="M 100,100 m -78,0 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0" />
+        </defs>
+        <circle cx="100" cy="100" r="78" class="hero__badge-ring" />
+        <text class="hero__badge-text">
+          <textPath href="#heroBadgeCircle" startOffset="0%">
+            МАЛЫЕ ТИРАЖИ &#8226; РУЧНАЯ ПЕЧАТЬ &#8226; MEADOW SHORE &#8226;
+          </textPath>
+        </text>
+        <circle cx="100" cy="100" r="34" class="hero__badge-core" />
+      </svg>
+      <span class="hero__badge-label">2026</span>
+    </div>
     <div class="hero__center reveal">
       <img src="{% static 'images/logo-bird-white.svg' %}" alt="Meadow Shore" class="hero__logo">
       <h1 class="hero__headline">{{ block.value.headline }}</h1>
@@ -180,29 +195,34 @@
       </div>
       {% endif %}
       <div class="products__grid">
-        {% for product in block.value.products %}
+        {% for page in block.value.products %}
+        {% with product=page.specific %}
         <article class="product-card reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
-          <div class="product-card__image-wrap">
-            {% if product.image %}
-            {% image product.image width-600 class="product-card__image" %}
+          <a href="{{ product.url }}" class="product-card__image-wrap">
+            {% if product.main_image %}
+            {% image product.main_image fill-600x750 class="product-card__image" %}
             {% else %}
             <div class="product-card__placeholder"></div>
             {% endif %}
-            {% if product.tag %}
-            <span class="product-card__tag">{{ product.tag }}</span>
+            {% if product.status == 'coming_soon' %}
+            <span class="product-card__tag">Скоро</span>
             {% endif %}
-          </div>
+          </a>
+          {% include "includes/favorite_button.html" with product_id=product.id is_favorite=product.id|in_list:favorite_ids %}
           <div class="product-card__body">
-            {% if product.collection %}
-            <span class="product-card__collection">{{ product.collection }}</span>
+            {% if product.collection_name %}
+            <span class="product-card__collection">{{ product.collection_name }}</span>
             {% endif %}
-            <h3 class="product-card__name">{{ product.name }}</h3>
+            <h3 class="product-card__name">
+              <a href="{{ product.url }}">{{ product.title }}</a>
+            </h3>
             {% if product.price %}
             <span class="product-card__price">{{ product.price }}</span>
             {% endif %}
-            <a href="#" class="product-card__cta">Подробнее</a>
+            <a href="{{ product.url }}" class="product-card__cta">Подробнее</a>
           </div>
         </article>
+        {% endwith %}
         {% endfor %}
       </div>
     </div>
