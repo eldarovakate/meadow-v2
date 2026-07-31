@@ -10,6 +10,7 @@ urlpatterns = [
     path('django-admin/', admin.site.urls),
     path('admin/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
+    path('', include('accounts.urls')),
     path('', include('website.urls')),
     path('', include(wagtail_urls)),
 ]

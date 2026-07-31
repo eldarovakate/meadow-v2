@@ -182,3 +182,14 @@ class DeliveryPage(Page):
 
     class Meta:
         verbose_name = 'Доставка и возврат'
+
+
+class LegalPage(Page):
+    body = RichTextField(verbose_name="Текст документа")
+
+    content_panels = Page.content_panels + [
+        FieldPanel('body'),
+    ]
+
+    class Meta:
+        verbose_name = 'Юридическая страница'

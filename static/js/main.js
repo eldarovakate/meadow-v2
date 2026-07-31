@@ -120,6 +120,14 @@ document.querySelectorAll('[data-favorite-form]').forEach(form => {
   });
 });
 
+// === Password Visibility Toggle ===
+document.querySelectorAll('[data-password-toggle]').forEach(button => {
+  button.addEventListener('click', () => {
+    const input = button.parentElement.querySelector('input');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  });
+});
+
 // === Close mobile menu on resize ===
 window.addEventListener('resize', () => {
   if (window.innerWidth >= 1024 && mobileMenu) {

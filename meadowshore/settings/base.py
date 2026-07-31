@@ -9,6 +9,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-producti
 INSTALLED_APPS = [
     'home',
     'website',
+    'accounts',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -93,3 +94,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 WAGTAIL_SITE_NAME = 'Meadow Shore'
 WAGTAILADMIN_BASE_URL = 'http://localhost:8000'
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = 10 * 1024 * 1024
+
+LOGIN_URL = '/account/login/'
+LOGIN_REDIRECT_URL = '/account/'

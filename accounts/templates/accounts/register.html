@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация — Meadow Shore{% endblock %}
+{% block body_class %}register-page{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero__inner reveal">
+      <h1 class="page-hero__title">Регистрация</h1>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-form-wrap reveal" style="max-width: 480px; margin: 0 auto;">
+      <form class="contact-form" method="post" action=".">
+        {% csrf_token %}
+        {% for field in form %}
+          {% if field.name == 'personal_data_consent' %}
+          <div class="form-group form-group--checkbox">
+            <label class="form-checkbox">
+              {{ field }}
+              <span>{{ field.label }}</span>
+            </label>
+            {% if field.errors %}
+            <div class="form-error">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% else %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="form-error">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+        <p class="form-note">
+          Нажимая «Зарегистрироваться», вы соглашаетесь с
+          <a href="/privacy-policy/">Политикой обработки персональных данных</a>.
+        </p>
+        <button type="submit" class="btn btn--primary">Зарегистрироваться</button>
+      </form>
+      <p class="form-note">Уже есть аккаунт? <a href="/account/login/">Войти</a></p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

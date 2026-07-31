@@ -13,12 +13,40 @@
   </div>
 </section>
 
-<section class="empty-state-section">
+{% if user.is_authenticated %}
+<section class="account-section">
   <div class="container">
-    <div class="empty-state reveal">
-      <p class="empty-state__text">Вход и регистрация скоро появятся здесь.</p>
+    <div class="account-profile reveal">
+      <dl class="account-profile__list">
+        <div class="account-profile__row">
+          <dt>Email</dt>
+          <dd>{{ user.email }}</dd>
+        </div>
+        <div class="account-profile__row">
+          <dt>ФИО</dt>
+          <dd>{{ user.last_name }} {{ user.first_name }} {{ user.profile.patronymic }}</dd>
+        </div>
+        <div class="account-profile__row">
+          <dt>Телефон</dt>
+          <dd>{{ user.profile.phone }}</dd>
+        </div>
+      </dl>
+      <a href="/account/logout/" class="btn btn--outline">Выйти</a>
     </div>
   </div>
 </section>
+{% else %}
+<section class="empty-state-section">
+  <div class="container">
+    <div class="empty-state reveal">
+      <p class="empty-state__text">Войдите или зарегистрируйтесь, чтобы получить доступ к личному кабинету.</p>
+      <div class="empty-state__actions">
+        <a href="/account/login/" class="btn btn--outline">Войти</a>
+        <a href="/account/register/" class="btn btn--primary">Зарегистрироваться</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
 
 {% endblock %}
