@@ -2366,6 +2366,191 @@ body.auth-page .site-header {
   flex-wrap: wrap;
 }
 
+/* ============================================================
+   34. ACCOUNT PAGE (ЛИЧНЫЙ КАБИНЕТ)
+   ============================================================ */
+
+.page-hero--account .page-hero__inner {
+  position: relative;
+}
+
+.page-hero__decor {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.page-hero__decor-tree {
+  height: 56px;
+  width: auto;
+  opacity: 0.85;
+}
+
+.page-hero__decor-cone {
+  height: 40px;
+  width: auto;
+  opacity: 0.85;
+}
+
+.account-section {
+  padding: var(--space-xl) 0 var(--space-2xl);
+  background-color: var(--color-beige);
+}
+
+.form-alert {
+  max-width: 720px;
+  margin: 0 auto var(--space-md);
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+}
+
+.form-alert--success {
+  background-color: rgba(107, 124, 79, 0.12);
+  color: var(--color-moss);
+  border: 1px solid rgba(107, 124, 79, 0.25);
+}
+
+.form-alert--error {
+  background-color: rgba(192, 57, 43, 0.08);
+  color: #c0392b;
+  border: 1px solid rgba(192, 57, 43, 0.2);
+}
+
+.account-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  align-items: flex-start;
+}
+
+.account-nav {
+  width: 100%;
+  background-color: var(--color-ivory);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.account-nav nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.account-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.account-nav__link svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  color: var(--color-terracotta);
+}
+
+.account-nav__link:hover {
+  background-color: var(--color-beige);
+}
+
+.account-nav__logout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.account-nav__logout svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+.account-nav__logout:hover {
+  color: #c0392b;
+}
+
+.account-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+.account-card {
+  background-color: var(--color-ivory);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  scroll-margin-top: calc(var(--header-h) + var(--space-sm));
+}
+
+.account-card__title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.account-card__note {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+}
+
+.account-card .contact-form {
+  max-width: 480px;
+}
+
+.account-empty {
+  text-align: center;
+  padding: var(--space-md) 0;
+}
+
+.account-empty__icon {
+  width: 44px;
+  height: auto;
+  opacity: 0.7;
+  margin: 0 auto var(--space-sm);
+  display: block;
+}
+
+.account-empty__text {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+@media (min-width: 900px) {
+  .account-layout {
+    flex-direction: row;
+  }
+
+  .account-nav {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-md));
+  }
+}
+
 .legal-section {
   padding: var(--space-xl) 0 var(--space-2xl);
 }

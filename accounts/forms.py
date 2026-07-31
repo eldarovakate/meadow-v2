@@ -63,3 +63,22 @@ class EmailLoginForm(forms.Form):
 
 class PasswordResetRequestForm(forms.Form):
     email = forms.EmailField(label="Email")
+
+
+class ProfileForm(forms.Form):
+    last_name = forms.CharField(label="Фамилия", max_length=150, required=True)
+    first_name = forms.CharField(label="Имя", max_length=150, required=True)
+    patronymic = forms.CharField(label="Отчество", max_length=150, required=False)
+    phone = forms.CharField(
+        label="Телефон",
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(attrs={"type": "tel", "inputmode": "tel", "autocomplete": "tel"}),
+    )
+
+
+class AddressForm(forms.Form):
+    city = forms.CharField(label="Город", max_length=100, required=True)
+    street = forms.CharField(label="Улица", max_length=255, required=True)
+    house = forms.CharField(label="Дом, квартира", max_length=50, required=True)
+    postal_code = forms.CharField(label="Почтовый индекс", max_length=20, required=False)

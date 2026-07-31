@@ -1,10 +1,205 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Личный кабинет — Meadow Shore{% endblock %}
 {% block body_class %}account-page{% endblock %}
 
 {% block content %}
 
+{% if user.is_authenticated %}
+
+<section class="page-hero page-hero--account">
+  <div class="container">
+    <div class="page-hero__inner reveal">
+      <div class="page-hero__decor" aria-hidden="true">
+        <img src="{% static 'images/decor-tree.svg' %}" class="page-hero__decor-tree" alt="">
+        <img src="{% static 'images/decor-cone.svg' %}" class="page-hero__decor-cone" alt="">
+      </div>
+      <h1 class="page-hero__title">Личный кабинет</h1>
+      <div class="page-hero__sub">
+        <p>Здравствуйте{% if user.first_name %}, {{ user.first_name }}{% endif %}!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="account-section">
+  <div class="container">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="form-alert form-alert--{{ message.tags }} reveal">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="account-layout reveal">
+
+      <aside class="account-nav">
+        <nav aria-label="Разделы кабинета">
+          <a href="#profile" class="account-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Профиль
+          </a>
+          <a href="/favorites/" class="account-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            Избранное
+          </a>
+          <a href="#orders" class="account-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73Z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
+            Заказы
+          </a>
+          <a href="#address" class="account-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+            Адрес доставки
+          </a>
+          <a href="#security" class="account-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Пароль
+          </a>
+        </nav>
+        <a href="/account/logout/" class="account-nav__logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Выйти
+        </a>
+      </aside>
+
+      <div class="account-content">
+
+        <div class="account-card" id="profile">
+          <h2 class="account-card__title">Личные данные</h2>
+          <p class="account-card__note">Email: {{ user.email }} — используется для входа, изменить нельзя</p>
+
+          <form class="contact-form auth-form" method="post" action="." novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="profile">
+
+            <div class="auth-form-grid">
+              <div class="form-group">
+                <label for="{{ profile_form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                {{ profile_form.last_name }}
+                {% if profile_form.last_name.errors %}<div class="form-error">{{ profile_form.last_name.errors }}</div>{% endif %}
+              </div>
+              <div class="form-group">
+                <label for="{{ profile_form.first_name.id_for_label }}" class="form-label">Имя</label>
+                {{ profile_form.first_name }}
+                {% if profile_form.first_name.errors %}<div class="form-error">{{ profile_form.first_name.errors }}</div>{% endif %}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="{{ profile_form.patronymic.id_for_label }}" class="form-label">Отчество</label>
+              {{ profile_form.patronymic }}
+              {% if profile_form.patronymic.errors %}<div class="form-error">{{ profile_form.patronymic.errors }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ profile_form.phone.id_for_label }}" class="form-label">Телефон</label>
+              {{ profile_form.phone }}
+              {% if profile_form.phone.errors %}<div class="form-error">{{ profile_form.phone.errors }}</div>{% endif %}
+            </div>
+
+            <button type="submit" class="btn btn--primary">Сохранить данные</button>
+          </form>
+        </div>
+
+        <div class="account-card" id="orders">
+          <h2 class="account-card__title">Заказы</h2>
+          <div class="account-empty">
+            <img src="{% static 'images/decor-cone.svg' %}" class="account-empty__icon" alt="">
+            <p class="account-empty__text">Заказов пока нет. Здесь появится история ваших покупок.</p>
+            <a href="/collection/" class="btn btn--outline">Смотреть каталог</a>
+          </div>
+        </div>
+
+        <div class="account-card" id="address">
+          <h2 class="account-card__title">Адрес доставки</h2>
+
+          <form class="contact-form auth-form" method="post" action="." novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="address">
+
+            <div class="form-group">
+              <label for="{{ address_form.city.id_for_label }}" class="form-label">Город</label>
+              {{ address_form.city }}
+              {% if address_form.city.errors %}<div class="form-error">{{ address_form.city.errors }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ address_form.street.id_for_label }}" class="form-label">Улица</label>
+              {{ address_form.street }}
+              {% if address_form.street.errors %}<div class="form-error">{{ address_form.street.errors }}</div>{% endif %}
+            </div>
+
+            <div class="auth-form-grid">
+              <div class="form-group">
+                <label for="{{ address_form.house.id_for_label }}" class="form-label">Дом, квартира</label>
+                {{ address_form.house }}
+                {% if address_form.house.errors %}<div class="form-error">{{ address_form.house.errors }}</div>{% endif %}
+              </div>
+              <div class="form-group">
+                <label for="{{ address_form.postal_code.id_for_label }}" class="form-label">Индекс</label>
+                {{ address_form.postal_code }}
+                {% if address_form.postal_code.errors %}<div class="form-error">{{ address_form.postal_code.errors }}</div>{% endif %}
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--primary">Сохранить адрес</button>
+          </form>
+        </div>
+
+        <div class="account-card" id="security">
+          <h2 class="account-card__title">Смена пароля</h2>
+
+          <form class="contact-form auth-form" method="post" action="." novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="password">
+
+            <div class="form-group">
+              <label for="{{ password_form.old_password.id_for_label }}" class="form-label">Текущий пароль</label>
+              <div class="auth-input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                {{ password_form.old_password }}
+                <button type="button" class="auth-input__toggle" data-password-toggle aria-label="Показать пароль">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              {% if password_form.old_password.errors %}<div class="form-error">{{ password_form.old_password.errors }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ password_form.new_password1.id_for_label }}" class="form-label">Новый пароль</label>
+              <div class="auth-input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                {{ password_form.new_password1 }}
+                <button type="button" class="auth-input__toggle" data-password-toggle aria-label="Показать пароль">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              {% if password_form.new_password1.errors %}<div class="form-error">{{ password_form.new_password1.errors }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ password_form.new_password2.id_for_label }}" class="form-label">Повторите новый пароль</label>
+              <div class="auth-input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                {{ password_form.new_password2 }}
+                <button type="button" class="auth-input__toggle" data-password-toggle aria-label="Показать пароль">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              {% if password_form.new_password2.errors %}<div class="form-error">{{ password_form.new_password2.errors }}</div>{% endif %}
+            </div>
+
+            <button type="submit" class="btn btn--primary">Сменить пароль</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% else %}
 <section class="page-hero">
   <div class="container">
     <div class="page-hero__inner reveal">
@@ -12,34 +207,6 @@
     </div>
   </div>
 </section>
-
-{% if user.is_authenticated %}
-<section class="account-section">
-  <div class="container">
-    <div class="account-profile reveal">
-      <dl class="account-profile__list">
-        <div class="account-profile__row">
-          <dt>Email</dt>
-          <dd>{{ user.email }}</dd>
-        </div>
-        {% if user.last_name or user.first_name %}
-        <div class="account-profile__row">
-          <dt>ФИО</dt>
-          <dd>{{ user.last_name }} {{ user.first_name }} {{ user.profile.patronymic }}</dd>
-        </div>
-        {% endif %}
-        {% if user.profile.phone %}
-        <div class="account-profile__row">
-          <dt>Телефон</dt>
-          <dd>{{ user.profile.phone }}</dd>
-        </div>
-        {% endif %}
-      </dl>
-      <a href="/account/logout/" class="btn btn--outline">Выйти</a>
-    </div>
-  </div>
-</section>
-{% else %}
 <section class="empty-state-section">
   <div class="container">
     <div class="empty-state reveal">

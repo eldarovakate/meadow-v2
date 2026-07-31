@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 100" fill="none" stroke="#b5614a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Trunk -->
+  <line x1="30" y1="90" x2="30" y2="98"/>
+  <!-- Tier 1 (bottom, widest) -->
+  <path d="M6,90 Q14,82 22,86 Q26,80 30,84 Q34,80 38,86 Q46,82 54,90"/>
+  <path d="M14,90 L30,66 L46,90"/>
+  <!-- Tier 2 -->
+  <path d="M12,68 Q19,61 25,65 Q27,60 30,63 Q33,60 35,65 Q41,61 48,68"/>
+  <path d="M18,68 L30,46 L42,68"/>
+  <!-- Tier 3 (top, narrowest) -->
+  <path d="M18,46 Q23,40 27,43 Q28.5,39 30,42 Q31.5,39 33,43 Q37,40 42,46"/>
+  <path d="M22,46 L30,26 L38,46"/>
+  <!-- Tip -->
+  <path d="M30,26 L30,16"/>
+</svg>
