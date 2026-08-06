@@ -108,7 +108,7 @@ class FabricSectionBlock(blocks.StructBlock):
 
 
 class FeaturedProductsSectionBlock(blocks.StructBlock):
-    title = blocks.CharBlock(max_length=200, label="Заголовок секции")
+    title = blocks.CharBlock(max_length=200, required=False, label="Заголовок секции (необязательно)")
     products = blocks.ListBlock(
         blocks.PageChooserBlock(page_type='website.ProductPage'),
         label="Товары",
