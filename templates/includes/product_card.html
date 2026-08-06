@@ -40,7 +40,19 @@
     <span class="product-card__price-row">
       <span class="product-card__price">{{ product.price }}</span>
       {% if product.old_price %}<span class="product-card__old-price">{{ product.old_price }}</span>{% endif %}
+      {% if product.discount_percent %}<span class="product-card__discount-percent">-{{ product.discount_percent }}%</span>{% endif %}
     </span>
+    {% endif %}
+    {% if product.status == 'available' %}
+      {% if product.sorted_size_stocks %}
+      <a href="{{ product.url }}#add-to-cart" class="btn btn--primary product-card__add-btn">Добавить в корзину</a>
+      {% else %}
+      <form action="{% url 'cart_add' product.id %}" method="post" class="product-card__add-btn-form" data-cart-form>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ product.url }}">
+        <button type="submit" class="btn btn--primary product-card__add-btn add-to-cart-form__submit">Добавить в корзину</button>
+      </form>
+      {% endif %}
     {% endif %}
   </div>
 </article>

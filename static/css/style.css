@@ -1482,14 +1482,15 @@ blockquote {
 .product-card__price-row {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .product-card__price {
   font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-text);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-terracotta);
 }
 
 .product-card__old-price {
@@ -1497,6 +1498,25 @@ blockquote {
   font-size: 0.8125rem;
   color: var(--color-text-muted);
   text-decoration: line-through;
+}
+
+.product-card__discount-percent {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-terracotta);
+}
+
+.product-card__add-btn-form {
+  margin-top: auto;
+  padding-top: var(--space-xs);
+}
+
+.product-card__add-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 0.75rem;
 }
 
 /* ============================================================
@@ -2092,8 +2112,8 @@ blockquote {
 .product-detail__price {
   font-family: var(--font-serif);
   font-size: 1.75rem;
-  font-weight: 400;
-  color: var(--color-text);
+  font-weight: 600;
+  color: var(--color-terracotta);
 }
 
 .product-detail__old-price {
@@ -2101,6 +2121,13 @@ blockquote {
   font-size: 1.125rem;
   color: var(--color-text-muted);
   text-decoration: line-through;
+}
+
+.product-detail__discount-percent {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-terracotta);
 }
 
 .product-detail__status {

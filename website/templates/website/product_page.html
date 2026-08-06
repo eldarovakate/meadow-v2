@@ -50,7 +50,7 @@
         <div class="product-detail__price-row">
           {% if page.price %}<span class="product-detail__price">{{ page.price }}</span>{% endif %}
           {% if page.old_price %}<span class="product-detail__old-price">{{ page.old_price }}</span>{% endif %}
-          {% if page.discount_percent %}<span class="product-card__tag product-card__tag--discount">-{{ page.discount_percent }}%</span>{% endif %}
+          {% if page.discount_percent %}<span class="product-detail__discount-percent">-{{ page.discount_percent }}%</span>{% endif %}
         </div>
 
         <div class="product-detail__status product-status--{{ page.status }}">
@@ -58,7 +58,7 @@
         </div>
 
         {% if page.status == 'available' %}
-        <form action="{% url 'cart_add' page.id %}" method="post" class="add-to-cart-form" data-cart-form>
+        <form id="add-to-cart" action="{% url 'cart_add' page.id %}" method="post" class="add-to-cart-form" data-cart-form>
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.path }}">
 
