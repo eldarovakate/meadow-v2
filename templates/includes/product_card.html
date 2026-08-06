@@ -1,0 +1,46 @@
+{% load wagtailimages_tags favorite_tags %}
+<article class="product-card{% if extra_class %} {{ extra_class }}{% endif %} reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}" data-card-link="{{ product.url }}">
+  <div class="product-card__image-wrap" data-gallery>
+    <a href="{{ product.url }}" class="product-card__image-link">
+      {% for img in product.all_images %}
+      {% if forloop.first %}
+      {% image img fill-600x750 class="product-card__image gallery-slide is-active" %}
+      {% else %}
+      {% image img fill-600x750 class="product-card__image gallery-slide" %}
+      {% endif %}
+      {% empty %}
+      <div class="product-card__placeholder"></div>
+      {% endfor %}
+    </a>
+    <div class="product-card__badges">
+      {% if product.status == 'coming_soon' %}
+      <span class="product-card__tag">Скоро</span>
+      {% endif %}
+      {% if product.discount_percent %}
+      <span class="product-card__tag product-card__tag--discount">-{{ product.discount_percent }}%</span>
+      {% endif %}
+    </div>
+    {% if product.all_images|length > 1 %}
+    <div class="product-card__dots">
+      {% for img in product.all_images %}
+      <button type="button" class="product-card__dot gallery-dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Фото {{ forloop.counter }}"></button>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% include "includes/favorite_button.html" with product_id=product.id is_favorite=product.id|in_list:favorite_ids %}
+  <div class="product-card__body">
+    {% if product.collection_name %}
+    <span class="product-card__collection">{{ product.collection_name }}</span>
+    {% endif %}
+    <h3 class="product-card__name">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+    {% if product.price %}
+    <span class="product-card__price-row">
+      <span class="product-card__price">{{ product.price }}</span>
+      {% if product.old_price %}<span class="product-card__old-price">{{ product.old_price }}</span>{% endif %}
+    </span>
+    {% endif %}
+  </div>
+</article>

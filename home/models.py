@@ -12,6 +12,7 @@ class CollectionCardBlock(blocks.StructBlock):
     description = blocks.TextBlock(required=False, label="Описание")
     image = ImageChooserBlock(required=False, label="Изображение")
     link_text = blocks.CharBlock(max_length=50, default="Смотреть", label="Текст ссылки")
+    link_url = blocks.CharBlock(max_length=200, required=False, default="#", label="Ссылка")
 
     class Meta:
         icon = 'image'
@@ -39,7 +40,7 @@ class MarqueeItemBlock(blocks.StructBlock):
 class HeroSectionBlock(blocks.StructBlock):
     headline = blocks.CharBlock(max_length=200, label="Главный заголовок")
     subheadline = blocks.CharBlock(max_length=300, required=False, label="Подзаголовок")
-    cta_text = blocks.CharBlock(max_length=100, default="Смотреть коллекцию", label="Текст кнопки")
+    cta_text = blocks.CharBlock(max_length=100, default="Смотреть каталог", label="Текст кнопки")
     cta_url = blocks.URLBlock(required=False, label="Ссылка кнопки")
     image = ImageChooserBlock(required=False, label="Фоновое изображение")
 
@@ -112,10 +113,36 @@ class FeaturedProductsSectionBlock(blocks.StructBlock):
         blocks.PageChooserBlock(page_type='website.ProductPage'),
         label="Товары",
     )
+    cta_text = blocks.CharBlock(max_length=100, default="Перейти в каталог", label="Текст кнопки")
+    cta_url = blocks.CharBlock(max_length=200, default="/catalog/", label="Ссылка кнопки")
 
     class Meta:
         icon = 'tag'
         label = 'Избранные товары'
+
+
+class USPItemBlock(blocks.StructBlock):
+    icon = blocks.ChoiceBlock(
+        choices=[
+            ('shipping', 'Доставка (коробка)'),
+            ('returns', 'Обмен и возврат (стрелки)'),
+            ('prints', 'Авторские принты (птица)'),
+        ],
+        label="Иконка",
+    )
+    label = blocks.CharBlock(max_length=100, label="Текст")
+
+    class Meta:
+        icon = 'tick'
+        label = 'Пункт преимущества'
+
+
+class USPStripSectionBlock(blocks.StructBlock):
+    items = blocks.ListBlock(USPItemBlock(), label="Преимущества")
+
+    class Meta:
+        icon = 'list-ul'
+        label = 'Полоска преимуществ'
 
 
 class PhilosophySectionBlock(blocks.StructBlock):
@@ -132,7 +159,7 @@ class CTASectionBlock(blocks.StructBlock):
     title = blocks.CharBlock(max_length=200, label="Заголовок")
     subtitle = blocks.CharBlock(max_length=300, required=False, label="Подзаголовок")
     cta_text = blocks.CharBlock(max_length=100, label="Текст кнопки")
-    cta_url = blocks.CharBlock(max_length=200, default="/collection/", label="Ссылка")
+    cta_url = blocks.CharBlock(max_length=200, default="/catalog/", label="Ссылка")
 
     class Meta:
         icon = 'mail'
@@ -148,6 +175,7 @@ class HomePage(Page):
         ('features', FeaturesSectionBlock()),
         ('fabric', FabricSectionBlock()),
         ('featured_products', FeaturedProductsSectionBlock()),
+        ('usp_strip', USPStripSectionBlock()),
         ('philosophy', PhilosophySectionBlock()),
         ('cta', CTASectionBlock()),
     ], use_json_field=True, blank=True)

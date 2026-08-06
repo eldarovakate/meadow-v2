@@ -9,51 +9,109 @@
   <div class="container">
     <div class="product-detail__grid">
 
-      <div class="product-detail__gallery reveal">
+      <div class="product-detail__gallery reveal" data-gallery>
         <div class="product-detail__main-image">
-          {% if page.main_image %}
-            {% image page.main_image width-900 class="product-detail__img" %}
+          {% for img in page.all_images %}
+          {% if forloop.first %}
+          {% image img width-900 class="product-detail__img gallery-slide is-active" %}
           {% else %}
+          {% image img width-900 class="product-detail__img gallery-slide" %}
+          {% endif %}
+          {% empty %}
           <div class="product-gallery-placeholder">
             <span>{{ page.title }}</span>
           </div>
+          {% endfor %}
+          {% if page.discount_percent %}
+          <span class="product-card__tag product-card__tag--discount product-detail__discount">-{{ page.discount_percent }}%</span>
           {% endif %}
         </div>
+        {% if page.all_images|length > 1 %}
+        <div class="product-card__dots product-detail__dots">
+          {% for img in page.all_images %}
+          <button type="button" class="product-card__dot gallery-dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Фото {{ forloop.counter }}"></button>
+          {% endfor %}
+        </div>
+        {% endif %}
       </div>
 
       <div class="product-detail__info reveal reveal--delay">
-        {% if page.collection_name %}
-        <span class="label">{{ page.collection_name }}</span>
-        {% endif %}
+        <div class="product-detail__meta-row">
+          {% if page.collection_name %}
+          <span class="label">{{ page.collection_name }}</span>
+          {% endif %}
+          <span class="product-detail__sku">Артикул {{ page.sku }}</span>
+        </div>
         <h1 class="product-detail__title">{{ page.title }}</h1>
         {% if page.short_description %}
         <p class="product-detail__short-desc">{{ page.short_description }}</p>
         {% endif %}
-        {% if page.price %}
-        <div class="product-detail__price">{{ page.price }}</div>
-        {% endif %}
+
+        <div class="product-detail__price-row">
+          {% if page.price %}<span class="product-detail__price">{{ page.price }}</span>{% endif %}
+          {% if page.old_price %}<span class="product-detail__old-price">{{ page.old_price }}</span>{% endif %}
+          {% if page.discount_percent %}<span class="product-card__tag product-card__tag--discount">-{{ page.discount_percent }}%</span>{% endif %}
+        </div>
+
         <div class="product-detail__status product-status--{{ page.status }}">
           {% if page.status == 'available' %}В наличии{% elif page.status == 'coming_soon' %}Скоро в продаже{% else %}Нет в наличии{% endif %}
         </div>
+
+        {% if page.status == 'available' %}
+        <form action="{% url 'cart_add' page.id %}" method="post" class="add-to-cart-form" data-cart-form>
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+
+          {% if page.sorted_size_stocks %}
+          <div class="size-selector">
+            <span class="size-selector__label">Размер</span>
+            <div class="size-selector__options">
+              {% for stock in page.sorted_size_stocks %}
+              <label class="size-option{% if not stock.quantity %} is-disabled{% endif %}">
+                <input type="radio" name="size" value="{{ stock.size }}"{% if not stock.quantity %} disabled{% else %} required{% endif %}>
+                <span>{{ stock.size }}</span>
+                {% if stock.quantity > 0 and stock.quantity <= 2 %}<em class="size-option__low">{{ stock.quantity }}</em>{% endif %}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn--primary btn--lg add-to-cart-form__submit">Добавить в корзину</button>
+        </form>
+        {% endif %}
 
         <div class="product-detail__favorite">
           {% include "includes/favorite_button.html" with product_id=page.id is_favorite=is_favorite %}
           <span class="product-detail__favorite-label">{% if is_favorite %}В избранном{% else %}Добавить в избранное{% endif %}</span>
         </div>
-{% if page.body %}
+
+        {% if page.body %}
         <div class="product-detail__body richtext">{{ page.body|richtext }}</div>
         {% endif %}
 
         {% if page.fabric_info %}
-        <div class="product-detail__fabric">
-          <h4>О ткани</h4>
+        <div class="product-detail__info-block">
+          <h4>Состав</h4>
           <p>{{ page.fabric_info }}</p>
         </div>
         {% endif %}
         {% if page.care_info %}
-        <div class="product-detail__care">
+        <div class="product-detail__info-block">
           <h4>Уход</h4>
           <p>{{ page.care_info }}</p>
+        </div>
+        {% endif %}
+        {% if settings.website.sitesettings.delivery_info %}
+        <div class="product-detail__info-block">
+          <h4>Доставка и возврат</h4>
+          <div class="richtext">{{ settings.website.sitesettings.delivery_info|richtext }}</div>
+        </div>
+        {% endif %}
+        {% if settings.website.sitesettings.payment_info %}
+        <div class="product-detail__info-block">
+          <h4>Оплата</h4>
+          <div class="richtext">{{ settings.website.sitesettings.payment_info|richtext }}</div>
         </div>
         {% endif %}
       </div>

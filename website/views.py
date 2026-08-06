@@ -8,14 +8,15 @@ from django.views.decorators.http import require_POST
 from accounts.forms import AddressForm, ProfileForm
 from accounts.models import Profile
 
-from .favorites import get_favorite_ids, toggle_favorite
+from .cart import add_item, get_cart_count, get_cart_lines, get_cart_total, remove_item, update_quantity
+from .favorites import get_favorite_count, get_favorite_ids, toggle_favorite
 from .models import ProductPage
 
 
 def favorites_view(request):
     favorite_ids = get_favorite_ids(request)
     products = ProductPage.objects.filter(id__in=favorite_ids).live()
-    return render(request, "website/favorites_page.html", {"products": products})
+    return render(request, "website/favorites_page.html", {"products": products, "favorite_ids": favorite_ids})
 
 
 def account_view(request):
@@ -81,7 +82,59 @@ def account_view(request):
 
 
 def cart_view(request):
-    return render(request, "website/cart_page.html")
+    lines = get_cart_lines(request)
+    total = get_cart_total(request)
+    return render(request, "website/cart_page.html", {"lines": lines, "total": total})
+
+
+@require_POST
+def cart_add_view(request, page_id):
+    product = get_object_or_404(ProductPage, id=page_id)
+    size = request.POST.get("size") or None
+    is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
+
+    size_stocks = list(product.size_stocks.all())
+    max_quantity = None
+    if size_stocks:
+        stock = next((s for s in size_stocks if s.size == size), None)
+        max_quantity = stock.quantity if stock else 0
+        if not size or not max_quantity:
+            if is_ajax:
+                return JsonResponse({"ok": False, "error": "Выберите доступный размер"}, status=400)
+            return redirect(request.POST.get("next") or product.url)
+
+    add_item(request, product.id, size, quantity=1, max_quantity=max_quantity)
+    cart_count = get_cart_count(request)
+
+    if is_ajax:
+        return JsonResponse({"ok": True, "cart_count": cart_count})
+
+    next_url = request.POST.get("next") or "/cart/"
+    return redirect(next_url)
+
+
+@require_POST
+def cart_remove_view(request, page_id, size):
+    remove_item(request, page_id, None if size == "-" else size)
+    return redirect(request.POST.get("next") or "cart")
+
+
+@require_POST
+def cart_update_view(request, page_id, size):
+    size_value = None if size == "-" else size
+    try:
+        quantity = int(request.POST.get("quantity", 1))
+    except ValueError:
+        quantity = 1
+
+    max_quantity = None
+    product = ProductPage.objects.filter(id=page_id).first()
+    if product and size_value:
+        stock = product.size_stocks.filter(size=size_value).first()
+        max_quantity = stock.quantity if stock else 0
+
+    update_quantity(request, page_id, size_value, quantity, max_quantity=max_quantity)
+    return redirect("cart")
 
 
 @require_POST
@@ -90,7 +143,7 @@ def favorite_toggle_view(request, page_id):
     is_favorite = toggle_favorite(request, page_id)
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        return JsonResponse({"is_favorite": is_favorite})
+        return JsonResponse({"is_favorite": is_favorite, "favorite_count": get_favorite_count(request)})
 
     next_url = request.POST.get("next") or "/"
     return redirect(next_url)

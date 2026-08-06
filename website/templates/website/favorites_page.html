@@ -19,34 +19,13 @@
     {% if products %}
     <div class="products__grid">
       {% for product in products %}
-      <article class="product-card reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
-        <a href="{{ product.url }}" class="product-card__image-wrap">
-          {% if product.main_image %}
-            {% image product.main_image fill-600x750 class="product-card__img" %}
-          {% else %}
-            <div class="product-card__placeholder"></div>
-          {% endif %}
-        </a>
-        {% include "includes/favorite_button.html" with product_id=product.id is_favorite=True %}
-        <div class="product-card__body">
-          {% if product.collection_name %}
-          <span class="product-card__collection">{{ product.collection_name }}</span>
-          {% endif %}
-          <h3 class="product-card__name">
-            <a href="{{ product.url }}">{{ product.title }}</a>
-          </h3>
-          {% if product.price %}
-          <span class="product-card__price">{{ product.price }}</span>
-          {% endif %}
-          <a href="{{ product.url }}" class="product-card__cta">Подробнее</a>
-        </div>
-      </article>
+      {% include "includes/product_card.html" with product=product favorite_ids=favorite_ids %}
       {% endfor %}
     </div>
     {% else %}
     <div class="empty-state reveal">
       <p class="empty-state__text">Здесь пока пусто. Добавляйте товары в избранное, чтобы вернуться к ним позже.</p>
-      <a href="/collection/" class="btn btn--outline">Смотреть каталог</a>
+      <a href="/catalog/" class="btn btn--outline">Смотреть каталог</a>
     </div>
     {% endif %}
   </div>

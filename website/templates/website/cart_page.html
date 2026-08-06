@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load wagtailimages_tags %}
 
 {% block title %}Корзина — Meadow Shore{% endblock %}
 {% block body_class %}cart-page{% endblock %}
@@ -13,13 +14,60 @@
   </div>
 </section>
 
+{% if lines %}
+<section class="cart-section">
+  <div class="container">
+    <div class="cart-list">
+      {% for line in lines %}
+      <div class="cart-line reveal">
+        <a href="{{ line.product.url }}" class="cart-line__image">
+          {% if line.product.main_image %}
+          {% image line.product.main_image fill-200x250 class="cart-line__img" %}
+          {% else %}
+          <div class="product-card__placeholder"></div>
+          {% endif %}
+        </a>
+        <div class="cart-line__body">
+          <h3 class="cart-line__title"><a href="{{ line.product.url }}">{{ line.product.title }}</a></h3>
+          {% if line.size %}<span class="cart-line__size">Размер: {{ line.size }}</span>{% endif %}
+          <span class="cart-line__price">{{ line.unit_price }} ₽</span>
+        </div>
+
+        <form action="{% url 'cart_update' line.product.id line.size|default:'-' %}" method="post" class="cart-line__qty" data-cart-qty-form>
+          {% csrf_token %}
+          <button type="button" class="cart-line__qty-btn" data-qty-decrease aria-label="Уменьшить количество">−</button>
+          <input type="number" name="quantity" value="{{ line.quantity }}" min="1" class="cart-line__qty-input" aria-label="Количество">
+          <button type="button" class="cart-line__qty-btn" data-qty-increase aria-label="Увеличить количество">+</button>
+          <button type="submit" class="cart-line__qty-submit">Обновить</button>
+        </form>
+
+        <span class="cart-line__subtotal">{{ line.subtotal }} ₽</span>
+
+        <form action="{% url 'cart_remove' line.product.id line.size|default:'-' %}" method="post" class="cart-line__remove">
+          {% csrf_token %}
+          <button type="submit" aria-label="Удалить из корзины">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="cart-summary reveal">
+      <span class="cart-summary__label">Итого</span>
+      <span class="cart-summary__total">{{ total }} ₽</span>
+    </div>
+  </div>
+</section>
+{% else %}
 <section class="empty-state-section">
   <div class="container">
     <div class="empty-state reveal">
       <p class="empty-state__text">Ваша корзина пуста.</p>
-      <a href="/collection/" class="btn btn--outline">Смотреть каталог</a>
+      <a href="/catalog/" class="btn btn--outline">Смотреть каталог</a>
     </div>
   </div>
 </section>
+{% endif %}
 
 {% endblock %}

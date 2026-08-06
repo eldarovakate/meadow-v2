@@ -17,27 +17,35 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 revealElements.forEach(el => revealObserver.observe(el));
 
-// === Header Scroll Effect ===
-const header = document.getElementById('site-header');
-let lastScrollY = window.scrollY;
+// === Product Carousel ===
+document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+  const viewport = carousel.querySelector('[data-carousel-viewport]');
+  const track = carousel.querySelector('[data-carousel-track]');
+  const prevBtn = carousel.querySelector('[data-carousel-prev]');
+  const nextBtn = carousel.querySelector('[data-carousel-next]');
 
-window.addEventListener('scroll', () => {
-  const currentScrollY = window.scrollY;
+  if (!viewport || !track || !prevBtn || !nextBtn) return;
 
-  if (currentScrollY > 60) {
-    header.classList.add('is-scrolled');
-  } else {
-    header.classList.remove('is-scrolled');
-  }
+  const updateArrows = () => {
+    const maxScroll = track.scrollWidth - viewport.clientWidth;
+    prevBtn.disabled = viewport.scrollLeft <= 4;
+    nextBtn.disabled = maxScroll <= 4 || viewport.scrollLeft >= maxScroll - 4;
+  };
 
-  if (currentScrollY > lastScrollY && currentScrollY > 120) {
-    header.classList.add('is-hidden');
-  } else {
-    header.classList.remove('is-hidden');
-  }
+  const scrollByCard = (direction) => {
+    const card = track.querySelector('.product-carousel__item');
+    if (!card) return;
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const distance = card.getBoundingClientRect().width + gap;
+    viewport.scrollBy({ left: direction * distance, behavior: 'smooth' });
+  };
 
-  lastScrollY = currentScrollY;
-}, { passive: true });
+  prevBtn.addEventListener('click', () => scrollByCard(-1));
+  nextBtn.addEventListener('click', () => scrollByCard(1));
+  viewport.addEventListener('scroll', updateArrows, { passive: true });
+  window.addEventListener('resize', updateArrows);
+  updateArrows();
+});
 
 // === Mobile Menu ===
 const burgerBtn = document.getElementById('burger-btn');
@@ -83,6 +91,24 @@ function initMarquee() {
 
 initMarquee();
 
+// === Header Icon Badges (cart / favorites count) ===
+function updateHeaderBadge(linkSelector, badgeAttr, count) {
+  const link = document.querySelector(linkSelector);
+  if (!link) return;
+  let badge = link.querySelector(`[${badgeAttr}]`);
+  if (count > 0) {
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'header__badge';
+      badge.setAttribute(badgeAttr, '');
+      link.appendChild(badge);
+    }
+    badge.textContent = count;
+  } else if (badge) {
+    badge.remove();
+  }
+}
+
 // === Favorite Toggle ===
 document.querySelectorAll('[data-favorite-form]').forEach(form => {
   form.addEventListener('submit', async (e) => {
@@ -109,6 +135,8 @@ document.querySelectorAll('[data-favorite-form]').forEach(form => {
     button.setAttribute('aria-pressed', String(data.is_favorite));
     button.setAttribute('aria-label', data.is_favorite ? 'Убрать из избранного' : 'Добавить в избранное');
 
+    updateHeaderBadge('.header__icon-link--favorites', 'data-favorite-badge', data.favorite_count);
+
     const label = form.parentElement.querySelector('.product-detail__favorite-label');
     if (label) {
       label.textContent = data.is_favorite ? 'В избранном' : 'Добавить в избранное';
@@ -117,6 +145,94 @@ document.querySelectorAll('[data-favorite-form]').forEach(form => {
     if (!data.is_favorite && document.body.classList.contains('favorites-page')) {
       form.closest('.product-card')?.remove();
     }
+  });
+});
+
+// === Product Image Gallery (dots + hover scrub) ===
+document.querySelectorAll('[data-gallery]').forEach((gallery) => {
+  const slides = gallery.querySelectorAll('.gallery-slide');
+  const dots = gallery.querySelectorAll('.gallery-dot');
+  if (slides.length < 2) return;
+
+  const setActive = (index) => {
+    slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
+    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+  };
+
+  dots.forEach((dot) => {
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setActive(Number(dot.dataset.index));
+    });
+  });
+
+  gallery.addEventListener('mousemove', (e) => {
+    const rect = gallery.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    const index = Math.min(slides.length - 1, Math.max(0, Math.floor(ratio * slides.length)));
+    setActive(index);
+  });
+
+  gallery.addEventListener('mouseleave', () => setActive(0));
+});
+
+// === Product Card Click-through ===
+document.querySelectorAll('[data-card-link]').forEach((card) => {
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('a, button')) return;
+    window.location.href = card.dataset.cardLink;
+  });
+});
+
+// === Add to Cart ===
+document.querySelectorAll('[data-cart-form]').forEach((form) => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = form.querySelector('.add-to-cart-form__submit');
+    const formData = new FormData(form);
+
+    let data;
+    try {
+      const response = await fetch(form.getAttribute('action'), {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData,
+      });
+      data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Request failed');
+    } catch (err) {
+      form.submit();
+      return;
+    }
+
+    updateHeaderBadge('.header__icon-link--cart', 'data-cart-badge', data.cart_count);
+
+    if (submitBtn) {
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Добавлено ✓';
+      submitBtn.disabled = true;
+      setTimeout(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }, 1800);
+    }
+  });
+});
+
+// === Cart Quantity Stepper ===
+document.querySelectorAll('[data-cart-qty-form]').forEach((form) => {
+  const input = form.querySelector('.cart-line__qty-input');
+  const decBtn = form.querySelector('[data-qty-decrease]');
+  const incBtn = form.querySelector('[data-qty-increase]');
+  if (!input) return;
+
+  decBtn?.addEventListener('click', () => {
+    input.value = Math.max(1, Number(input.value) - 1);
+  });
+  incBtn?.addEventListener('click', () => {
+    input.value = Number(input.value) + 1;
   });
 });
 

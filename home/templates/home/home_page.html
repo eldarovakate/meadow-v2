@@ -99,7 +99,7 @@
             {% if card.subtitle %}<span class="label">{{ card.subtitle }}</span>{% endif %}
             <h3 class="collection-card__title">{{ card.title }}</h3>
             {% if card.description %}<p class="collection-card__desc">{{ card.description }}</p>{% endif %}
-            <a href="#" class="collection-card__link">{{ card.link_text }} &rarr;</a>
+            <a href="{{ card.link_url|default:'#' }}" class="collection-card__link">{{ card.link_text }} &rarr;</a>
           </div>
         </article>
         {% endfor %}
@@ -194,35 +194,30 @@
         <h2 class="section-title">{{ block.value.title }}</h2>
       </div>
       {% endif %}
-      <div class="products__grid">
-        {% for page in block.value.products %}
-        {% with product=page.specific %}
-        <article class="product-card reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
-          <a href="{{ product.url }}" class="product-card__image-wrap">
-            {% if product.main_image %}
-            {% image product.main_image fill-600x750 class="product-card__image" %}
-            {% else %}
-            <div class="product-card__placeholder"></div>
-            {% endif %}
-            {% if product.status == 'coming_soon' %}
-            <span class="product-card__tag">Скоро</span>
-            {% endif %}
-          </a>
-          {% include "includes/favorite_button.html" with product_id=product.id is_favorite=product.id|in_list:favorite_ids %}
-          <div class="product-card__body">
-            {% if product.collection_name %}
-            <span class="product-card__collection">{{ product.collection_name }}</span>
-            {% endif %}
-            <h3 class="product-card__name">
-              <a href="{{ product.url }}">{{ product.title }}</a>
-            </h3>
-            {% if product.price %}
-            <span class="product-card__price">{{ product.price }}</span>
-            {% endif %}
-            <a href="{{ product.url }}" class="product-card__cta">Подробнее</a>
-          </div>
-        </article>
-        {% endwith %}
+      {% include "includes/product_carousel.html" with products=block.value.products favorite_ids=favorite_ids %}
+      {% if block.value.cta_text %}
+      <div class="featured-products__footer reveal">
+        <a href="{{ block.value.cta_url }}" class="btn btn--outline">{{ block.value.cta_text }}</a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  {% elif block.block_type == 'usp_strip' %}
+  <section class="usp-strip">
+    <div class="container">
+      <div class="usp-strip__grid">
+        {% for item in block.value.items %}
+        <div class="usp-strip__item reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
+          {% if item.value.icon == 'shipping' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="usp-strip__icon"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73Z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
+          {% elif item.value.icon == 'returns' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="usp-strip__icon"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+          {% elif item.value.icon == 'prints' %}
+          <img src="{% static 'images/logo-bird-white.svg' %}" alt="" class="usp-strip__icon usp-strip__icon--bird">
+          {% endif %}
+          <span class="usp-strip__label">{{ item.value.label }}</span>
+        </div>
         {% endfor %}
       </div>
     </div>
