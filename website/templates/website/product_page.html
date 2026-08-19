@@ -27,10 +27,22 @@
           {% endif %}
         </div>
         {% if page.all_images|length > 1 %}
-        <div class="product-card__dots product-detail__dots">
-          {% for img in page.all_images %}
-          <button type="button" class="product-card__dot gallery-dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Фото {{ forloop.counter }}"></button>
-          {% endfor %}
+        <div class="product-detail__thumbs">
+          <button type="button" class="thumb-arrow" data-thumb-prev aria-label="Предыдущее фото">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div class="product-detail__thumb-viewport" data-thumb-viewport>
+            <div class="product-detail__thumb-track">
+              {% for img in page.all_images %}
+              <button type="button" class="product-detail__thumb gallery-thumb{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Фото {{ forloop.counter }}">
+                {% image img fill-120x150 %}
+              </button>
+              {% endfor %}
+            </div>
+          </div>
+          <button type="button" class="thumb-arrow" data-thumb-next aria-label="Следующее фото">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
         {% endif %}
       </div>
@@ -58,22 +70,27 @@
         </div>
 
         {% if page.status == 'available' %}
-        <form id="add-to-cart" action="{% url 'cart_add' page.id %}" method="post" class="add-to-cart-form" data-cart-form>
+        <form id="add-to-cart" action="{% url 'cart_add' page.id %}" method="post" class="add-to-cart-form" data-cart-form novalidate>
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.path }}">
 
           {% if page.sorted_size_stocks %}
           <div class="size-selector">
-            <span class="size-selector__label">Размер</span>
-            <div class="size-selector__options">
-              {% for stock in page.sorted_size_stocks %}
-              <label class="size-option{% if not stock.quantity %} is-disabled{% endif %}">
-                <input type="radio" name="size" value="{{ stock.size }}"{% if not stock.quantity %} disabled{% else %} required{% endif %}>
-                <span>{{ stock.size }}</span>
-                {% if stock.quantity > 0 and stock.quantity <= 2 %}<em class="size-option__low">{{ stock.quantity }}</em>{% endif %}
-              </label>
-              {% endfor %}
+            <label class="size-selector__label" for="size-select">Размер</label>
+            <div class="size-select-wrap">
+              <select name="size" id="size-select" class="size-select" required>
+                <option value="" disabled selected>Выбрать размер</option>
+                {% for stock in page.sorted_size_stocks %}
+                <option value="{{ stock.size }}"{% if not stock.quantity %} disabled{% endif %}>
+                  {{ stock.size }}{% if not stock.quantity %} — нет в наличии{% elif stock.quantity <= 2 %} — осталось {{ stock.quantity }}{% endif %}
+                </option>
+                {% endfor %}
+              </select>
             </div>
+            <p class="size-selector__error" data-size-error hidden>
+              <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.5v4.2M8 11.2h.01" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Пожалуйста, выберите размер
+            </p>
           </div>
           {% endif %}
 
@@ -87,31 +104,59 @@
         </div>
 
         {% if page.body %}
-        <div class="product-detail__body richtext">{{ page.body|richtext }}</div>
+        <div class="product-detail__info-block">
+          <button type="button" class="accordion__header" aria-expanded="false">
+            <h4>Описание</h4>
+            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion__panel">
+            <div class="accordion__panel-inner richtext">{{ page.body|richtext }}</div>
+          </div>
+        </div>
         {% endif %}
 
         {% if page.fabric_info %}
         <div class="product-detail__info-block">
-          <h4>Состав</h4>
-          <p>{{ page.fabric_info }}</p>
+          <button type="button" class="accordion__header" aria-expanded="false">
+            <h4>Состав</h4>
+            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion__panel">
+            <div class="accordion__panel-inner"><p>{{ page.fabric_info }}</p></div>
+          </div>
         </div>
         {% endif %}
         {% if page.care_info %}
         <div class="product-detail__info-block">
-          <h4>Уход</h4>
-          <p>{{ page.care_info }}</p>
+          <button type="button" class="accordion__header" aria-expanded="false">
+            <h4>Уход</h4>
+            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion__panel">
+            <div class="accordion__panel-inner"><p>{{ page.care_info }}</p></div>
+          </div>
         </div>
         {% endif %}
         {% if settings.website.sitesettings.delivery_info %}
         <div class="product-detail__info-block">
-          <h4>Доставка и возврат</h4>
-          <div class="richtext">{{ settings.website.sitesettings.delivery_info|richtext }}</div>
+          <button type="button" class="accordion__header" aria-expanded="false">
+            <h4>Доставка и возврат</h4>
+            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion__panel">
+            <div class="accordion__panel-inner richtext">{{ settings.website.sitesettings.delivery_info|richtext }}</div>
+          </div>
         </div>
         {% endif %}
         {% if settings.website.sitesettings.payment_info %}
         <div class="product-detail__info-block">
-          <h4>Оплата</h4>
-          <div class="richtext">{{ settings.website.sitesettings.payment_info|richtext }}</div>
+          <button type="button" class="accordion__header" aria-expanded="false">
+            <h4>Оплата</h4>
+            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion__panel">
+            <div class="accordion__panel-inner richtext">{{ settings.website.sitesettings.payment_info|richtext }}</div>
+          </div>
         </div>
         {% endif %}
       </div>

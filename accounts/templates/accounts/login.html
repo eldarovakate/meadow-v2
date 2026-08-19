@@ -24,6 +24,7 @@
 
       <form class="contact-form auth-form" method="post" action="." novalidate>
         {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
         <div class="form-group">
           <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
@@ -57,7 +58,7 @@
         <button type="submit" class="btn btn--primary auth-form__submit">Войти</button>
       </form>
 
-      <p class="form-note auth-form-panel__footer">Нет аккаунта? <a href="/account/register/">Зарегистрируйтесь</a></p>
+      <p class="form-note auth-form-panel__footer">Нет аккаунта? <a href="/account/register/{% if next %}?next={{ next|urlencode }}{% endif %}">Зарегистрируйтесь</a></p>
     </div>
   </div>
 

@@ -80,3 +80,7 @@ def get_cart_lines(request):
 
 def get_cart_total(request):
     return sum(line['subtotal'] for line in get_cart_lines(request))
+
+
+def clear_cart(request):
+    _save_cart(request, {})

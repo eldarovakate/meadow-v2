@@ -101,3 +101,8 @@ WAGTAILIMAGES_MAX_UPLOAD_SIZE = 10 * 1024 * 1024
 
 LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = '/account/'
+
+# Уведомления о новых заказах
+ORDER_NOTIFICATION_EMAIL = config('ORDER_NOTIFICATION_EMAIL', default='info@meadowshore.ru')
+TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')
+TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID', default='')

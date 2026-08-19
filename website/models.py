@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from wagtail.models import Orderable, Page
 from wagtail.fields import RichTextField, StreamField
@@ -272,3 +273,75 @@ class SiteSettings(BaseSiteSetting):
 
     class Meta:
         verbose_name = 'Товары: доставка и оплата'
+
+
+class Order(models.Model):
+    STATUS_NEW = 'new'
+    STATUS_PAID = 'paid'
+    STATUS_SHIPPED = 'shipped'
+    STATUS_COMPLETED = 'completed'
+    STATUS_CANCELLED = 'cancelled'
+    STATUS_CHOICES = [
+        (STATUS_NEW, 'Новый'),
+        (STATUS_PAID, 'Оплачен'),
+        (STATUS_SHIPPED, 'Отправлен'),
+        (STATUS_COMPLETED, 'Завершён'),
+        (STATUS_CANCELLED, 'Отменён'),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='orders',
+        verbose_name="Покупатель",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_NEW, verbose_name="Статус")
+
+    full_name = models.CharField(max_length=255, verbose_name="ФИО")
+    phone = models.CharField(max_length=20, verbose_name="Телефон")
+    email = models.EmailField(blank=True, verbose_name="Email")
+    city = models.CharField(max_length=100, verbose_name="Город")
+    street = models.CharField(max_length=255, verbose_name="Улица")
+    house = models.CharField(max_length=50, verbose_name="Дом, квартира")
+    postal_code = models.CharField(max_length=20, blank=True, verbose_name="Индекс")
+    comment = models.TextField(blank=True, verbose_name="Комментарий к заказу")
+
+    total = models.PositiveIntegerField(default=0, verbose_name="Сумма заказа")
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Заказ №{self.id}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', verbose_name="Заказ")
+    product = models.ForeignKey(
+        'website.ProductPage',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+        verbose_name="Товар",
+    )
+    product_title = models.CharField(max_length=255, verbose_name="Название товара")
+    size = models.CharField(max_length=10, blank=True, verbose_name="Размер")
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Количество")
+    unit_price = models.PositiveIntegerField(default=0, verbose_name="Цена за штуку")
+
+    class Meta:
+        verbose_name = "Товар в заказе"
+        verbose_name_plural = "Товары в заказе"
+
+    def __str__(self):
+        return f"{self.product_title} × {self.quantity}"
+
+    @property
+    def subtotal(self):
+        return self.unit_price * self.quantity

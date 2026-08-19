@@ -6,9 +6,9 @@
 
 {% block content %}
 
-<section class="page-hero">
+<section class="page-hero page-hero--compact">
   <div class="container">
-    <div class="page-hero__inner reveal">
+    <div class="page-hero__inner">
       <h1 class="page-hero__title">Корзина</h1>
     </div>
   </div>
@@ -19,7 +19,7 @@
   <div class="container">
     <div class="cart-list">
       {% for line in lines %}
-      <div class="cart-line reveal">
+      <div class="cart-line">
         <a href="{{ line.product.url }}" class="cart-line__image">
           {% if line.product.main_image %}
           {% image line.product.main_image fill-200x250 class="cart-line__img" %}
@@ -53,9 +53,10 @@
       {% endfor %}
     </div>
 
-    <div class="cart-summary reveal">
+    <div class="cart-summary">
       <span class="cart-summary__label">Итого</span>
       <span class="cart-summary__total">{{ total }} ₽</span>
+      <a href="{% url 'checkout' %}" class="btn btn--primary btn--lg cart-summary__checkout">Оформить заказ</a>
     </div>
   </div>
 </section>
@@ -68,6 +69,17 @@
     </div>
   </div>
 </section>
+
+{% if catalog_products %}
+<section class="featured-products">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2 class="section-title">Каталог</h2>
+    </div>
+    {% include "includes/product_carousel.html" with products=catalog_products favorite_ids=favorite_ids %}
+  </div>
+</section>
+{% endif %}
 {% endif %}
 
 {% endblock %}

@@ -6,32 +6,42 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_decode, urlsafe_base64_encode
 
 from .forms import EmailLoginForm, PasswordResetRequestForm, RegistrationForm
 
 User = get_user_model()
 
 
+def _safe_next_url(request, next_url):
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        return next_url
+    return None
+
+
 def register_view(request):
+    next_url = _safe_next_url(request, request.GET.get("next") or request.POST.get("next"))
+
     if request.user.is_authenticated:
-        return redirect("account")
+        return redirect(next_url or "account")
 
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("account")
+            return redirect(next_url or "account")
     else:
         form = RegistrationForm()
 
-    return render(request, "accounts/register.html", {"form": form})
+    return render(request, "accounts/register.html", {"form": form, "next": next_url or ""})
 
 
 def login_view(request):
+    next_url = _safe_next_url(request, request.GET.get("next") or request.POST.get("next"))
+
     if request.user.is_authenticated:
-        return redirect("account")
+        return redirect(next_url or "account")
 
     if request.method == "POST":
         form = EmailLoginForm(request.POST)
@@ -49,12 +59,12 @@ def login_view(request):
                 login(request, user)
                 if not form.cleaned_data.get("remember_me"):
                     request.session.set_expiry(0)
-                return redirect("account")
+                return redirect(next_url or "account")
             messages.error(request, "Неверный email или пароль.")
     else:
         form = EmailLoginForm()
 
-    return render(request, "accounts/login.html", {"form": form})
+    return render(request, "accounts/login.html", {"form": form, "next": next_url or ""})
 
 
 def logout_view(request):

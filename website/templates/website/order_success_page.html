@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ оформлен — Meadow Shore{% endblock %}
+{% block body_class %}order-success-page{% endblock %}
+
+{% block content %}
+
+<section class="empty-state-section">
+  <div class="container">
+    <div class="empty-state">
+      <h1 class="order-success__title">Спасибо за заказ!</h1>
+      <p class="empty-state__text">Заказ №{{ order.id }} оформлен на сумму {{ order.total }} ₽.<br>Мы свяжемся с вами по телефону {{ order.phone }}, чтобы подтвердить детали и оплату.</p>
+      <a href="/catalog/" class="btn btn--outline">Вернуться в каталог</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

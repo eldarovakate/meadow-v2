@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load wagtailimages_tags %}
+
+{% block title %}Оформление заказа — Meadow Shore{% endblock %}
+{% block body_class %}checkout-page{% endblock %}
+
+{% block content %}
+
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <div class="page-hero__inner">
+      <h1 class="page-hero__title">Оформление заказа</h1>
+    </div>
+  </div>
+</section>
+
+<section class="checkout-section">
+  <div class="container">
+    <div class="checkout-grid">
+
+      <div class="account-card checkout-form-card">
+        <h2 class="account-card__title">Данные для доставки</h2>
+
+        <form class="contact-form" method="post" novalidate>
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="{{ form.full_name.id_for_label }}" class="form-label">ФИО</label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}<div class="form-error">{{ form.full_name.errors }}</div>{% endif %}
+          </div>
+
+          <div class="auth-form-grid">
+            <div class="form-group">
+              <label for="{{ form.phone.id_for_label }}" class="form-label">Телефон</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}<div class="form-error">{{ form.phone.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group">
+              <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+              {{ form.email }}
+              {% if form.email.errors %}<div class="form-error">{{ form.email.errors }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.city.id_for_label }}" class="form-label">Город</label>
+            {{ form.city }}
+            {% if form.city.errors %}<div class="form-error">{{ form.city.errors }}</div>{% endif %}
+          </div>
+
+          <div class="auth-form-grid">
+            <div class="form-group">
+              <label for="{{ form.street.id_for_label }}" class="form-label">Улица</label>
+              {{ form.street }}
+              {% if form.street.errors %}<div class="form-error">{{ form.street.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group">
+              <label for="{{ form.house.id_for_label }}" class="form-label">Дом, квартира</label>
+              {{ form.house }}
+              {% if form.house.errors %}<div class="form-error">{{ form.house.errors }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.postal_code.id_for_label }}" class="form-label">Почтовый индекс</label>
+            {{ form.postal_code }}
+            {% if form.postal_code.errors %}<div class="form-error">{{ form.postal_code.errors }}</div>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.comment.id_for_label }}" class="form-label">Комментарий к заказу</label>
+            {{ form.comment }}
+          </div>
+
+          <p class="checkout-note">Онлайн-оплата пока не подключена — после оформления мы свяжемся с вами, чтобы подтвердить заказ и способ оплаты.</p>
+
+          <button type="submit" class="btn btn--primary btn--lg">Подтвердить заказ</button>
+        </form>
+      </div>
+
+      <div class="account-card checkout-summary-card">
+        <h2 class="account-card__title">Ваш заказ</h2>
+        <div class="checkout-summary-list">
+          {% for line in lines %}
+          <div class="checkout-summary-line">
+            <div class="checkout-summary-line__image">
+              {% if line.product.main_image %}
+              {% image line.product.main_image fill-120x150 class="checkout-summary-line__img" %}
+              {% else %}
+              <div class="product-card__placeholder"></div>
+              {% endif %}
+            </div>
+            <div class="checkout-summary-line__body">
+              <span class="checkout-summary-line__title">{{ line.product.title }}</span>
+              {% if line.size %}<span class="checkout-summary-line__meta">Размер: {{ line.size }} · {{ line.quantity }} шт.</span>
+              {% else %}<span class="checkout-summary-line__meta">{{ line.quantity }} шт.</span>{% endif %}
+            </div>
+            <span class="checkout-summary-line__price">{{ line.subtotal }} ₽</span>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="checkout-summary-total">
+          <span>Итого</span>
+          <span>{{ total }} ₽</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

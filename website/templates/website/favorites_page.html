@@ -6,9 +6,9 @@
 
 {% block content %}
 
-<section class="page-hero">
+<section class="page-hero page-hero--compact">
   <div class="container">
-    <div class="page-hero__inner reveal">
+    <div class="page-hero__inner">
       <h1 class="page-hero__title">Избранное</h1>
     </div>
   </div>
@@ -30,5 +30,16 @@
     {% endif %}
   </div>
 </section>
+
+{% if catalog_products %}
+<section class="featured-products">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2 class="section-title">Каталог</h2>
+    </div>
+    {% include "includes/product_carousel.html" with products=catalog_products favorite_ids=favorite_ids %}
+  </div>
+</section>
+{% endif %}
 
 {% endblock %}

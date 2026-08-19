@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -8,15 +9,22 @@ from django.views.decorators.http import require_POST
 from accounts.forms import AddressForm, ProfileForm
 from accounts.models import Profile
 
-from .cart import add_item, get_cart_count, get_cart_lines, get_cart_total, remove_item, update_quantity
+from .cart import add_item, clear_cart, get_cart_count, get_cart_lines, get_cart_total, remove_item, update_quantity
 from .favorites import get_favorite_count, get_favorite_ids, toggle_favorite
-from .models import ProductPage
+from .forms import CheckoutForm
+from .models import Order, OrderItem, ProductPage
+from .notifications import send_order_notifications
 
 
 def favorites_view(request):
     favorite_ids = get_favorite_ids(request)
     products = ProductPage.objects.filter(id__in=favorite_ids).live()
-    return render(request, "website/favorites_page.html", {"products": products, "favorite_ids": favorite_ids})
+    catalog_products = ProductPage.objects.live().exclude(id__in=favorite_ids).order_by('-first_published_at')
+    return render(request, "website/favorites_page.html", {
+        "products": products,
+        "favorite_ids": favorite_ids,
+        "catalog_products": catalog_products,
+    })
 
 
 def account_view(request):
@@ -84,7 +92,68 @@ def account_view(request):
 def cart_view(request):
     lines = get_cart_lines(request)
     total = get_cart_total(request)
-    return render(request, "website/cart_page.html", {"lines": lines, "total": total})
+    context = {"lines": lines, "total": total}
+    if not lines:
+        context["catalog_products"] = ProductPage.objects.live().order_by('-first_published_at')
+        context["favorite_ids"] = get_favorite_ids(request)
+    return render(request, "website/cart_page.html", context)
+
+
+@login_required
+def checkout_view(request):
+    lines = get_cart_lines(request)
+    if not lines:
+        return redirect("cart")
+
+    total = get_cart_total(request)
+    profile = Profile.objects.filter(user=request.user).first()
+
+    initial = {
+        "full_name": f"{request.user.last_name} {request.user.first_name}".strip(),
+        "email": request.user.email,
+        "phone": profile.phone if profile else "",
+        "city": profile.city if profile else "",
+        "street": profile.street if profile else "",
+        "house": profile.house if profile else "",
+        "postal_code": profile.postal_code if profile else "",
+    }
+
+    if request.method == "POST":
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            order = Order.objects.create(
+                user=request.user,
+                total=total,
+                **form.cleaned_data,
+            )
+            for line in lines:
+                OrderItem.objects.create(
+                    order=order,
+                    product=line["product"],
+                    product_title=line["product"].title,
+                    size=line["size"] or "",
+                    quantity=line["quantity"],
+                    unit_price=line["unit_price"],
+                )
+                if line["size"]:
+                    stock = line["product"].size_stocks.filter(size=line["size"]).first()
+                    if stock and stock.quantity:
+                        stock.quantity = max(0, stock.quantity - line["quantity"])
+                        stock.save(update_fields=["quantity"])
+
+            clear_cart(request)
+            send_order_notifications(order)
+            return redirect("order_success", order_id=order.id)
+    else:
+        form = CheckoutForm(initial=initial)
+
+    return render(request, "website/checkout_page.html", {"form": form, "lines": lines, "total": total})
+
+
+@login_required
+def order_success_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, "website/order_success_page.html", {"order": order})
 
 
 @require_POST

@@ -1,5 +1,12 @@
 // Meadow Shore — main.js
 
+// === Force scroll-to-top on fresh loads (incl. bfcache restores), unless deep-linking to an anchor ===
+window.addEventListener('pageshow', () => {
+  if (!location.hash) {
+    window.scrollTo(0, 0);
+  }
+});
+
 // === Scroll Reveal ===
 const revealElements = document.querySelectorAll('.reveal');
 
@@ -148,15 +155,30 @@ document.querySelectorAll('[data-favorite-form]').forEach(form => {
   });
 });
 
-// === Product Image Gallery (dots + hover scrub) ===
+// === Product Info Accordion (Состав / Уход / Доставка / Оплата / Описание) ===
+document.querySelectorAll('.accordion__header').forEach((header) => {
+  header.addEventListener('click', () => {
+    const panel = header.nextElementSibling;
+    const isOpen = header.getAttribute('aria-expanded') === 'true';
+    header.setAttribute('aria-expanded', String(!isOpen));
+    panel.classList.toggle('is-open', !isOpen);
+  });
+});
+
+// === Product Image Gallery (dots + hover scrub on cards, thumbnail carousel on detail page) ===
 document.querySelectorAll('[data-gallery]').forEach((gallery) => {
   const slides = gallery.querySelectorAll('.gallery-slide');
   const dots = gallery.querySelectorAll('.gallery-dot');
+  const thumbs = gallery.querySelectorAll('.gallery-thumb');
   if (slides.length < 2) return;
 
+  let current = 0;
+
   const setActive = (index) => {
+    current = index;
     slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
     dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+    thumbs.forEach((thumb, i) => thumb.classList.toggle('is-active', i === index));
   };
 
   dots.forEach((dot) => {
@@ -167,14 +189,43 @@ document.querySelectorAll('[data-gallery]').forEach((gallery) => {
     });
   });
 
-  gallery.addEventListener('mousemove', (e) => {
-    const rect = gallery.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / rect.width;
-    const index = Math.min(slides.length - 1, Math.max(0, Math.floor(ratio * slides.length)));
-    setActive(index);
-  });
+  if (thumbs.length) {
+    const viewport = gallery.querySelector('[data-thumb-viewport]');
+    const prevBtn = gallery.querySelector('[data-thumb-prev]');
+    const nextBtn = gallery.querySelector('[data-thumb-next]');
 
-  gallery.addEventListener('mouseleave', () => setActive(0));
+    const goTo = (index) => {
+      setActive((index + thumbs.length) % thumbs.length);
+      thumbs[current].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    };
+
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener('click', () => goTo(Number(thumb.dataset.index)));
+    });
+
+    prevBtn?.addEventListener('click', () => goTo(current - 1));
+    nextBtn?.addEventListener('click', () => goTo(current + 1));
+
+    if (viewport) {
+      const updateThumbArrows = () => {
+        const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+        if (prevBtn) prevBtn.disabled = viewport.scrollLeft <= 4;
+        if (nextBtn) nextBtn.disabled = maxScroll <= 4 || viewport.scrollLeft >= maxScroll - 4;
+      };
+      viewport.addEventListener('scroll', updateThumbArrows, { passive: true });
+      window.addEventListener('resize', updateThumbArrows);
+      updateThumbArrows();
+    }
+  } else {
+    gallery.addEventListener('mousemove', (e) => {
+      const rect = gallery.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      const index = Math.min(slides.length - 1, Math.max(0, Math.floor(ratio * slides.length)));
+      setActive(index);
+    });
+
+    gallery.addEventListener('mouseleave', () => setActive(0));
+  }
 });
 
 // === Product Card Click-through ===
@@ -187,8 +238,26 @@ document.querySelectorAll('[data-card-link]').forEach((card) => {
 
 // === Add to Cart ===
 document.querySelectorAll('[data-cart-form]').forEach((form) => {
+  const sizeSelect = form.querySelector('select[name="size"]');
+  const sizeWrap = form.querySelector('.size-select-wrap');
+  const sizeError = form.querySelector('[data-size-error]');
+
+  if (sizeSelect) {
+    sizeSelect.addEventListener('change', () => {
+      sizeWrap?.classList.remove('has-error');
+      sizeError?.setAttribute('hidden', '');
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (sizeSelect && !sizeSelect.value) {
+      sizeWrap?.classList.add('has-error');
+      sizeError?.removeAttribute('hidden');
+      sizeSelect.focus();
+      return;
+    }
 
     const submitBtn = form.querySelector('.add-to-cart-form__submit');
     const formData = new FormData(form);
