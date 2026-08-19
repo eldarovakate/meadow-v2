@@ -37,3 +37,20 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Куда приходят заявки с формы контактов
 WAGTAILFORMS_HELP_TEXT = ''
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
