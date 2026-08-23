@@ -160,47 +160,16 @@ After running migrations and creating a superuser:
 
 ## Production Deployment
 
-### Environment variables for production
-
-```env
-SECRET_KEY=a-very-long-and-random-production-secret-key
-DEBUG=False
-ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
-DATABASE_URL=postgres://user:password@host:5432/dbname
-```
-
-### Using production settings
-
-```bash
-DJANGO_SETTINGS_MODULE=meadowshore.settings.production gunicorn meadowshore.wsgi
-```
-
-### Collect static files
-
-```bash
-python manage.py collectstatic --noinput
-```
-
-### Run migrations on production
-
-```bash
-python manage.py migrate
-```
+Production runs on its own server, deployed automatically via GitHub Actions on every push to `main`. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the actual deploy process, manual steps, and rollback.
 
 ---
 
-## Deployment on Railway
+## Project documentation
 
-1. Push your code to GitHub
-2. Create a new Railway project and connect your repository
-3. Add a PostgreSQL plugin in Railway
-4. Set environment variables in Railway dashboard:
-   - `SECRET_KEY`
-   - `DEBUG=False`
-   - `ALLOWED_HOSTS=your-app.up.railway.app`
-   - `DATABASE_URL` (auto-set by Railway PostgreSQL plugin)
-   - `DJANGO_SETTINGS_MODULE=meadowshore.settings.production`
-5. Railway will automatically build and deploy
+- [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) — current project state (production status, stack, brand, what's done, what's next)
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — how to deploy
+- [CHANGELOG.md](CHANGELOG.md) — release history
+- [docs/site-redesign-progress.md](docs/site-redesign-progress.md) — detailed working log of the homepage redesign
 
 ---
 
