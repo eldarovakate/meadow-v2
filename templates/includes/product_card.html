@@ -1,12 +1,20 @@
 {% load wagtailimages_tags favorite_tags %}
-<article class="product-card{% if extra_class %} {{ extra_class }}{% endif %} reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}" data-card-link="{{ product.url }}">
+<article class="product-card{% if extra_class %} {{ extra_class }}{% endif %}{% if card_variant == 'homepage' %} product-card--editorial{% endif %} reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}"{% if card_variant != 'homepage' %} data-card-link="{{ product.url }}"{% endif %}>
   <div class="product-card__image-wrap" data-gallery>
     <a href="{{ product.url }}" class="product-card__image-link">
       {% for img in product.all_images %}
-      {% if forloop.first %}
-      {% image img fill-600x750 class="product-card__image gallery-slide is-active" %}
+      {% if card_variant == 'homepage' %}
+        {% if forloop.first %}
+        {% image img fill-600x750 class="product-card__image gallery-slide is-active" alt=product.title loading="lazy" decoding="async" %}
+        {% else %}
+        {% image img fill-600x750 class="product-card__image gallery-slide" alt="" loading="lazy" decoding="async" %}
+        {% endif %}
       {% else %}
-      {% image img fill-600x750 class="product-card__image gallery-slide" %}
+        {% if forloop.first %}
+        {% image img fill-600x750 class="product-card__image gallery-slide is-active" %}
+        {% else %}
+        {% image img fill-600x750 class="product-card__image gallery-slide" %}
+        {% endif %}
       {% endif %}
       {% empty %}
       <div class="product-card__placeholder"></div>
@@ -16,7 +24,7 @@
       {% if product.status == 'coming_soon' %}
       <span class="product-card__tag">Скоро</span>
       {% endif %}
-      {% if product.discount_percent %}
+      {% if product.discount_percent and card_variant != 'homepage' %}
       <span class="product-card__tag product-card__tag--discount">-{{ product.discount_percent }}%</span>
       {% endif %}
     </div>
@@ -40,10 +48,10 @@
     <span class="product-card__price-row">
       <span class="product-card__price">{{ product.price }}</span>
       {% if product.old_price %}<span class="product-card__old-price">{{ product.old_price }}</span>{% endif %}
-      {% if product.discount_percent %}<span class="product-card__discount-percent">-{{ product.discount_percent }}%</span>{% endif %}
+      {% if product.discount_percent and card_variant != 'homepage' %}<span class="product-card__discount-percent">-{{ product.discount_percent }}%</span>{% endif %}
     </span>
     {% endif %}
-    {% if product.status == 'available' %}
+    {% if card_variant != 'homepage' and product.status == 'available' %}
       {% if product.sorted_size_stocks %}
       <a href="{{ product.url }}#add-to-cart" class="btn btn--primary product-card__add-btn">Добавить в корзину</a>
       {% else %}

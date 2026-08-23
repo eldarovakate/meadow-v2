@@ -546,22 +546,27 @@ blockquote {
    9. HERO SECTION
    ============================================================ */
 
-.hero {
-  min-height: 94svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.home-page .hero {
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(680px, calc(100svh - var(--header-h)), 920px);
 }
 
-.hero__bg {
+@media (max-width: 767px) {
+  .home-page .hero {
+    min-height: clamp(620px, calc(100svh - var(--header-h)), 700px);
+  }
+}
+
+.home-page .hero__bg {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-.hero__bg-img {
+.home-page .hero__bg-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -569,246 +574,234 @@ blockquote {
   display: block;
 }
 
-.hero__overlay {
+/* Mobile/tablet: darker toward the bottom, where the text sits */
+.home-page .hero__overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: rgba(20, 30, 15, 0.55);
+  background: linear-gradient(
+    to top,
+    rgba(20, 30, 15, 0.7) 0%,
+    rgba(20, 30, 15, 0.34) 42%,
+    rgba(20, 30, 15, 0) 74%
+  );
 }
 
-.hero__center {
+/* Desktop/tablet-landscape: darker toward the text (bottom-left), photo stays open on the right */
+@media (min-width: 768px) {
+  .home-page .hero__overlay {
+    background: linear-gradient(
+      115deg,
+      rgba(20, 30, 15, 0.72) 0%,
+      rgba(20, 30, 15, 0.4) 34%,
+      rgba(20, 30, 15, 0) 66%
+    );
+  }
+}
+
+.home-page .hero__content {
   position: relative;
   z-index: 2;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: calc(var(--header-h) + var(--space-md)) var(--container-pad) var(--space-md);
-  max-width: 900px;
   width: 100%;
-  margin: 0 auto;
+  padding-top: calc(var(--header-h) + var(--space-sm));
+  padding-bottom: clamp(2.25rem, 6vw, 4.5rem);
 }
 
-.hero__bottom {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 0 var(--container-pad) var(--space-xs);
-  width: 100%;
-}
-
-.hero__logo {
-  display: block;
-  width: clamp(70px, 11vw, 130px);
-  height: auto;
-  margin: 0 auto var(--space-md);
-  opacity: 0.85;
-}
-
-.hero__eyebrow {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 1.375rem;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  color: var(--color-terracotta);
-  margin-bottom: var(--space-sm);
-}
-
-.hero__headline {
-  font-family: var(--font-serif);
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  font-weight: 300;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-  color: var(--color-ivory);
-  margin-bottom: var(--space-md);
-  max-width: 780px;
-}
-
-.hero__sub {
-  font-size: 1.0625rem;
-  font-weight: 300;
-  color: rgba(248, 245, 239, 0.75);
-  margin-bottom: var(--space-md);
-  line-height: 1.7;
-  text-align: center;
-  width: 100%;
-}
-
-.hero__scroll-hint {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 3rem;
-  padding-bottom: var(--space-xs);
-  color: rgba(248, 245, 239, 0.5);
-}
-
-.hero__scroll-hint span {
-  font-size: 0.625rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-family: var(--font-sans);
-}
-
-.hero__scroll-line {
-  width: 1px;
-  height: 48px;
-  background: linear-gradient(to bottom, var(--color-stone), transparent);
-  animation: scrollLine 2s ease-in-out infinite;
-}
-
-.hero__badge {
-  position: absolute;
-  z-index: 2;
-  right: clamp(1rem, 5vw, 6rem);
-  bottom: clamp(6rem, 14vh, 9rem);
-  width: clamp(110px, 12vw, 156px);
-  height: clamp(110px, 12vw, 156px);
-}
-
-.hero__badge-svg {
-  width: 100%;
-  height: 100%;
-  animation: spin 22s linear infinite;
+.home-page .hero__text {
+  max-width: clamp(560px, 62vw, 800px);
+  animation: heroTextIn 0.8s ease both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__badge-svg { animation: none; }
+  .home-page .hero__text {
+    animation: none;
+  }
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.hero__badge-ring {
-  fill: none;
-  stroke: rgba(248, 245, 239, 0.35);
-  stroke-width: 1;
-  stroke-dasharray: 2 5;
+@keyframes heroTextIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.hero__badge-core {
-  fill: rgba(181, 97, 74, 0.9);
-}
-
-.hero__badge-text {
+.home-page .hero__eyebrow {
   font-family: var(--font-sans);
-  font-size: 10.5px;
-  letter-spacing: 2px;
-  fill: var(--color-ivory);
+  font-size: clamp(11px, 0.2vw + 10.6px, 12px);
+  font-weight: 400;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-}
-
-.hero__badge-label {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
   color: var(--color-ivory);
-  pointer-events: none;
+  margin-bottom: 1rem;
 }
 
-@media (max-width: 900px) {
-  .hero__badge { display: none; }
+.home-page .hero__headline {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 1.5rem + 4vw, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--color-ivory);
+  text-wrap: balance;
+  margin-bottom: 1.25rem;
 }
 
-@keyframes scrollLine {
-  0%, 100% { transform: scaleY(1); opacity: 1; }
-  50% { transform: scaleY(0.6); opacity: 0.4; }
+.home-page .hero__sub {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 0.5vw + 0.9rem, 1.125rem);
+  font-weight: 400;
+  line-height: 1.55;
+  max-width: 520px;
+  color: rgba(248, 245, 239, 0.82);
+  margin-bottom: 2rem;
+}
+
+.home-page .hero__cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-ivory);
+  background-color: var(--color-terracotta);
+  border: 1px solid var(--color-terracotta);
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background-color var(--transition-base),
+              border-color var(--transition-base),
+              transform var(--transition-fast),
+              box-shadow var(--transition-base);
+}
+
+.home-page .hero__cta:hover {
+  background-color: var(--color-terracotta-light);
+  border-color: var(--color-terracotta-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(181, 97, 74, 0.3);
+}
+
+.home-page .hero__cta:focus-visible {
+  outline: 2px solid var(--color-ivory);
+  outline-offset: 3px;
+}
+
+.home-page .hero__cta-arrow {
+  transition: transform var(--transition-fast);
+}
+
+.home-page .hero__cta:hover .hero__cta-arrow {
+  transform: translateX(3px);
 }
 
 /* ============================================================
-   10. ABOUT SECTION
+   10. COLLECTION STORY SECTION (formerly "about")
    ============================================================ */
 
-.about {
-  padding: var(--space-xl) 0;
-  background-color: var(--color-ivory);
+.home-page .collection-story {
+  padding: clamp(4.5rem, 4rem + 2vw, 5.5rem) 0;
+  background-color: var(--color-beige);
 }
 
-.about__grid {
+.home-page .collection-story__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-lg);
+  gap: 2.75rem;
 }
 
-.about__text {
+.home-page .collection-story__text {
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
-.about__title {
-  font-family: var(--font-serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
+.home-page .collection-story__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
   font-weight: 400;
-  margin-bottom: var(--space-md);
-  color: var(--color-text);
-  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin-bottom: 1.1rem;
 }
 
-.about__body {
-  margin-bottom: var(--space-md);
+.home-page .collection-story__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 2.33rem + 1.85vw, 4.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--color-brown-dark);
+  text-wrap: balance;
+  margin-bottom: 1.5rem;
 }
 
-.about__details {
+.home-page .collection-story__body p {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  margin-bottom: 1.4rem;
+}
+
+.home-page .collection-story__body p:last-child {
+  margin-bottom: 0;
+}
+
+.home-page .collection-story__details {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-top: var(--space-md);
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1.75rem;
 }
 
-.about__details span {
+.home-page .collection-story__details span {
+  font-family: var(--font-sans);
   font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(181, 97, 74, 0.7);
-  white-space: nowrap;
+  color: var(--color-stone);
 }
 
-/* мобиле: · в начале каждой строки */
-.about__details span::before {
-  content: '·';
-  margin-right: 0.6rem;
-  color: rgba(181, 97, 74, 0.4);
-  font-size: 1rem;
-  letter-spacing: 0;
-}
-
-.about__visual {
+.home-page .collection-story__visual {
   position: relative;
-  min-height: 400px;
-  border-radius: var(--radius-md);
+  aspect-ratio: 4 / 5;
   overflow: hidden;
+  border-radius: var(--radius-sm);
 }
 
-.about__image {
+.home-page .collection-story__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-md);
+  display: block;
 }
 
-.about__image-placeholder {
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
-  background: linear-gradient(135deg, var(--color-beige) 0%, var(--color-sand) 100%);
-  border-radius: var(--radius-md);
-  position: relative;
-  overflow: hidden;
+@media (prefers-reduced-motion: reduce) {
+  .home-page .collection-story .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-page .collection-story {
+    padding: clamp(7.5rem, 5rem + 5vw, 10rem) 0;
+  }
+
+  .home-page .collection-story__grid {
+    grid-template-columns: minmax(320px, 41%) 1fr;
+    gap: clamp(70px, 6vw, 110px);
+    align-items: start;
+  }
+
+  .home-page .collection-story__text {
+    max-width: 560px;
+    /* Slightly lower than the top of the image so the composition doesn't
+       start both columns on the same line — a deliberately less rigid grid. */
+    padding-top: clamp(1.5rem, 4vw, 3.25rem);
+  }
 }
 
 .placeholder-texture {
@@ -821,6 +814,107 @@ blockquote {
     rgba(168, 159, 145, 0.1) 20px,
     rgba(168, 159, 145, 0.1) 21px
   );
+}
+
+/* ============================================================
+   10b. OBSERVATION SECTION
+   ============================================================ */
+
+.home-page .observation {
+  background-color: var(--color-forest);
+  padding: clamp(4.5rem, 4rem + 2vw, 5.5rem) 0;
+}
+
+.home-page .observation__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+.home-page .observation__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(248, 245, 239, 0.7);
+  margin-bottom: 1.1rem;
+}
+
+.home-page .observation__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 2.33rem + 1.85vw, 4.5rem);
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+  color: var(--color-ivory);
+  text-wrap: balance;
+  margin-bottom: 1.5rem;
+}
+
+.home-page .observation__body p {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  line-height: 1.68;
+  color: rgba(248, 245, 239, 0.78);
+  margin-bottom: 1.4rem;
+}
+
+.home-page .observation__body p:last-child {
+  margin-bottom: 0;
+}
+
+.home-page .observation__visual {
+  position: relative;
+}
+
+.home-page .observation__image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.home-page .observation__caption {
+  margin-top: 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: rgba(248, 245, 239, 0.62);
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .observation .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-page .observation {
+    padding: clamp(7.5rem, 5rem + 5vw, 10rem) 0;
+  }
+
+  .home-page .observation__grid {
+    /* Mirrors "О коллекции" (text left / image right) so the page keeps a
+       visual rhythm: image sits left here via grid placement below, while
+       the DOM keeps text first for a sane mobile reading order. */
+    grid-template-columns: 1fr minmax(300px, 36%);
+    gap: clamp(70px, 6vw, 110px);
+    align-items: center;
+  }
+
+  .home-page .observation__text {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: 540px;
+  }
+
+  .home-page .observation__visual {
+    grid-column: 1;
+    grid-row: 1;
+  }
 }
 
 /* ============================================================
@@ -1145,8 +1239,8 @@ blockquote {
    16. PRODUCTS GRID STYLES
    ============================================================ */
 
-.featured-products {
-  padding: var(--space-lg) 0;
+.home-page .featured-products {
+  padding: clamp(4.5rem, 3.625rem + 5vw, 8.75rem) 0;
   background-color: var(--color-ivory);
 }
 
@@ -1156,9 +1250,138 @@ blockquote {
   gap: var(--space-md);
 }
 
-.featured-products__footer {
-  text-align: center;
-  margin-top: var(--space-md);
+.home-page .featured-products__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+}
+
+.home-page .featured-products__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin-bottom: 0.6rem;
+}
+
+.home-page .featured-products__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 1.8rem + 3vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--color-brown-dark);
+}
+
+.home-page .featured-products__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-brown-dark);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-bottom: 0.4rem;
+}
+
+.home-page .featured-products__cta span {
+  transition: transform var(--transition-fast);
+}
+
+.home-page .featured-products__cta:hover {
+  color: var(--color-terracotta);
+}
+
+.home-page .featured-products__cta:hover span {
+  transform: translateX(3px);
+}
+
+/* Editorial card variant used only on the homepage (card_variant="homepage") —
+   the catalog/favorites pages keep the default .product-card styling untouched. */
+.product-card.product-card--editorial {
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  /* Only the photo and the title are real links here — no whole-card click-through */
+  cursor: default;
+}
+
+.product-card.product-card--editorial:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.product-card--editorial .product-card__image-link,
+.product-card--editorial .product-card__name a {
+  cursor: pointer;
+}
+
+.product-card--editorial .product-card__body {
+  padding: 1rem 0 0;
+  gap: 0.4rem;
+}
+
+.product-card--editorial .product-card__price {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--color-brown-dark);
+}
+
+.product-card--editorial .product-card__name {
+  font-size: clamp(1.4rem, 1.1rem + 0.7vw, 1.875rem);
+  line-height: 1.25;
+}
+
+.product-card--editorial .product-card__tag {
+  background-color: rgba(248, 245, 239, 0.92);
+  color: var(--color-brown-dark);
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(42, 31, 22, 0.1);
+}
+
+.product-card--editorial .favorite-toggle {
+  width: 44px;
+  height: 44px;
+}
+
+@media (max-width: 767px) {
+  .home-page .featured-products__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Let the carousel bleed to the true viewport edge so a card can be sized
+     as a share of the viewport (not just the remaining container width) and
+     still leave the next card peeking in — the header/CTA above stay inset
+     inside .container as usual. */
+  .home-page .featured-products .product-carousel {
+    margin-right: calc(-1 * var(--container-pad));
+  }
+
+  .home-page .featured-products .product-carousel__viewport {
+    padding-right: var(--container-pad);
+  }
+
+  .home-page .featured-products .product-carousel__track {
+    gap: 0.75rem;
+  }
+
+  .home-page .featured-products .product-carousel__item {
+    width: 82vw;
+  }
+
+  /* Touch/swipe is the primary interaction on mobile; arrows aren't required here */
+  .home-page .featured-products .product-carousel__arrow {
+    display: none;
+  }
 }
 
 /* ============================================================
@@ -3349,88 +3572,9 @@ blockquote {
 
 @media (min-width: 768px) {
 
-  /* Header nav */
-  .header__nav {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 6rem;
-  }
-
-  .header__burger {
-    display: none;
-  }
-
-  /* Десктоп: лого слева, меню справа, иконки в отдельной колонке у края */
-  .header__inner {
-    grid-template-columns: auto 1fr auto;
-    gap: var(--space-xs);
-  }
-
-  .header__brand {
-    grid-column: auto;
-  }
-
-  .header__icons {
-    display: flex;
-  }
-
-  .header__burger {
-    grid-column: auto;
-    justify-self: auto;
-  }
-
-  /* Hero */
-  .hero__inner {
-    flex-direction: row;
-  }
-
-  .hero__content {
-    max-width: 50%;
-    padding-right: var(--space-lg);
-  }
-
-  .hero__image-wrap {
-    position: relative;
-    width: 50%;
-    height: auto;
-    flex-shrink: 0;
-  }
-
-  /* About */
-  .about__grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  /* About details: одна строка на десктопе */
-  .about__details {
-    flex-direction: row;
-    align-items: center;
-    gap: 0;
-    flex-wrap: nowrap;
-  }
-
-  .about__details span {
-    white-space: nowrap;
-    padding: 0 1rem;
-  }
-
-  .about__details span:first-child {
-    padding-left: 0;
-  }
-
-  /* убираем · перед первым, между остальными — через + span */
-  .about__details span::before {
-    content: none;
-  }
-
-  .about__details span + span::before {
-    content: '·';
-    margin-right: 1rem;
-    color: rgba(181, 97, 74, 0.4);
-    font-size: 1rem;
-    letter-spacing: 0;
-  }
+  /* Header nav/icons/burger switch to desktop layout at 1024px — see block 29.
+     Below that, mobile/tablet header (centered brand + burger) stays in effect
+     to avoid the 768–903px icon-overflow bug. */
 
   /* Collections */
   .collections__grid {
@@ -3498,22 +3642,45 @@ blockquote {
     --header-h: 80px;
   }
 
-  /* Десктоп: восстанавливаем нормальные отступы */
+  /* Header: переключение на desktop-раскладку (лого слева, меню справа,
+     иконки в отдельной колонке). Раньше срабатывало с 768px и на планшетах
+     (768–903px) иконки избранного/аккаунта/корзины выезжали за viewport —
+     до 1023px включительно остаётся mobile/tablet-шапка (центр. лого + burger). */
   .header__inner {
+    grid-template-columns: auto 1fr auto;
     gap: var(--space-md);
+  }
+
+  .header__brand {
+    grid-column: auto;
+  }
+
+  .header__nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 2rem;
+  }
+
+  .header__icons {
+    display: flex;
+  }
+
+  .header__burger {
+    display: none;
+    grid-column: auto;
+    justify-self: auto;
+  }
+
+  /* Hard CSS failsafe: guarantee the drawer is gone at desktop widths even if
+     a viewport change doesn't reset its JS state (e.g. a resize that isn't
+     accompanied by a native 'resize' event). */
+  .header__mobile-menu {
+    display: none;
   }
 
   .header__nav-list {
     gap: 4.5rem;
-  }
-
-  /* Hero full height layout */
-  .hero {
-    min-height: 94svh;
-  }
-
-  .hero__content {
-    padding: var(--space-2xl) var(--container-pad);
   }
 
   /* Collections 3 columns */
@@ -3588,12 +3755,6 @@ blockquote {
 
   /* Fabric section balanced */
   .fabric__grid {
-    grid-template-columns: 5fr 4fr;
-    gap: var(--space-xl);
-  }
-
-  /* About section balanced */
-  .about__grid {
     grid-template-columns: 5fr 4fr;
     gap: var(--space-xl);
   }

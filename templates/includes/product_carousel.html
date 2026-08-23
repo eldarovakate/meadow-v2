@@ -7,7 +7,7 @@
     <div class="product-carousel__track" data-carousel-track>
       {% for page in products %}
       {% with product=page.specific %}
-      {% include "includes/product_card.html" with product=product favorite_ids=favorite_ids extra_class="product-carousel__item" %}
+      {% include "includes/product_card.html" with product=product favorite_ids=favorite_ids extra_class="product-carousel__item" card_variant=card_variant %}
       {% endwith %}
       {% endfor %}
     </div>

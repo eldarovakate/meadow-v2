@@ -1,9 +1,38 @@
+import re
+
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.db import models
 from wagtail.models import Page
 from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
+
+# Allows internal paths like "/catalog/" and in-page anchors like "#collections",
+# in addition to full http(s) URLs — rejects things like "javascript:", "data:",
+# "catalog/" (no leading slash), plain text, or protocol-relative "//host" values
+# (exactly one leading "/" is required — "//" or "///" must not match).
+_RELATIVE_PATH_RE = re.compile(r'^/(?!/)[\w\-./]*$')
+_FRAGMENT_RE = re.compile(r'^#[\w\-]+$')
+_absolute_url_validator = URLValidator(schemes=['http', 'https'])
+
+
+def validate_cta_url(value):
+    value = (value or '').strip()
+    if not value:
+        return
+    if _RELATIVE_PATH_RE.match(value) or _FRAGMENT_RE.match(value):
+        return
+    try:
+        _absolute_url_validator(value)
+        return
+    except ValidationError:
+        pass
+    raise ValidationError(
+        'Введите внутреннюю ссылку вида /catalog/, якорь вида #collections '
+        'или полный адрес http(s)://...'
+    )
 
 
 class CollectionCardBlock(blocks.StructBlock):
@@ -38,11 +67,23 @@ class MarqueeItemBlock(blocks.StructBlock):
 
 
 class HeroSectionBlock(blocks.StructBlock):
+    eyebrow = blocks.CharBlock(max_length=100, required=False, label="Надпись над заголовком")
     headline = blocks.CharBlock(max_length=200, label="Главный заголовок")
     subheadline = blocks.CharBlock(max_length=300, required=False, label="Подзаголовок")
     cta_text = blocks.CharBlock(max_length=100, default="Смотреть каталог", label="Текст кнопки")
-    cta_url = blocks.URLBlock(required=False, label="Ссылка кнопки")
+    cta_url = blocks.CharBlock(
+        max_length=200, required=False, label="Ссылка кнопки",
+        help_text="Внутренняя ссылка (например /catalog/) или полный URL",
+    )
     image = ImageChooserBlock(required=False, label="Фоновое изображение")
+
+    def clean(self, value):
+        result = super().clean(value)
+        try:
+            validate_cta_url(result.get('cta_url'))
+        except ValidationError as e:
+            raise blocks.StructBlockValidationError(block_errors={'cta_url': e})
+        return result
 
     class Meta:
         icon = 'pick'
@@ -108,13 +149,14 @@ class FabricSectionBlock(blocks.StructBlock):
 
 
 class FeaturedProductsSectionBlock(blocks.StructBlock):
-    title = blocks.CharBlock(max_length=200, required=False, label="Заголовок секции (необязательно)")
+    eyebrow = blocks.CharBlock(max_length=100, required=False, label="Надпись над заголовком")
+    title = blocks.CharBlock(max_length=200, required=False, label="Заголовок секции (H2)")
     products = blocks.ListBlock(
         blocks.PageChooserBlock(page_type='website.ProductPage'),
         label="Товары",
     )
-    cta_text = blocks.CharBlock(max_length=100, default="Перейти в каталог", label="Текст кнопки")
-    cta_url = blocks.CharBlock(max_length=200, default="/catalog/", label="Ссылка кнопки")
+    cta_text = blocks.CharBlock(max_length=100, default="Смотреть всю коллекцию", label="Текст ссылки")
+    cta_url = blocks.CharBlock(max_length=200, default="/catalog/", label="Ссылка")
 
     class Meta:
         icon = 'tag'
@@ -166,6 +208,18 @@ class CTASectionBlock(blocks.StructBlock):
         label = 'CTA блок'
 
 
+class ObservationSectionBlock(blocks.StructBlock):
+    eyebrow = blocks.CharBlock(max_length=100, label="Номер наблюдения", help_text="Например: НАБЛЮДЕНИЕ № 01")
+    title = blocks.CharBlock(max_length=200, label="Заголовок")
+    body = blocks.RichTextBlock(label="Текст")
+    image = ImageChooserBlock(label="Изображение")
+    caption = blocks.CharBlock(max_length=150, required=False, label="Подпись под изображением")
+
+    class Meta:
+        icon = 'view'
+        label = 'Наблюдение'
+
+
 class HomePage(Page):
     body = StreamField([
         ('hero', HeroSectionBlock()),
@@ -178,6 +232,7 @@ class HomePage(Page):
         ('usp_strip', USPStripSectionBlock()),
         ('philosophy', PhilosophySectionBlock()),
         ('cta', CTASectionBlock()),
+        ('observation', ObservationSectionBlock()),
     ], use_json_field=True, blank=True)
 
     content_panels = Page.content_panels + [

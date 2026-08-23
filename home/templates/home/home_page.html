@@ -11,65 +11,78 @@
   <section class="hero" id="hero">
     {% if block.value.image %}
     <div class="hero__bg">
-      {% image block.value.image width-1920 class="hero__bg-img" %}
+      {% image block.value.image fill-1920x1080 as hero_bg_desktop %}
+      {% image block.value.image fill-900x1200 as hero_bg_mobile %}
+      <picture>
+        <source media="(min-width: 768px)" srcset="{{ hero_bg_desktop.url }}">
+        <img
+          src="{{ hero_bg_mobile.url }}"
+          width="{{ hero_bg_mobile.width }}"
+          height="{{ hero_bg_mobile.height }}"
+          alt=""
+          class="hero__bg-img"
+          fetchpriority="high"
+        >
+      </picture>
     </div>
     {% endif %}
     <div class="hero__overlay"></div>
-    <div class="hero__badge reveal" aria-hidden="true">
-      <svg viewBox="0 0 200 200" class="hero__badge-svg">
-        <defs>
-          <path id="heroBadgeCircle" d="M 100,100 m -78,0 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0" />
-        </defs>
-        <circle cx="100" cy="100" r="78" class="hero__badge-ring" />
-        <text class="hero__badge-text">
-          <textPath href="#heroBadgeCircle" startOffset="0%">
-            МАЛЫЕ ТИРАЖИ &#8226; РУЧНАЯ ПЕЧАТЬ &#8226; MEADOW SHORE &#8226;
-          </textPath>
-        </text>
-        <circle cx="100" cy="100" r="34" class="hero__badge-core" />
-      </svg>
-      <span class="hero__badge-label">2026</span>
-    </div>
-    <div class="hero__center reveal">
-      <h1 class="hero__headline">{{ block.value.headline }}</h1>
-    </div>
-    <div class="hero__bottom">
-      {% if block.value.subheadline %}
-      <p class="hero__sub">{{ block.value.subheadline }}</p>
-      {% endif %}
-      <a href="#collections" class="btn btn--primary">
-        {{ block.value.cta_text }}
-      </a>
-      <div class="hero__scroll-hint">
-        <span>scroll</span>
-        <div class="hero__scroll-line"></div>
+    <div class="hero__content container">
+      <div class="hero__text">
+        {% if block.value.eyebrow %}
+        <p class="hero__eyebrow">{{ block.value.eyebrow }}</p>
+        {% endif %}
+        <h1 class="hero__headline">{{ block.value.headline }}</h1>
+        {% if block.value.subheadline %}
+        <p class="hero__sub">{{ block.value.subheadline }}</p>
+        {% endif %}
+        <a href="{% firstof block.value.cta_url '/catalog/' %}" class="hero__cta">
+          {{ block.value.cta_text }}<span class="hero__cta-arrow" aria-hidden="true">&rarr;</span>
+        </a>
       </div>
     </div>
   </section>
 
   {% elif block.block_type == 'about' %}
-  <section class="about" id="about">
+  <section class="collection-story">
     <div class="container">
-      <div class="about__grid">
-        <div class="about__text reveal">
+      <div class="collection-story__grid">
+        <div class="collection-story__text reveal">
           {% if block.value.tagline %}
-          <span class="label">{{ block.value.tagline }}</span>
+          <p class="collection-story__eyebrow">{{ block.value.tagline }}</p>
           {% endif %}
-          <h2 class="about__title">{{ block.value.title }}</h2>
-          <div class="about__body richtext">{{ block.value.body }}</div>
-          <div class="about__details">
+          <h2 class="collection-story__title">{{ block.value.title }}</h2>
+          <div class="collection-story__body richtext">{{ block.value.body }}</div>
+          {% if block.value.detail_one or block.value.detail_two or block.value.detail_three %}
+          <div class="collection-story__details">
             {% if block.value.detail_one %}<span>{{ block.value.detail_one }}</span>{% endif %}
             {% if block.value.detail_two %}<span>{{ block.value.detail_two }}</span>{% endif %}
             {% if block.value.detail_three %}<span>{{ block.value.detail_three }}</span>{% endif %}
           </div>
+          {% endif %}
         </div>
-        <div class="about__visual reveal reveal--delay">
-          {% if block.value.image %}
-          {% image block.value.image width-800 class="about__image" %}
-          {% else %}
-          <div class="about__image-placeholder">
-            <div class="placeholder-texture"></div>
-          </div>
+        {% if block.value.image %}
+        <div class="collection-story__visual reveal reveal--delay">
+          {% image block.value.image fill-1000x1250 class="collection-story__image" loading="lazy" decoding="async" alt="" %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% elif block.block_type == 'observation' %}
+  <section class="observation">
+    <div class="container">
+      <div class="observation__grid">
+        <div class="observation__text reveal">
+          <p class="observation__eyebrow">{{ block.value.eyebrow }}</p>
+          <h2 class="observation__title">{{ block.value.title }}</h2>
+          <div class="observation__body richtext">{{ block.value.body }}</div>
+        </div>
+        <div class="observation__visual reveal reveal--delay">
+          {% image block.value.image fill-1000x1000 class="observation__image" loading="lazy" decoding="async" alt=block.value.caption|default:"Вышивка с певчей птицей на футболке Meadow Shore" %}
+          {% if block.value.caption %}
+          <p class="observation__caption">{{ block.value.caption }}</p>
           {% endif %}
         </div>
       </div>
@@ -188,17 +201,24 @@
   {% elif block.block_type == 'featured_products' %}
   <section class="featured-products" id="collections">
     <div class="container">
-      {% if block.value.title %}
-      <div class="section-header reveal">
-        <h2 class="section-title">{{ block.value.title }}</h2>
+      {% if block.value.eyebrow or block.value.title or block.value.cta_text %}
+      <div class="featured-products__header reveal">
+        <div class="featured-products__heading">
+          {% if block.value.eyebrow %}
+          <p class="featured-products__eyebrow">{{ block.value.eyebrow }}</p>
+          {% endif %}
+          {% if block.value.title %}
+          <h2 class="featured-products__title">{{ block.value.title }}</h2>
+          {% endif %}
+        </div>
+        {% if block.value.cta_text %}
+        <a href="{{ block.value.cta_url }}" class="featured-products__cta">
+          {{ block.value.cta_text }}<span aria-hidden="true">&rarr;</span>
+        </a>
+        {% endif %}
       </div>
       {% endif %}
-      {% include "includes/product_carousel.html" with products=block.value.products favorite_ids=favorite_ids %}
-      {% if block.value.cta_text %}
-      <div class="featured-products__footer reveal">
-        <a href="{{ block.value.cta_url }}" class="btn btn--outline">{{ block.value.cta_text }}</a>
-      </div>
-      {% endif %}
+      {% include "includes/product_carousel.html" with products=block.value.products favorite_ids=favorite_ids card_variant="homepage" %}
     </div>
   </section>
 

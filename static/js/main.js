@@ -58,26 +58,48 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
 const burgerBtn = document.getElementById('burger-btn');
 const mobileMenu = document.getElementById('mobile-menu');
 
+function closeMobileMenu() {
+  if (!burgerBtn || !mobileMenu) return;
+  burgerBtn.setAttribute('aria-expanded', 'false');
+  mobileMenu.setAttribute('aria-hidden', 'true');
+  burgerBtn.classList.remove('is-active');
+  mobileMenu.classList.remove('is-open');
+  document.body.classList.remove('menu-open');
+}
+
 if (burgerBtn && mobileMenu) {
   burgerBtn.addEventListener('click', () => {
     const isOpen = burgerBtn.getAttribute('aria-expanded') === 'true';
-    burgerBtn.setAttribute('aria-expanded', String(!isOpen));
-    mobileMenu.setAttribute('aria-hidden', String(isOpen));
-    burgerBtn.classList.toggle('is-active');
-    mobileMenu.classList.toggle('is-open');
-    document.body.classList.toggle('menu-open');
+    if (isOpen) {
+      closeMobileMenu();
+      return;
+    }
+    burgerBtn.setAttribute('aria-expanded', 'true');
+    mobileMenu.setAttribute('aria-hidden', 'false');
+    burgerBtn.classList.add('is-active');
+    mobileMenu.classList.add('is-open');
+    document.body.classList.add('menu-open');
   });
 
   // Close on link click
   mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      burgerBtn.setAttribute('aria-expanded', 'false');
-      mobileMenu.setAttribute('aria-hidden', 'true');
-      burgerBtn.classList.remove('is-active');
-      mobileMenu.classList.remove('is-open');
-      document.body.classList.remove('menu-open');
-    });
+    link.addEventListener('click', closeMobileMenu);
   });
+
+  // Close whenever the viewport crosses into the desktop layout (1024px).
+  // Two independent listeners on purpose: matchMedia's 'change' event is the
+  // correct signal for a breakpoint crossing, and a plain 'resize' fallback
+  // covers browsers/situations where that event doesn't fire as expected.
+  // A CSS failsafe (@media min-width:1024px { display: none }) also hides the
+  // drawer outright regardless of this JS state — see style.css section 29.
+  const desktopNavQuery = window.matchMedia('(min-width: 1024px)');
+  desktopNavQuery.addEventListener('change', (e) => {
+    if (e.matches) closeMobileMenu();
+  });
+  window.addEventListener('resize', () => {
+    if (desktopNavQuery.matches) closeMobileMenu();
+  }, { passive: true });
+  if (desktopNavQuery.matches) closeMobileMenu();
 }
 
 // === Marquee Auto-Clone ===
@@ -402,13 +424,3 @@ document.querySelectorAll('.auth-form').forEach(form => {
   });
 });
 
-// === Close mobile menu on resize ===
-window.addEventListener('resize', () => {
-  if (window.innerWidth >= 1024 && mobileMenu) {
-    burgerBtn.setAttribute('aria-expanded', 'false');
-    mobileMenu.setAttribute('aria-hidden', 'true');
-    burgerBtn.classList.remove('is-active');
-    mobileMenu.classList.remove('is-open');
-    document.body.classList.remove('menu-open');
-  }
-}, { passive: true });
