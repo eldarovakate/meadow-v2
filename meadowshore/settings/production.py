@@ -22,6 +22,10 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
+# nginx перед этим сервером передаёт proxy_set_header X-Forwarded-Proto $scheme
+# (подтверждено вручную на 89.104.71.175) — без этого Django строит
+# return_url для ЮKassa (request.build_absolute_uri) с http:// вместо https://.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = ['https://meadowshore.ru', 'http://meadowshore.ru', 'http://194.67.101.156:8000']
 WAGTAILADMIN_BASE_URL = 'https://meadowshore.ru'
 

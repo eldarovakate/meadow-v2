@@ -310,6 +310,8 @@ class Order(models.Model):
     comment = models.TextField(blank=True, verbose_name="Комментарий к заказу")
 
     total = models.PositiveIntegerField(default=0, verbose_name="Сумма заказа")
+    payment_id = models.CharField(max_length=64, blank=True, verbose_name="ID платежа ЮKassa")
+    payment_idempotence_key = models.CharField(max_length=64, blank=True, verbose_name="Idempotence-Key платежа")
 
     class Meta:
         verbose_name = "Заказ"

@@ -106,3 +106,7 @@ LOGIN_REDIRECT_URL = '/account/'
 ORDER_NOTIFICATION_EMAIL = config('ORDER_NOTIFICATION_EMAIL', default='info@meadowshore.ru')
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')
 TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID', default='')
+
+# ЮKassa
+YOOKASSA_SHOP_ID = config('YOOKASSA_SHOP_ID', default='')
+YOOKASSA_SECRET_KEY = config('YOOKASSA_SECRET_KEY', default='')

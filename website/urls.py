@@ -12,4 +12,6 @@ urlpatterns = [
     path("cart/update/<int:page_id>/<str:size>/", views.cart_update_view, name="cart_update"),
     path("checkout/", views.checkout_view, name="checkout"),
     path("checkout/success/<int:order_id>/", views.order_success_view, name="order_success"),
+    path("checkout/success/<int:order_id>/retry/", views.order_payment_retry_view, name="order_payment_retry"),
+    path("payments/yookassa/webhook/", views.yookassa_webhook_view, name="yookassa_webhook"),
 ]

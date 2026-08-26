@@ -1,9 +1,14 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.http import JsonResponse
+from django.db import transaction
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from accounts.forms import AddressForm, ProfileForm
@@ -14,6 +19,17 @@ from .favorites import get_favorite_count, get_favorite_ids, toggle_favorite
 from .forms import CheckoutForm
 from .models import Order, OrderItem, ProductPage
 from .notifications import send_order_notifications
+from .payments import (
+    PaymentAPIUnavailable,
+    WebhookMalformed,
+    create_order_payment,
+    mark_order_cancelled,
+    process_webhook_event,
+    sync_order_payment,
+)
+from .stock import InsufficientStockError, reserve_stock_for_lines
+
+logger = logging.getLogger(__name__)
 
 
 def favorites_view(request):
@@ -121,29 +137,39 @@ def checkout_view(request):
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            order = Order.objects.create(
-                user=request.user,
-                total=total,
-                **form.cleaned_data,
-            )
-            for line in lines:
-                OrderItem.objects.create(
-                    order=order,
-                    product=line["product"],
-                    product_title=line["product"].title,
-                    size=line["size"] or "",
-                    quantity=line["quantity"],
-                    unit_price=line["unit_price"],
-                )
-                if line["size"]:
-                    stock = line["product"].size_stocks.filter(size=line["size"]).first()
-                    if stock and stock.quantity:
-                        stock.quantity = max(0, stock.quantity - line["quantity"])
-                        stock.save(update_fields=["quantity"])
+            try:
+                with transaction.atomic():
+                    reserve_stock_for_lines(lines)
+                    order = Order.objects.create(
+                        user=request.user,
+                        total=total,
+                        **form.cleaned_data,
+                    )
+                    for line in lines:
+                        OrderItem.objects.create(
+                            order=order,
+                            product=line["product"],
+                            product_title=line["product"].title,
+                            size=line["size"] or "",
+                            quantity=line["quantity"],
+                            unit_price=line["unit_price"],
+                        )
+            except InsufficientStockError as exc:
+                messages.error(request, str(exc))
+                return render(request, "website/checkout_page.html", {"form": form, "lines": lines, "total": total})
 
             clear_cart(request)
             send_order_notifications(order)
-            return redirect("order_success", order_id=order.id)
+
+            return_url = request.build_absolute_uri(reverse("order_success", args=[order.id]))
+            try:
+                payment_url = create_order_payment(order, return_url)
+            except Exception:
+                logger.exception("Не удалось создать платёж ЮKassa для заказа №%s", order.id)
+                mark_order_cancelled(order)
+                return redirect("order_success", order_id=order.id)
+
+            return redirect(payment_url)
     else:
         form = CheckoutForm(initial=initial)
 
@@ -153,7 +179,96 @@ def checkout_view(request):
 @login_required
 def order_success_view(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    return render(request, "website/order_success_page.html", {"order": order})
+
+    payment_state = None
+    if order.status == Order.STATUS_NEW and order.payment_id:
+        try:
+            order, _payment = sync_order_payment(order)
+        except PaymentAPIUnavailable:
+            payment_state = "unavailable"
+
+    if payment_state is None:
+        if order.status == Order.STATUS_PAID:
+            payment_state = "paid"
+        elif order.status == Order.STATUS_CANCELLED:
+            payment_state = "cancelled" if order.payment_id else "create_failed"
+        else:
+            payment_state = "pending"
+
+    return render(request, "website/order_success_page.html", {
+        "order": order,
+        "payment_state": payment_state,
+    })
+
+
+@login_required
+@require_POST
+def order_payment_retry_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.status == Order.STATUS_NEW and order.payment_id:
+        try:
+            order, _payment = sync_order_payment(order)
+        except PaymentAPIUnavailable:
+            messages.error(request, "Не удалось проверить оплату, попробуйте позже.")
+            return redirect("order_success", order_id=order.id)
+
+    if order.status != Order.STATUS_CANCELLED:
+        messages.error(request, "Этот заказ нельзя повторно оплатить.")
+        return redirect("order_success", order_id=order.id)
+
+    lines = [
+        {"product": item.product, "size": item.size, "quantity": item.quantity}
+        for item in order.items.all()
+        if item.product_id
+    ]
+
+    try:
+        with transaction.atomic():
+            reserve_stock_for_lines(lines)
+            # order.payment_id set = предыдущий Payment был реально создан и затем
+            # достоверно подтверждён как canceled через sync_order_payment() выше —
+            # это новая, независимая попытка оплаты, ей нужен новый Idempotence-Key.
+            # order.payment_id пустой = create_order_payment() тогда упал с
+            # исключением ДО получения payment.id (см. checkout_view/этот же view
+            # чуть ниже) — итог того вызова на стороне ЮKassa неизвестен, поэтому
+            # сохранённый payment_idempotence_key НЕ сбрасываем: если тот запрос
+            # всё же дошёл до ЮKassa, повтор с тем же ключом вернёт тот же Payment
+            # вместо создания дубликата.
+            if order.payment_id:
+                order.payment_idempotence_key = ""
+            order.status = Order.STATUS_NEW
+            order.payment_id = ""
+            order.save(update_fields=["status", "payment_id", "payment_idempotence_key"])
+    except InsufficientStockError as exc:
+        messages.error(request, str(exc))
+        return redirect("order_success", order_id=order.id)
+
+    return_url = request.build_absolute_uri(reverse("order_success", args=[order.id]))
+    try:
+        payment_url = create_order_payment(order, return_url)
+    except Exception:
+        logger.exception("Не удалось создать повторный платёж ЮKassa для заказа №%s", order.id)
+        mark_order_cancelled(order)
+        return redirect("order_success", order_id=order.id)
+
+    return redirect(payment_url)
+
+
+@csrf_exempt
+@require_POST
+def yookassa_webhook_view(request):
+    try:
+        process_webhook_event(request.body)
+    except WebhookMalformed:
+        return HttpResponseBadRequest()
+    except PaymentAPIUnavailable:
+        logger.error("ЮKassa webhook: API временно недоступно, запрошен повтор доставки")
+        return HttpResponse(status=502)
+    except Exception:
+        logger.exception("Ошибка обработки webhook ЮKassa")
+        return HttpResponseBadRequest()
+    return HttpResponse(status=200)
 
 
 @require_POST

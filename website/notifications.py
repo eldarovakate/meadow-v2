@@ -51,3 +51,30 @@ def send_order_notifications(order):
             )
         except Exception:
             logger.exception("Не удалось отправить Telegram-уведомление о заказе №%s", order.id)
+
+
+def send_payment_confirmed_notification(order):
+    """Отправляется ровно один раз — вызывается только из идемпотентного перехода NEW -> PAID."""
+    summary = _build_order_summary(order)
+    message = f"Оплата подтверждена.\n\n{summary}"
+
+    try:
+        send_mail(
+            subject=f"Заказ №{order.id} оплачен — Meadow Shore",
+            message=message,
+            from_email=None,
+            recipient_list=[settings.ORDER_NOTIFICATION_EMAIL],
+        )
+    except Exception:
+        logger.exception("Не удалось отправить email-уведомление об оплате заказа №%s", order.id)
+
+    if settings.TELEGRAM_BOT_TOKEN and settings.TELEGRAM_CHAT_ID:
+        try:
+            requests.post(
+                f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage",
+                data={"chat_id": settings.TELEGRAM_CHAT_ID, "text": message},
+                timeout=5,
+                proxies={"http": None, "https": None},
+            )
+        except Exception:
+            logger.exception("Не удалось отправить Telegram-уведомление об оплате заказа №%s", order.id)

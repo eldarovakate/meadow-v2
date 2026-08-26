@@ -15,5 +15,5 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ["id", "created_at", "full_name", "phone", "status", "total"]
     list_filter = ["status", "created_at"]
     search_fields = ["full_name", "phone", "email"]
-    readonly_fields = ["created_at", "user", "total"]
+    readonly_fields = ["created_at", "user", "total", "payment_id", "payment_idempotence_key"]
     inlines = [OrderItemInline]

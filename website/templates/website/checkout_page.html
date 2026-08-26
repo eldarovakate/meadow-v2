@@ -21,6 +21,12 @@
       <div class="account-card checkout-form-card">
         <h2 class="account-card__title">Данные для доставки</h2>
 
+        {% if messages %}
+        {% for message in messages %}
+        <div class="form-error">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
         <form class="contact-form" method="post" novalidate>
           {% csrf_token %}
 
@@ -73,7 +79,7 @@
             {{ form.comment }}
           </div>
 
-          <p class="checkout-note">Онлайн-оплата пока не подключена — после оформления мы свяжемся с вами, чтобы подтвердить заказ и способ оплаты.</p>
+          <p class="checkout-note">После подтверждения заказа вы перейдёте к оплате картой через ЮKassa.</p>
 
           <button type="submit" class="btn btn--primary btn--lg">Подтвердить заказ</button>
         </form>

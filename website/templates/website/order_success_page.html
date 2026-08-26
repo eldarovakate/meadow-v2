@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Заказ оформлен — Meadow Shore{% endblock %}
+{% block title %}Заказ №{{ order.id }} — Meadow Shore{% endblock %}
 {% block body_class %}order-success-page{% endblock %}
 
 {% block content %}
@@ -8,8 +8,42 @@
 <section class="empty-state-section">
   <div class="container">
     <div class="empty-state">
+
+      {% if messages %}
+      {% for message in messages %}
+      <p class="form-error">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+
+      {% if payment_state == "paid" %}
       <h1 class="order-success__title">Спасибо за заказ!</h1>
-      <p class="empty-state__text">Заказ №{{ order.id }} оформлен на сумму {{ order.total }} ₽.<br>Мы свяжемся с вами по телефону {{ order.phone }}, чтобы подтвердить детали и оплату.</p>
+      <p class="empty-state__text">Заказ №{{ order.id }} оплачен на сумму {{ order.total }} ₽.<br>Мы свяжемся с вами по телефону {{ order.phone }}, чтобы подтвердить детали доставки.</p>
+
+      {% elif payment_state == "pending" %}
+      <h1 class="order-success__title">Проверяем оплату</h1>
+      <p class="empty-state__text">Заказ №{{ order.id }} на сумму {{ order.total }} ₽ создан. Платёж обрабатывается — обновите страницу через минуту, если статус ещё не изменился.</p>
+
+      {% elif payment_state == "cancelled" %}
+      <h1 class="order-success__title">Платёж отменён</h1>
+      <p class="empty-state__text">Оплата заказа №{{ order.id }} не прошла. Заказ не подтверждён.</p>
+      <form method="post" action="{% url 'order_payment_retry' order.id %}" class="order-success__retry">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--primary">Повторить оплату</button>
+      </form>
+
+      {% elif payment_state == "create_failed" %}
+      <h1 class="order-success__title">Платёж не удалось создать</h1>
+      <p class="empty-state__text">Заказ №{{ order.id }} не оплачен. Попробуйте ещё раз или мы свяжемся с вами по телефону {{ order.phone }}.</p>
+      <form method="post" action="{% url 'order_payment_retry' order.id %}" class="order-success__retry">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--primary">Повторить оплату</button>
+      </form>
+
+      {% else %}
+      <h1 class="order-success__title">Не удалось подтвердить оплату</h1>
+      <p class="empty-state__text">Заказ №{{ order.id }} создан, но сейчас не получилось проверить статус платежа. Обновите страницу через минуту — заказ при этом не потерян.</p>
+      {% endif %}
+
       <a href="/catalog/" class="btn btn--outline">Вернуться в каталог</a>
     </div>
   </div>
