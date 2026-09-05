@@ -43,6 +43,24 @@
     </div>
   </section>
 
+  {% if is_preorder %}
+  <section class="prelaunch">
+    <div class="container">
+      <div class="prelaunch__grid reveal">
+        <div class="prelaunch__intro">
+          <span class="label prelaunch__label">Скоро</span>
+          <h2 class="prelaunch__title">Открытие продаж —<br>{{ sales_open_date_short_ru }}</h2>
+        </div>
+        <div class="prelaunch__details">
+          <p>Оранжевые футболки уже отправлены в печать. Следом появятся модели в тёплом терракотовом оттенке.</p>
+          <p class="prelaunch__note">До открытия продаж можно оформить предзаказ.</p>
+          <a href="/catalog/" class="prelaunch__cta">Смотреть каталог<span class="prelaunch__cta-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
   {% elif block.block_type == 'about' %}
   <section class="collection-story">
     <div class="container">

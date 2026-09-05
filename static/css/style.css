@@ -53,8 +53,15 @@
   --transition-base: 0.4s ease;
   --transition-slow: 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
-  /* Header height */
-  --header-h: 72px;
+  /* Header height. --header-box-h is the header's own literal box height;
+     --header-h is the "clear this much from the top" offset used everywhere
+     else (page-hero padding, scroll-margin, sticky tops) — normally equal to
+     --header-box-h, but grows by --announcement-h when the prelaunch
+     announcement bar is showing (see body.has-announcement below), so every
+     existing calc(var(--header-h) + ...) site adapts without being touched. */
+  --header-box-h: 72px;
+  --header-h: var(--header-box-h);
+  --announcement-h: 0px;
 }
 
 /* ============================================================
@@ -314,16 +321,59 @@ blockquote {
 }
 
 /* ============================================================
+   ANNOUNCEMENT BAR (prelaunch, SALES_MODE=preorder only)
+   ============================================================ */
+
+body.has-announcement {
+  --announcement-h: 40px;
+  --header-h: calc(var(--header-box-h) + var(--announcement-h));
+}
+
+.announcement-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  min-height: var(--announcement-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-forest);
+  padding: 0.5rem var(--container-pad);
+  text-align: center;
+}
+
+.announcement-bar__text {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  color: var(--color-ivory);
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  body.has-announcement {
+    --announcement-h: 56px;
+  }
+
+  .announcement-bar__text {
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================================
    7. SITE HEADER
    ============================================================ */
 
 .site-header {
   position: fixed;
-  top: 0;
+  top: var(--announcement-h);
   left: 0;
   right: 0;
   z-index: 1000;
-  height: var(--header-h);
+  height: var(--header-box-h);
   background: var(--color-ivory);
   box-shadow: 0 1px 0 var(--color-border);
 }
@@ -693,6 +743,105 @@ blockquote {
 
 .home-page .hero__cta:hover .hero__cta-arrow {
   transform: translateX(3px);
+}
+
+/* ============================================================
+   9b. PRELAUNCH SECTION (SALES_MODE=preorder only, homepage)
+   ============================================================ */
+
+.prelaunch {
+  /* Compact banner: content-driven height, no min-height. Bottom padding is
+     intentionally smaller than the top — the section right after this one
+     (featured products / "Первая коллекция") already carries its own large
+     top padding, so equal padding on both sides would stack into the huge
+     empty gap this section is specifically designed to avoid. */
+  padding: var(--space-lg) 0 var(--space-md);
+  background-color: var(--color-forest);
+}
+
+.prelaunch__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+.prelaunch__label {
+  color: var(--color-terracotta-light);
+}
+
+.prelaunch__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.65rem, 1.3rem + 1.6vw, 2.375rem);
+  font-weight: 400;
+  color: var(--color-ivory);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.prelaunch__details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  max-width: 520px;
+}
+
+.prelaunch__details p {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: rgba(248, 245, 239, 0.78);
+  margin: 0;
+}
+
+.prelaunch__details .prelaunch__note {
+  color: var(--color-ivory);
+}
+
+.prelaunch__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(248, 245, 239, 0.4);
+  padding-bottom: 0.3rem;
+  transition: border-color var(--transition-fast);
+}
+
+.prelaunch__cta:hover {
+  border-color: var(--color-ivory);
+}
+
+.prelaunch__cta-arrow {
+  transition: transform var(--transition-fast);
+}
+
+.prelaunch__cta:hover .prelaunch__cta-arrow {
+  transform: translateX(3px);
+}
+
+@media (min-width: 768px) {
+  .prelaunch {
+    padding: var(--space-xl) 0 var(--space-lg);
+  }
+
+  .prelaunch__grid {
+    grid-template-columns: minmax(240px, 34%) 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .prelaunch__title {
+    font-size: clamp(2rem, 1.5rem + 1.4vw, 2.5rem);
+  }
 }
 
 /* ============================================================
@@ -3639,7 +3788,7 @@ blockquote {
 @media (min-width: 1024px) {
 
   :root {
-    --header-h: 80px;
+    --header-box-h: 80px;
   }
 
   /* Header: переключение на desktop-раскладку (лого слева, меню справа,
@@ -3817,6 +3966,7 @@ blockquote {
    ============================================================ */
 
 @media print {
+  .announcement-bar,
   .site-header,
   .site-footer,
   .btn,

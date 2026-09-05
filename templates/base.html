@@ -19,8 +19,9 @@
 
   {% block extra_head %}{% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}{% if is_preorder %} has-announcement{% endif %}">
 
+  {% include "includes/announcement_bar.html" %}
   {% include "includes/header.html" %}
 
   <main id="main-content">
