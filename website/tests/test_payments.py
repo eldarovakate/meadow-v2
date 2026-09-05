@@ -35,9 +35,15 @@ def make_payment(payment_id, status, value, currency="RUB", order_id=None, metad
     )
 
 
-@override_settings(TELEGRAM_BOT_TOKEN="", TELEGRAM_CHAT_ID="")
+@override_settings(TELEGRAM_BOT_TOKEN="", TELEGRAM_CHAT_ID="", SALES_MODE="sales")
 class PaymentTestBase(TestCase):
-    """No real network calls: YooKassa client is mocked per-test, Telegram notifications are disabled here."""
+    """
+    No real network calls: YooKassa client is mocked per-test, Telegram notifications are disabled here.
+
+    SALES_MODE is pinned to "sales" here (this whole file is about the paid flow) so these
+    tests don't depend on whatever SALES_MODE happens to be set in the local .env — preorder-mode
+    behavior is covered separately in test_preorder.py, which overrides SALES_MODE explicitly.
+    """
 
     def setUp(self):
         root = Page.objects.get(id=1)

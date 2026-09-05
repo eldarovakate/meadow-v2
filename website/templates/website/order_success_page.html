@@ -15,7 +15,12 @@
       {% endfor %}
       {% endif %}
 
-      {% if payment_state == "paid" %}
+      {% if payment_state == "preorder" %}
+      <h1 class="order-success__title">Предзаказ оформлен</h1>
+      <p class="empty-state__text">Спасибо! Мы получили ваш предзаказ.<br>Оплата сейчас не требуется.<br>Открытие продаж Meadow Shore — {{ sales_open_date_ru }}.</p>
+      <p class="empty-state__text">Номер предзаказа: #{{ order.id }}</p>
+
+      {% elif payment_state == "paid" %}
       <h1 class="order-success__title">Спасибо за заказ!</h1>
       <p class="empty-state__text">Заказ №{{ order.id }} оплачен на сумму {{ order.total }} ₽.<br>Мы свяжемся с вами по телефону {{ order.phone }}, чтобы подтвердить детали доставки.</p>
 

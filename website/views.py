@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -137,12 +138,17 @@ def checkout_view(request):
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
+            # Единственный источник истины для preorder/sales — server-side settings.SALES_MODE,
+            # а не что-либо в request. Ниже это единственная развилка, решающая, вызывать ли ЮKassa.
+            is_preorder = settings.SALES_MODE == "preorder"
+
             try:
                 with transaction.atomic():
                     reserve_stock_for_lines(lines)
                     order = Order.objects.create(
                         user=request.user,
                         total=total,
+                        is_preorder=is_preorder,
                         **form.cleaned_data,
                     )
                     for line in lines:
@@ -160,6 +166,11 @@ def checkout_view(request):
 
             clear_cart(request)
             send_order_notifications(order)
+
+            if is_preorder:
+                # preorder = no payment: create_order_payment() (единственное место,
+                # откуда вызывается ЮKassa для нового заказа) здесь не вызывается вовсе.
+                return redirect("order_success", order_id=order.id)
 
             return_url = request.build_absolute_uri(reverse("order_success", args=[order.id]))
             try:
@@ -179,6 +190,12 @@ def checkout_view(request):
 @login_required
 def order_success_view(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.is_preorder:
+        return render(request, "website/order_success_page.html", {
+            "order": order,
+            "payment_state": "preorder",
+        })
 
     payment_state = None
     if order.status == Order.STATUS_NEW and order.payment_id:
@@ -205,6 +222,12 @@ def order_success_view(request, order_id):
 @require_POST
 def order_payment_retry_view(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.is_preorder:
+        # Защита в глубину: даже прямой POST на этот эндпоинт не должен запускать
+        # ЮKassa для предзаказа — тот же принцип, что и в checkout_view.
+        messages.error(request, "Предзаказ не требует оплаты.")
+        return redirect("order_success", order_id=order.id)
 
     if order.status == Order.STATUS_NEW and order.payment_id:
         try:

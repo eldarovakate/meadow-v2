@@ -27,7 +27,7 @@
         {% endfor %}
         {% endif %}
 
-        <form class="contact-form" method="post" novalidate>
+        <form class="contact-form" method="post" novalidate data-checkout-form>
           {% csrf_token %}
 
           <div class="form-group">
@@ -79,9 +79,13 @@
             {{ form.comment }}
           </div>
 
+          {% if is_preorder %}
+          <p class="checkout-note">Предзаказ не требует оплаты.<br>После оформления мы сохраним ваши данные и состав предзаказа.<br>Открытие продаж — {{ sales_open_date_ru }}.</p>
+          {% else %}
           <p class="checkout-note">После подтверждения заказа вы перейдёте к оплате картой через ЮKassa.</p>
+          {% endif %}
 
-          <button type="submit" class="btn btn--primary btn--lg">Подтвердить заказ</button>
+          <button type="submit" class="btn btn--primary btn--lg" data-checkout-submit>{% if is_preorder %}Оформить предзаказ{% else %}Подтвердить заказ{% endif %}</button>
         </form>
       </div>
 

@@ -94,7 +94,7 @@
           </div>
           {% endif %}
 
-          <button type="submit" class="btn btn--primary btn--lg add-to-cart-form__submit">Добавить в корзину</button>
+          <button type="submit" class="btn btn--primary btn--lg add-to-cart-form__submit">{% if is_preorder %}Добавить в предзаказ{% else %}Добавить в корзину{% endif %}</button>
         </form>
         {% endif %}
 

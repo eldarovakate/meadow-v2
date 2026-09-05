@@ -1,4 +1,5 @@
 import os
+from datetime import date
 from pathlib import Path
 from decouple import config, Csv
 
@@ -61,6 +62,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'website.context_processors.cart',
                 'website.context_processors.favorites',
+                'website.context_processors.sales_mode',
                 'wagtail.contrib.settings.context_processors.settings',
             ],
         },
@@ -110,3 +112,9 @@ TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID', default='')
 # ЮKassa
 YOOKASSA_SHOP_ID = config('YOOKASSA_SHOP_ID', default='')
 YOOKASSA_SECRET_KEY = config('YOOKASSA_SECRET_KEY', default='')
+
+# Режим продаж сайта: 'preorder' (оплата не запрашивается, только сбор предзаказов)
+# или 'sales' (обычный flow с оплатой через ЮKassa). Единственный источник истины —
+# это backend-проверка в website.views.checkout_view, а не текст на кнопках.
+SALES_MODE = config('SALES_MODE', default='sales')
+SALES_OPEN_DATE = date.fromisoformat(config('SALES_OPEN_DATE', default='2026-10-01'))

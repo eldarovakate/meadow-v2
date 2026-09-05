@@ -53,10 +53,13 @@
       {% endfor %}
     </div>
 
+    {% if is_preorder %}
+    <p class="checkout-note">Оплата сейчас не требуется. Продажи откроются {{ sales_open_date_ru }}.</p>
+    {% endif %}
     <div class="cart-summary">
       <span class="cart-summary__label">Итого</span>
       <span class="cart-summary__total">{{ total }} ₽</span>
-      <a href="{% url 'checkout' %}" class="btn btn--primary btn--lg cart-summary__checkout">Оформить заказ</a>
+      <a href="{% url 'checkout' %}" class="btn btn--primary btn--lg cart-summary__checkout">{% if is_preorder %}Оформить предзаказ{% else %}Оформить заказ{% endif %}</a>
     </div>
   </div>
 </section>

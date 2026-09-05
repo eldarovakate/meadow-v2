@@ -312,6 +312,11 @@ class Order(models.Model):
     total = models.PositiveIntegerField(default=0, verbose_name="Сумма заказа")
     payment_id = models.CharField(max_length=64, blank=True, verbose_name="ID платежа ЮKassa")
     payment_idempotence_key = models.CharField(max_length=64, blank=True, verbose_name="Idempotence-Key платежа")
+    is_preorder = models.BooleanField(
+        default=False,
+        verbose_name="Предзаказ",
+        help_text="Оформлен в режиме SALES_MODE=preorder — оплата через ЮKassa для него не запрашивалась.",
+    )
 
     class Meta:
         verbose_name = "Заказ"

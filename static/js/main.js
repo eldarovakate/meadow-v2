@@ -312,6 +312,17 @@ document.querySelectorAll('[data-cart-form]').forEach((form) => {
   });
 });
 
+// === Checkout: block double submit ===
+document.querySelectorAll('[data-checkout-form]').forEach((form) => {
+  form.addEventListener('submit', () => {
+    const btn = form.querySelector('[data-checkout-submit]');
+    if (!btn || btn.disabled) return;
+    btn.dataset.originalText = btn.textContent;
+    btn.textContent = 'Оформляем…';
+    btn.disabled = true;
+  });
+});
+
 // === Cart Quantity Stepper ===
 document.querySelectorAll('[data-cart-qty-form]').forEach((form) => {
   const input = form.querySelector('.cart-line__qty-input');
