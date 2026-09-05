@@ -30,8 +30,7 @@ class PrelaunchSectionTests(TestCase):
 
         self.assertContains(response, 'class="prelaunch">')
         self.assertContains(response, "Открытие продаж — 1 октября")
-        self.assertContains(response, "Оранжевые футболки уже отправлены в печать")
-        self.assertContains(response, "терракотовом оттенке")
+        self.assertContains(response, "До открытия продаж можно оформить предзаказ")
         self.assertContains(response, 'href="/catalog/"')
 
         content = response.content.decode()
