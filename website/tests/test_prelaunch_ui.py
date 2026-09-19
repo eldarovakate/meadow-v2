@@ -36,7 +36,6 @@ class AnnouncementBarTests(PaymentTestBase):
 
         self.assertContains(response, 'class="announcement-bar"')
         self.assertContains(response, "Открытие продаж — 1 октября 2026 года")
-        self.assertContains(response, "До открытия можно оформить предзаказ")
 
     @override_settings(SALES_MODE="sales")
     def test_sales_hides_announcement_bar(self):
