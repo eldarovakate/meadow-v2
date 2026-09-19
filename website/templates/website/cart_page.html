@@ -53,7 +53,7 @@
       {% endfor %}
     </div>
 
-    {% if is_preorder %}
+    {% if is_preorder and checkout_enabled %}
     <p class="checkout-note">Оплата сейчас не требуется. Продажи откроются {{ sales_open_date_ru }}.</p>
     {% endif %}
     <div class="cart-summary">
