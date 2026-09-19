@@ -11,10 +11,6 @@
 <section class="page-hero page-hero--account">
   <div class="container">
     <div class="page-hero__inner reveal">
-      <div class="page-hero__decor" aria-hidden="true">
-        <img src="{% static 'images/decor-tree.svg' %}" class="page-hero__decor-tree" alt="">
-        <img src="{% static 'images/decor-cone.svg' %}" class="page-hero__decor-cone" alt="">
-      </div>
       <h1 class="page-hero__title">Личный кабинет</h1>
       <div class="page-hero__sub">
         <p>Здравствуйте{% if user.first_name %}, {{ user.first_name }}{% endif %}!</p>

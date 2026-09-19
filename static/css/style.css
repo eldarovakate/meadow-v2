@@ -3558,27 +3558,9 @@ main#main-content > .catalog-section:first-child {
    34. ACCOUNT PAGE (ЛИЧНЫЙ КАБИНЕТ)
    ============================================================ */
 
-.page-hero--account .page-hero__inner {
-  position: relative;
-}
-
-.page-hero__decor {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
-}
-
-.page-hero__decor-tree {
-  height: 56px;
-  width: auto;
-  opacity: 0.85;
-}
-
-.page-hero__decor-cone {
-  height: 40px;
-  width: auto;
-  opacity: 0.85;
+.page-hero--account {
+  padding-top: calc(var(--header-h) + var(--space-md));
+  padding-bottom: var(--space-md);
 }
 
 .account-section {
