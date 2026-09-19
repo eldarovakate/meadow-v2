@@ -2579,7 +2579,8 @@ main#main-content > .catalog-section:first-child {
   pointer-events: none;
 }
 
-.product-card[hidden] {
+.product-card[hidden],
+.catalog-empty[hidden] {
   display: none;
 }
 
