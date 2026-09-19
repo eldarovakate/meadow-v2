@@ -49,7 +49,7 @@
       <div class="prelaunch__grid reveal">
         <div class="prelaunch__intro">
           <span class="label prelaunch__label">Скоро</span>
-          <h2 class="prelaunch__title">Открытие продаж —<br>{{ sales_open_date_short_ru }}</h2>
+          <h2 class="prelaunch__title">Открытие продаж — {{ sales_open_date_short_ru }}</h2>
         </div>
         <div class="prelaunch__details">
           <a href="/catalog/" class="prelaunch__cta">Смотреть коллекцию<span class="prelaunch__cta-arrow" aria-hidden="true">&rarr;</span></a>
@@ -276,6 +276,24 @@
   </section>
 
   {% elif block.block_type == 'cta' %}
+  {% if block.value.image %}
+  <section class="cta-section cta-section--split">
+    <div class="container">
+      <div class="cta-section__grid">
+        <div class="cta-section__visual reveal">
+          {% image block.value.image fill-1000x1250 class="cta-section__image" loading="lazy" decoding="async" alt="" %}
+        </div>
+        <div class="cta-section__text reveal reveal--delay">
+          <h2 class="cta-section__title">{{ block.value.title }}</h2>
+          {% if block.value.subtitle %}
+          <p class="cta-section__sub">{{ block.value.subtitle }}</p>
+          {% endif %}
+          <a href="{{ block.value.cta_url }}" class="cta-section__link">{{ block.value.cta_text }}<span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% else %}
   <section class="cta-section">
     <div class="container">
       <div class="cta-section__inner reveal">
@@ -287,6 +305,7 @@
       </div>
     </div>
   </section>
+  {% endif %}
 
   {% endif %}
 {% endfor %}

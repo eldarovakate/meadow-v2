@@ -202,6 +202,10 @@ class CTASectionBlock(blocks.StructBlock):
     subtitle = blocks.CharBlock(max_length=300, required=False, label="Подзаголовок")
     cta_text = blocks.CharBlock(max_length=100, label="Текст кнопки")
     cta_url = blocks.CharBlock(max_length=200, default="/catalog/", label="Ссылка")
+    image = ImageChooserBlock(
+        required=False, label="Изображение",
+        help_text="Необязательно. Если задано, блок отображается в виде фото + текст.",
+    )
 
     class Meta:
         icon = 'mail'

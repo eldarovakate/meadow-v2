@@ -750,28 +750,26 @@ body.has-announcement {
    ============================================================ */
 
 .prelaunch {
-  /* Compact banner: content-driven height, no min-height. Bottom padding is
-     intentionally smaller than the top — the section right after this one
-     (featured products / "Первая коллекция") already carries its own large
-     top padding, so equal padding on both sides would stack into the huge
-     empty gap this section is specifically designed to avoid. */
-  padding: var(--space-lg) 0 var(--space-md);
+  /* Compact transitional banner between hero and "Первая коллекция" —
+     content-driven height (~180-220px on desktop), not a full screen. */
+  padding: 1.75rem 0;
   background-color: var(--color-forest);
 }
 
 .prelaunch__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-md);
+  gap: 0.75rem;
 }
 
 .prelaunch__label {
   color: var(--color-terracotta-light);
+  margin-bottom: 0.2rem;
 }
 
 .prelaunch__title {
   font-family: var(--font-serif);
-  font-size: clamp(1.65rem, 1.3rem + 1.6vw, 2.375rem);
+  font-size: clamp(1.375rem, 1.2rem + 1vw, 1.75rem);
   font-weight: 400;
   color: var(--color-ivory);
   letter-spacing: -0.01em;
@@ -783,7 +781,6 @@ body.has-announcement {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.85rem;
   max-width: 520px;
 }
 
@@ -791,7 +788,6 @@ body.has-announcement {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.25rem;
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 500;
@@ -818,7 +814,7 @@ body.has-announcement {
 
 @media (min-width: 768px) {
   .prelaunch {
-    padding: var(--space-xl) 0 var(--space-lg);
+    padding: 2.75rem 0;
   }
 
   .prelaunch__grid {
@@ -828,7 +824,7 @@ body.has-announcement {
   }
 
   .prelaunch__title {
-    font-size: clamp(2rem, 1.5rem + 1.4vw, 2.5rem);
+    font-size: clamp(1.625rem, 1.4rem + 0.9vw, 1.875rem);
   }
 }
 
@@ -2004,6 +2000,72 @@ body.has-announcement {
   color: var(--color-text-muted);
   margin-bottom: var(--space-md);
   line-height: 1.7;
+}
+
+.cta-section--split .cta-section__title,
+.cta-section--split .cta-section__sub {
+  max-width: 480px;
+}
+
+.cta-section__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+}
+
+.cta-section__visual {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.cta-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cta-section__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cta-section__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-brown-dark);
+  text-decoration: none;
+}
+
+.cta-section__link span {
+  transition: transform var(--transition-fast);
+}
+
+.cta-section__link:hover {
+  color: var(--color-terracotta);
+}
+
+.cta-section__link:hover span {
+  transform: translateX(3px);
+}
+
+@media (min-width: 1024px) {
+  .cta-section--split {
+    padding: clamp(5rem, 4rem + 3vw, 7rem) 0;
+  }
+
+  .cta-section__grid {
+    grid-template-columns: minmax(320px, 41%) 1fr;
+    gap: clamp(60px, 6vw, 100px);
+    align-items: center;
+  }
 }
 
 /* ============================================================
