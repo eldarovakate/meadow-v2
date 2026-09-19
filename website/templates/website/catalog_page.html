@@ -22,10 +22,35 @@
 <section class="catalog-section">
   <div class="container">
     {% if products %}
-    <div class="products__grid">
+    <div class="catalog-filters">
+      <div class="catalog-filters__group">
+        <label class="catalog-filters__label" for="filter-color">Цвет</label>
+        <div class="filter-select-wrap">
+          <select id="filter-color" class="filter-select" data-filter="color">
+            <option value="">Все цвета</option>
+            <option value="milk">Молочный</option>
+            <option value="olive">Оливковый</option>
+          </select>
+        </div>
+      </div>
+      <div class="catalog-filters__group">
+        <label class="catalog-filters__label" for="filter-print">Тип принта</label>
+        <div class="filter-select-wrap">
+          <select id="filter-print" class="filter-select" data-filter="printType">
+            <option value="">Все принты</option>
+            <option value="embroidery">Вышивка</option>
+            <option value="print">Печать</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="products__grid" data-products-grid>
       {% for product in products %}
       {% include "includes/product_card.html" with product=product favorite_ids=favorite_ids %}
       {% endfor %}
+    </div>
+    <div class="catalog-empty" data-no-results hidden>
+      <p class="catalog-empty__text">По этим фильтрам ничего не найдено.</p>
     </div>
     {% else %}
     <div class="catalog-empty reveal">

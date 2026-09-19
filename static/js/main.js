@@ -258,6 +258,34 @@ document.querySelectorAll('[data-card-link]').forEach((card) => {
   });
 });
 
+// === Catalog Filters (color / print type) ===
+document.querySelectorAll('.catalog-filters').forEach((filters) => {
+  const grid = document.querySelector('[data-products-grid]');
+  const noResults = document.querySelector('[data-no-results]');
+  if (!grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.product-card'));
+  const selects = filters.querySelectorAll('[data-filter]');
+
+  const applyFilters = () => {
+    const active = {};
+    selects.forEach((select) => {
+      if (select.value) active[select.dataset.filter] = select.value;
+    });
+
+    let visibleCount = 0;
+    cards.forEach((card) => {
+      const matches = Object.entries(active).every(([key, value]) => card.dataset[key] === value);
+      card.hidden = !matches;
+      if (matches) visibleCount += 1;
+    });
+
+    if (noResults) noResults.hidden = visibleCount !== 0;
+  };
+
+  selects.forEach((select) => select.addEventListener('change', applyFilters));
+});
+
 // === Add to Cart ===
 document.querySelectorAll('[data-cart-form]').forEach((form) => {
   const sizeSelect = form.querySelector('select[name="size"]');

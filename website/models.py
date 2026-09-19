@@ -77,7 +77,9 @@ class CatalogPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        context['products'] = ProductPage.objects.child_of(self).live().order_by('-first_published_at')
+        context['products'] = ProductPage.objects.child_of(self).live().order_by(
+            'color', 'print_type', '-first_published_at'
+        )
         context['favorite_ids'] = get_favorite_ids(request)
         return context
 
@@ -114,8 +116,24 @@ class ProductSizeStock(models.Model):
 
 
 class ProductPage(Page):
+    COLOR_MILK = 'milk'
+    COLOR_OLIVE = 'olive'
+    COLOR_CHOICES = [
+        (COLOR_MILK, 'Молочный'),
+        (COLOR_OLIVE, 'Оливковый'),
+    ]
+
+    PRINT_EMBROIDERY = 'embroidery'
+    PRINT_PRINT = 'print'
+    PRINT_TYPE_CHOICES = [
+        (PRINT_EMBROIDERY, 'Вышивка'),
+        (PRINT_PRINT, 'Печать'),
+    ]
+
     collection_name = models.CharField(max_length=100, blank=True)
     short_description = models.CharField(max_length=300, blank=True)
+    color = models.CharField(max_length=20, choices=COLOR_CHOICES, default=COLOR_MILK, verbose_name="Цвет")
+    print_type = models.CharField(max_length=20, choices=PRINT_TYPE_CHOICES, default=PRINT_PRINT, verbose_name="Тип принта")
     main_image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -144,6 +162,8 @@ class ProductPage(Page):
         MultiFieldPanel([
             FieldPanel('collection_name'),
             FieldPanel('short_description'),
+            FieldPanel('color'),
+            FieldPanel('print_type'),
             FieldPanel('price'),
             FieldPanel('old_price'),
             FieldPanel('status'),

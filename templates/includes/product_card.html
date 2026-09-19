@@ -1,5 +1,5 @@
 {% load wagtailimages_tags favorite_tags %}
-<article class="product-card{% if extra_class %} {{ extra_class }}{% endif %}{% if card_variant == 'homepage' %} product-card--editorial{% endif %} reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}"{% if card_variant != 'homepage' %} data-card-link="{{ product.url }}"{% endif %}>
+<article class="product-card{% if extra_class %} {{ extra_class }}{% endif %}{% if card_variant == 'homepage' %} product-card--editorial{% endif %} reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}"{% if card_variant != 'homepage' %} data-card-link="{{ product.url }}"{% endif %} data-color="{{ product.color }}" data-print-type="{{ product.print_type }}">
   <div class="product-card__image-wrap" data-gallery>
     <a href="{{ product.url }}" class="product-card__image-link">
       {% for img in product.all_images %}
