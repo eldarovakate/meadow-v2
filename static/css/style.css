@@ -2493,6 +2493,15 @@ body.has-announcement {
   background-color: var(--color-ivory);
 }
 
+/* CatalogPage.intro_title is optional — when it's blank, .page-hero (the
+   normal source of top clearance under the fixed header) doesn't render at
+   all, and .catalog-section becomes the first element in <main>. Give it
+   its own header-clearing padding for exactly that case, so cards never
+   sit under the fixed header/announcement bar regardless of CMS content. */
+main#main-content > .catalog-section:first-child {
+  padding-top: calc(var(--header-h) + var(--space-xl));
+}
+
 .catalog-empty {
   text-align: center;
   padding: var(--space-2xl) 0;
