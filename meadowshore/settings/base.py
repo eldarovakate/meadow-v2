@@ -118,3 +118,8 @@ YOOKASSA_SECRET_KEY = config('YOOKASSA_SECRET_KEY', default='')
 # это backend-проверка в website.views.checkout_view, а не текст на кнопках.
 SALES_MODE = config('SALES_MODE', default='sales')
 SALES_OPEN_DATE = date.fromisoformat(config('SALES_OPEN_DATE', default='2026-10-01'))
+
+# Показывать ли кнопку "Оформить заказ/предзаказ" в корзине. По умолчанию включено
+# (нужно на локальной/тестовой среде, чтобы продолжать дорабатывать checkout);
+# на проде временно выключается через CHECKOUT_ENABLED=False в .env.
+CHECKOUT_ENABLED = config('CHECKOUT_ENABLED', default=True, cast=bool)

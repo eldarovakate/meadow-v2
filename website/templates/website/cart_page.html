@@ -59,7 +59,9 @@
     <div class="cart-summary">
       <span class="cart-summary__label">Итого</span>
       <span class="cart-summary__total">{{ total }} ₽</span>
+      {% if checkout_enabled %}
       <a href="{% url 'checkout' %}" class="btn btn--primary btn--lg cart-summary__checkout">{% if is_preorder %}Оформить предзаказ{% else %}Оформить заказ{% endif %}</a>
+      {% endif %}
     </div>
   </div>
 </section>

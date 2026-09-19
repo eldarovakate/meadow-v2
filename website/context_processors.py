@@ -18,4 +18,5 @@ def sales_mode(request):
         'is_preorder': settings.SALES_MODE == 'preorder',
         'sales_open_date_ru': format_date_ru(settings.SALES_OPEN_DATE),
         'sales_open_date_short_ru': format_date_ru_short(settings.SALES_OPEN_DATE),
+        'checkout_enabled': settings.CHECKOUT_ENABLED,
     }
