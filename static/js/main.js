@@ -1,9 +1,13 @@
 // Meadow Shore — main.js
 
 // === Force scroll-to-top on fresh loads (incl. bfcache restores), unless deep-linking to an anchor ===
+// The delayed re-assertion guards against the browser's own password-manager
+// autofill (e.g. Chrome scrolling to/highlighting a saved-password field)
+// jumping the page after our initial scroll-to-top has already run.
 window.addEventListener('pageshow', () => {
   if (!location.hash) {
     window.scrollTo(0, 0);
+    setTimeout(() => window.scrollTo(0, 0), 200);
   }
 });
 
