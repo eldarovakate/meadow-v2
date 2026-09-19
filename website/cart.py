@@ -68,12 +68,18 @@ def get_cart_lines(request):
             continue
         size = None if size == '-' else size
         unit_price = parse_price_to_int(product.price) or 0
+        max_quantity = None
+        size_stocks = list(product.size_stocks.all())
+        if size_stocks:
+            stock = next((s for s in size_stocks if s.size == size), None)
+            max_quantity = stock.quantity if stock else 0
         lines.append({
             'product': product,
             'size': size,
             'quantity': quantity,
             'unit_price': unit_price,
             'subtotal': unit_price * quantity,
+            'max_quantity': max_quantity,
         })
     return lines
 

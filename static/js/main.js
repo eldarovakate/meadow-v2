@@ -358,11 +358,21 @@ document.querySelectorAll('[data-cart-qty-form]').forEach((form) => {
   const incBtn = form.querySelector('[data-qty-increase]');
   if (!input) return;
 
+  const min = Number(input.min) || 1;
+  const max = input.max ? Number(input.max) : null;
+  const clamp = (value) => {
+    const bounded = Math.max(min, value);
+    return max !== null ? Math.min(max, bounded) : bounded;
+  };
+
   decBtn?.addEventListener('click', () => {
-    input.value = Math.max(1, Number(input.value) - 1);
+    input.value = clamp(Number(input.value) - 1);
   });
   incBtn?.addEventListener('click', () => {
-    input.value = Number(input.value) + 1;
+    input.value = clamp(Number(input.value) + 1);
+  });
+  input.addEventListener('change', () => {
+    input.value = clamp(Number(input.value) || min);
   });
 });
 

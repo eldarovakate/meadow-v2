@@ -36,7 +36,7 @@
         <form action="{% url 'cart_update' line.product.id line.size|default:'-' %}" method="post" class="cart-line__qty" data-cart-qty-form>
           {% csrf_token %}
           <button type="button" class="cart-line__qty-btn" data-qty-decrease aria-label="Уменьшить количество">−</button>
-          <input type="number" name="quantity" value="{{ line.quantity }}" min="1" class="cart-line__qty-input" aria-label="Количество">
+          <input type="number" name="quantity" value="{{ line.quantity }}" min="1"{% if line.max_quantity is not None %} max="{{ line.max_quantity }}"{% endif %} class="cart-line__qty-input" aria-label="Количество">
           <button type="button" class="cart-line__qty-btn" data-qty-increase aria-label="Увеличить количество">+</button>
           <button type="submit" class="cart-line__qty-submit">Обновить</button>
         </form>
