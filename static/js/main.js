@@ -3,11 +3,14 @@
 // === Force scroll-to-top on fresh loads (incl. bfcache restores), unless deep-linking to an anchor ===
 // The delayed re-assertion guards against the browser's own password-manager
 // autofill (e.g. Chrome scrolling to/highlighting a saved-password field)
-// jumping the page after our initial scroll-to-top has already run.
+// jumping the page after our initial scroll-to-top has already run. Both
+// calls use behavior: 'instant' to bypass the site-wide smooth-scroll CSS —
+// otherwise this correction itself becomes a visible glide up the page.
+const scrollToTopInstant = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 window.addEventListener('pageshow', () => {
   if (!location.hash) {
-    window.scrollTo(0, 0);
-    setTimeout(() => window.scrollTo(0, 0), 200);
+    scrollToTopInstant();
+    [50, 150, 300].forEach((delay) => setTimeout(scrollToTopInstant, delay));
   }
 });
 
