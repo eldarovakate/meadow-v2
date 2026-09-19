@@ -787,18 +787,6 @@ body.has-announcement {
   max-width: 520px;
 }
 
-.prelaunch__details p {
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.65;
-  color: rgba(248, 245, 239, 0.78);
-  margin: 0;
-}
-
-.prelaunch__details .prelaunch__note {
-  color: var(--color-ivory);
-}
-
 .prelaunch__cta {
   display: inline-flex;
   align-items: center;

@@ -53,12 +53,12 @@
     {% endif %}
     {% if card_variant != 'homepage' and product.status == 'available' %}
       {% if product.sorted_size_stocks %}
-      <a href="{{ product.url }}#add-to-cart" class="btn btn--primary product-card__add-btn">{% if is_preorder %}Добавить в предзаказ{% else %}Добавить в корзину{% endif %}</a>
+      <a href="{{ product.url }}#add-to-cart" class="btn btn--primary product-card__add-btn">Добавить в корзину</a>
       {% else %}
       <form action="{% url 'cart_add' product.id %}" method="post" class="product-card__add-btn-form" data-cart-form>
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ product.url }}">
-        <button type="submit" class="btn btn--primary product-card__add-btn add-to-cart-form__submit">{% if is_preorder %}Добавить в предзаказ{% else %}Добавить в корзину{% endif %}</button>
+        <button type="submit" class="btn btn--primary product-card__add-btn add-to-cart-form__submit">Добавить в корзину</button>
       </form>
       {% endif %}
     {% endif %}
