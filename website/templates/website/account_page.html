@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static wagtailimages_tags %}
 
 {% block title %}Личный кабинет — Meadow Shore{% endblock %}
 {% block body_class %}account-page{% endblock %}
@@ -100,11 +100,49 @@
 
         <div class="account-card" id="orders">
           <h2 class="account-card__title">Заказы</h2>
+          {% if orders %}
+          <div class="account-orders">
+            {% for order in orders %}
+            <div class="account-order">
+              <div class="account-order__header">
+                <span class="account-order__number">Заказ №{{ order.id }}</span>
+                <span class="account-order__date">{{ order.created_at|date:"d.m.Y, H:i" }}</span>
+                <span class="account-order__status">{{ order.get_status_display }}</span>
+              </div>
+              <div class="account-order__items">
+                {% for item in order.items.all %}
+                <div class="account-order__item">
+                  <a href="{% if item.product %}{{ item.product.url }}{% endif %}" class="account-order__item-image">
+                    {% if item.product.main_image %}
+                    {% image item.product.main_image fill-120x150 class="account-order__item-img" %}
+                    {% else %}
+                    <div class="product-card__placeholder"></div>
+                    {% endif %}
+                  </a>
+                  <div class="account-order__item-body">
+                    <span class="account-order__item-title">{{ item.product_title }}</span>
+                    <span class="account-order__item-meta">
+                      {% if item.size %}Размер {{ item.size }}{% endif %}
+                      {% if item.product %}{% if item.product.color %} · {{ item.product.get_color_display }}{% endif %}{% if item.product.print_type %} · {{ item.product.get_print_type_display }}{% endif %}{% endif %}
+                    </span>
+                    <span class="account-order__item-qty">{{ item.quantity }} × {{ item.unit_price }} ₽</span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="account-order__footer">
+                <span class="account-order__total">Итого: {{ order.total }} ₽</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
           <div class="account-empty">
             <img src="{% static 'images/decor-cone.svg' %}" class="account-empty__icon" alt="">
             <p class="account-empty__text">Заказов пока нет. Здесь появится история ваших покупок.</p>
             <a href="/catalog/" class="btn btn--outline">Смотреть каталог</a>
           </div>
+          {% endif %}
         </div>
 
         <div class="account-card" id="address">

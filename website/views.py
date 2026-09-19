@@ -99,10 +99,13 @@ def account_view(request):
         messages.success(request, "Пароль изменён.")
         return redirect("account")
 
+    orders = request.user.orders.all().prefetch_related('items__product__main_image')
+
     return render(request, "website/account_page.html", {
         "profile_form": profile_form,
         "address_form": address_form,
         "password_form": password_form,
+        "orders": orders,
     })
 
 
