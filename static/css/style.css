@@ -1388,7 +1388,7 @@ body.has-announcement {
    16. PRODUCTS GRID STYLES
    ============================================================ */
 
-.home-page .featured-products {
+.featured-products {
   padding: clamp(4.5rem, 3.625rem + 5vw, 8.75rem) 0;
   background-color: var(--color-ivory);
 }
