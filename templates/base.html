@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Meadow Shore — дизайнерская одежда с природным характером. Плотные футболки с реалистичными лесными принтами.">
+  <meta name="description" content="{% firstof page.search_description "Meadow Shore — дизайнерская одежда с природным характером. Плотные футболки с реалистичными лесными принтами." %}">
   <title>{% block title %}{{ page.title }} — Meadow Shore{% endblock %}</title>
 
   <script>if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }</script>
