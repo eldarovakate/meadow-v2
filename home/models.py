@@ -98,6 +98,19 @@ class AboutSectionBlock(blocks.StructBlock):
     detail_two = blocks.CharBlock(max_length=100, required=False, label="Деталь 2")
     detail_three = blocks.CharBlock(max_length=100, required=False, label="Деталь 3")
     image = ImageChooserBlock(required=False, label="Изображение")
+    cta_text = blocks.CharBlock(max_length=100, required=False, label="Текст ссылки (необязательно)")
+    cta_url = blocks.CharBlock(
+        max_length=200, required=False, label="Ссылка (необязательно)",
+        help_text="Внутренняя ссылка (например /catalog/) или полный URL",
+    )
+
+    def clean(self, value):
+        result = super().clean(value)
+        try:
+            validate_cta_url(result.get('cta_url'))
+        except ValidationError as e:
+            raise blocks.StructBlockValidationError(block_errors={'cta_url': e})
+        return result
 
     class Meta:
         icon = 'doc-full'
@@ -106,6 +119,7 @@ class AboutSectionBlock(blocks.StructBlock):
 
 class CollectionSectionBlock(blocks.StructBlock):
     title = blocks.CharBlock(max_length=200, label="Заголовок секции")
+    intro = blocks.RichTextBlock(required=False, label="Вступительный текст")
     cards = blocks.ListBlock(CollectionCardBlock(), label="Карточки")
 
     class Meta:
@@ -191,6 +205,19 @@ class PhilosophySectionBlock(blocks.StructBlock):
     quote = blocks.TextBlock(label="Цитата / философия")
     attribution = blocks.CharBlock(max_length=100, required=False, label="Подпись")
     body = blocks.RichTextBlock(required=False, label="Текст")
+    cta_text = blocks.CharBlock(max_length=100, required=False, label="Текст ссылки (необязательно)")
+    cta_url = blocks.CharBlock(
+        max_length=200, required=False, label="Ссылка (необязательно)",
+        help_text="Внутренняя ссылка (например /catalog/) или полный URL",
+    )
+
+    def clean(self, value):
+        result = super().clean(value)
+        try:
+            validate_cta_url(result.get('cta_url'))
+        except ValidationError as e:
+            raise blocks.StructBlockValidationError(block_errors={'cta_url': e})
+        return result
 
     class Meta:
         icon = 'openquote'
@@ -218,6 +245,19 @@ class ObservationSectionBlock(blocks.StructBlock):
     body = blocks.RichTextBlock(label="Текст")
     image = ImageChooserBlock(label="Изображение")
     caption = blocks.CharBlock(max_length=150, required=False, label="Подпись под изображением")
+    cta_text = blocks.CharBlock(max_length=100, required=False, label="Текст ссылки (необязательно)")
+    cta_url = blocks.CharBlock(
+        max_length=200, required=False, label="Ссылка (необязательно)",
+        help_text="Внутренняя ссылка (например /catalog/) или полный URL",
+    )
+
+    def clean(self, value):
+        result = super().clean(value)
+        try:
+            validate_cta_url(result.get('cta_url'))
+        except ValidationError as e:
+            raise blocks.StructBlockValidationError(block_errors={'cta_url': e})
+        return result
 
     class Meta:
         icon = 'view'

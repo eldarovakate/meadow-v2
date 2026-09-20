@@ -11,52 +11,31 @@ from modelcluster.fields import ParentalKey
 from wagtail.contrib.forms.models import AbstractFormField, AbstractEmailForm
 from wagtail.contrib.forms.panels import FormSubmissionsPanel
 
+from home.models import (
+    AboutSectionBlock,
+    CollectionSectionBlock,
+    FabricSectionBlock,
+    HeroSectionBlock,
+    ObservationSectionBlock,
+    PhilosophySectionBlock,
+)
+
 from .favorites import get_favorite_ids
 from .utils import parse_price_to_int
 
 
 class AboutPage(Page):
-    tagline = models.CharField(max_length=100, blank=True, default="О нас")
-    hero_title = models.CharField(max_length=200, default="Тихая красота природы")
-    hero_subtitle = RichTextField(blank=True)
-
-    story_title = models.CharField(max_length=200, blank=True, default="История бренда")
-    story_body = RichTextField(blank=True)
-
-    values_title = models.CharField(max_length=200, blank=True, default="Наши ценности")
-    value_one_title = models.CharField(max_length=100, blank=True)
-    value_one_body = models.TextField(blank=True)
-    value_two_title = models.CharField(max_length=100, blank=True)
-    value_two_body = models.TextField(blank=True)
-    value_three_title = models.CharField(max_length=100, blank=True)
-    value_three_body = models.TextField(blank=True)
-    value_four_title = models.CharField(max_length=100, blank=True)
-    value_four_body = models.TextField(blank=True)
-
-    closing_quote = models.TextField(blank=True)
+    body = StreamField([
+        ('hero', HeroSectionBlock()),
+        ('about', AboutSectionBlock()),
+        ('collections', CollectionSectionBlock()),
+        ('observation', ObservationSectionBlock()),
+        ('fabric', FabricSectionBlock()),
+        ('philosophy', PhilosophySectionBlock()),
+    ], use_json_field=True, blank=True)
 
     content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            FieldPanel('tagline'),
-            FieldPanel('hero_title'),
-            FieldPanel('hero_subtitle'),
-        ], heading="Hero"),
-        MultiFieldPanel([
-            FieldPanel('story_title'),
-            FieldPanel('story_body'),
-        ], heading="История"),
-        MultiFieldPanel([
-            FieldPanel('values_title'),
-            FieldPanel('value_one_title'),
-            FieldPanel('value_one_body'),
-            FieldPanel('value_two_title'),
-            FieldPanel('value_two_body'),
-            FieldPanel('value_three_title'),
-            FieldPanel('value_three_body'),
-            FieldPanel('value_four_title'),
-            FieldPanel('value_four_body'),
-        ], heading="Ценности"),
-        FieldPanel('closing_quote'),
+        FieldPanel('body'),
     ]
 
     class Meta:

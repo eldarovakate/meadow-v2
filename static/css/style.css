@@ -897,6 +897,30 @@ body.has-announcement {
   color: var(--color-stone);
 }
 
+.home-page .collection-story__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-brown-dark);
+  text-decoration: none;
+}
+
+.home-page .collection-story__cta span {
+  transition: transform var(--transition-fast);
+}
+
+.home-page .collection-story__cta:hover {
+  color: var(--color-terracotta);
+}
+
+.home-page .collection-story__cta:hover span {
+  transform: translateX(3px);
+}
+
 .home-page .collection-story__visual {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -997,6 +1021,32 @@ body.has-announcement {
   margin-bottom: 0;
 }
 
+.home-page .observation__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-ivory);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(248, 245, 239, 0.4);
+  padding-bottom: 0.3rem;
+}
+
+.home-page .observation__cta span {
+  transition: transform var(--transition-fast);
+}
+
+.home-page .observation__cta:hover {
+  border-color: var(--color-ivory);
+}
+
+.home-page .observation__cta:hover span {
+  transform: translateX(3px);
+}
+
 .home-page .observation__visual {
   position: relative;
 }
@@ -1057,6 +1107,17 @@ body.has-announcement {
 .collections {
   padding: var(--space-xl) 0;
   background-color: var(--color-beige);
+}
+
+.collections__intro {
+  max-width: 640px;
+  margin: 0 auto;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.collections__intro p {
+  margin: 0;
 }
 
 .collections__grid {
@@ -1970,6 +2031,34 @@ body.has-announcement {
 .philosophy__body p {
   color: var(--color-sand);
   line-height: 1.8;
+}
+
+.philosophy__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: var(--space-md);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(248, 245, 239, 0.4);
+  padding-bottom: 0.3rem;
+}
+
+.philosophy__cta span {
+  transition: transform var(--transition-fast);
+}
+
+.philosophy__cta:hover {
+  border-color: var(--color-ivory);
+}
+
+.philosophy__cta:hover span {
+  transform: translateX(3px);
 }
 
 /* ============================================================

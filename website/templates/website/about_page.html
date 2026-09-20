@@ -1,83 +1,204 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
-{% block body_class %}about-page{% endblock %}
+{% block body_class %}about-page home-page{% endblock %}
 
 {% block content %}
 
-<section class="page-hero">
-  <div class="container">
-    <div class="page-hero__inner reveal">
-      {% if page.tagline %}
-      <span class="label">{{ page.tagline }}</span>
-      {% endif %}
-      <h1 class="page-hero__title">{{ page.hero_title }}</h1>
-      {% if page.hero_subtitle %}
-      <div class="page-hero__sub richtext">{{ page.hero_subtitle|richtext }}</div>
-      {% endif %}
-    </div>
-  </div>
-</section>
+{% for block in page.body %}
 
-{% if page.story_body %}
-<section class="about-story">
-  <div class="container">
-    <div class="about-story__grid">
-      <div class="about-story__header reveal">
-        <h2 class="about-story__title">{{ page.story_title }}</h2>
-      </div>
-      <div class="about-story__body richtext reveal reveal--delay">
-        {{ page.story_body|richtext }}
+  {% if block.block_type == 'hero' %}
+  <section class="hero" id="hero">
+    {% if block.value.image %}
+    <div class="hero__bg">
+      {% image block.value.image fill-1920x1080 as hero_bg_desktop %}
+      {% image block.value.image fill-900x1200 as hero_bg_mobile %}
+      <picture>
+        <source media="(min-width: 768px)" srcset="{{ hero_bg_desktop.url }}">
+        <img
+          src="{{ hero_bg_mobile.url }}"
+          width="{{ hero_bg_mobile.width }}"
+          height="{{ hero_bg_mobile.height }}"
+          alt=""
+          class="hero__bg-img"
+          fetchpriority="high"
+        >
+      </picture>
+    </div>
+    {% endif %}
+    <div class="hero__overlay"></div>
+    <div class="hero__content container">
+      <div class="hero__text">
+        {% if block.value.eyebrow %}
+        <p class="hero__eyebrow">{{ block.value.eyebrow }}</p>
+        {% endif %}
+        <h1 class="hero__headline">{{ block.value.headline }}</h1>
+        {% if block.value.subheadline %}
+        <p class="hero__sub">{{ block.value.subheadline }}</p>
+        {% endif %}
+        {% if block.value.cta_text %}
+        <a href="{% firstof block.value.cta_url '/catalog/' %}" class="hero__cta">
+          {{ block.value.cta_text }}<span class="hero__cta-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+        {% endif %}
       </div>
     </div>
-  </div>
-</section>
-{% endif %}
+  </section>
 
-{% if page.value_one_title %}
-<section class="about-values">
-  <div class="container">
-    <div class="section-header reveal">
-      <h2 class="section-title">{{ page.values_title }}</h2>
+  {% elif block.block_type == 'about' %}
+  <section class="collection-story">
+    <div class="container">
+      <div class="collection-story__grid">
+        <div class="collection-story__text reveal">
+          {% if block.value.tagline %}
+          <p class="collection-story__eyebrow">{{ block.value.tagline }}</p>
+          {% endif %}
+          <h2 class="collection-story__title">{{ block.value.title }}</h2>
+          <div class="collection-story__body richtext">{{ block.value.body }}</div>
+          {% if block.value.detail_one or block.value.detail_two or block.value.detail_three %}
+          <div class="collection-story__details">
+            {% if block.value.detail_one %}<span>{{ block.value.detail_one }}</span>{% endif %}
+            {% if block.value.detail_two %}<span>{{ block.value.detail_two }}</span>{% endif %}
+            {% if block.value.detail_three %}<span>{{ block.value.detail_three }}</span>{% endif %}
+          </div>
+          {% endif %}
+          {% if block.value.cta_text %}
+          <a href="{% firstof block.value.cta_url '/catalog/' %}" class="collection-story__cta">{{ block.value.cta_text }}<span aria-hidden="true">&rarr;</span></a>
+          {% endif %}
+        </div>
+        {% if block.value.image %}
+        <div class="collection-story__visual reveal reveal--delay">
+          {% image block.value.image fill-1000x1250 class="collection-story__image" loading="lazy" decoding="async" alt=block.value.title %}
+        </div>
+        {% endif %}
+      </div>
     </div>
-    <div class="values-grid">
-      {% if page.value_one_title %}
-      <div class="value-item reveal reveal--stagger" style="--stagger: 0">
-        <h3 class="value-item__title">{{ page.value_one_title }}</h3>
-        <p>{{ page.value_one_body }}</p>
-      </div>
-      {% endif %}
-      {% if page.value_two_title %}
-      <div class="value-item reveal reveal--stagger" style="--stagger: 1">
-        <h3 class="value-item__title">{{ page.value_two_title }}</h3>
-        <p>{{ page.value_two_body }}</p>
-      </div>
-      {% endif %}
-      {% if page.value_three_title %}
-      <div class="value-item reveal reveal--stagger" style="--stagger: 2">
-        <h3 class="value-item__title">{{ page.value_three_title }}</h3>
-        <p>{{ page.value_three_body }}</p>
-      </div>
-      {% endif %}
-      {% if page.value_four_title %}
-      <div class="value-item reveal reveal--stagger" style="--stagger: 3">
-        <h3 class="value-item__title">{{ page.value_four_title }}</h3>
-        <p>{{ page.value_four_body }}</p>
-      </div>
-      {% endif %}
-    </div>
-  </div>
-</section>
-{% endif %}
+  </section>
 
-{% if page.closing_quote %}
-<section class="philosophy">
-  <div class="container">
-    <div class="philosophy__inner reveal">
-      <blockquote class="philosophy__quote">{{ page.closing_quote }}</blockquote>
+  {% elif block.block_type == 'collections' %}
+  <section class="collections">
+    <div class="container">
+      {% if block.value.title or block.value.intro %}
+      <div class="section-header collections__header reveal">
+        {% if block.value.title %}
+        <h2 class="section-title">{{ block.value.title }}</h2>
+        {% endif %}
+        {% if block.value.intro %}
+        <div class="collections__intro richtext">{{ block.value.intro }}</div>
+        {% endif %}
+      </div>
+      {% endif %}
+      <div class="collections__grid">
+        {% for card in block.value.cards %}
+        <article class="collection-card reveal reveal--stagger" style="--stagger: {{ forloop.counter0 }}">
+          <div class="collection-card__image-wrap">
+            {% if card.image %}
+            {% image card.image width-600 class="collection-card__image" alt=card.title %}
+            {% else %}
+            <div class="collection-card__placeholder"></div>
+            {% endif %}
+          </div>
+          <div class="collection-card__body">
+            {% if card.subtitle %}<span class="label">{{ card.subtitle }}</span>{% endif %}
+            <h3 class="collection-card__title">{{ card.title }}</h3>
+            {% if card.description %}<p class="collection-card__desc">{{ card.description }}</p>{% endif %}
+            {% if card.link_url %}
+            <a href="{{ card.link_url }}" class="collection-card__link">{{ card.link_text }} &rarr;</a>
+            {% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
     </div>
-  </div>
-</section>
-{% endif %}
+  </section>
+
+  {% elif block.block_type == 'observation' %}
+  <section class="observation">
+    <div class="container">
+      <div class="observation__grid">
+        <div class="observation__text reveal">
+          <p class="observation__eyebrow">{{ block.value.eyebrow }}</p>
+          <h2 class="observation__title">{{ block.value.title }}</h2>
+          <div class="observation__body richtext">{{ block.value.body }}</div>
+          {% if block.value.cta_text %}
+          <a href="{% firstof block.value.cta_url '/catalog/' %}" class="observation__cta">{{ block.value.cta_text }}<span aria-hidden="true">&rarr;</span></a>
+          {% endif %}
+        </div>
+        <div class="observation__visual reveal reveal--delay">
+          {% image block.value.image fill-1000x1000 class="observation__image" loading="lazy" decoding="async" alt=block.value.caption|default:block.value.title %}
+          {% if block.value.caption %}
+          <p class="observation__caption">{{ block.value.caption }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% elif block.block_type == 'fabric' %}
+  <section class="fabric">
+    <div class="container">
+      <div class="fabric__grid">
+        <div class="fabric__visual reveal">
+          {% if block.value.image %}
+          {% image block.value.image width-800 class="fabric__image" alt=block.value.title %}
+          {% else %}
+          <div class="fabric__image-placeholder">
+            <div class="fabric__texture-overlay"></div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="fabric__content reveal reveal--delay">
+          {% if block.value.tagline %}
+          <span class="label">{{ block.value.tagline }}</span>
+          {% endif %}
+          <h2 class="fabric__title">{{ block.value.title }}</h2>
+          <div class="fabric__body richtext">{{ block.value.body }}</div>
+          <div class="fabric__stats">
+            {% if block.value.stat_one_value %}
+            <div class="fabric__stat">
+              <span class="fabric__stat-value">{{ block.value.stat_one_value }}</span>
+              <span class="fabric__stat-label">{{ block.value.stat_one_label }}</span>
+            </div>
+            {% endif %}
+            {% if block.value.stat_two_value %}
+            <div class="fabric__stat">
+              <span class="fabric__stat-value">{{ block.value.stat_two_value }}</span>
+              <span class="fabric__stat-label">{{ block.value.stat_two_label }}</span>
+            </div>
+            {% endif %}
+            {% if block.value.stat_three_value %}
+            <div class="fabric__stat">
+              <span class="fabric__stat-value">{{ block.value.stat_three_value }}</span>
+              <span class="fabric__stat-label">{{ block.value.stat_three_label }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% elif block.block_type == 'philosophy' %}
+  <section class="philosophy">
+    <div class="container">
+      <div class="philosophy__inner reveal">
+        <blockquote class="philosophy__quote">
+          {{ block.value.quote }}
+        </blockquote>
+        {% if block.value.attribution %}
+        <cite class="philosophy__attr">{{ block.value.attribution }}</cite>
+        {% endif %}
+        {% if block.value.body %}
+        <div class="philosophy__body richtext">{{ block.value.body }}</div>
+        {% endif %}
+        {% if block.value.cta_text %}
+        <a href="{% firstof block.value.cta_url '/catalog/' %}" class="philosophy__cta">{{ block.value.cta_text }}<span aria-hidden="true">&rarr;</span></a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% endif %}
+{% endfor %}
 
 {% endblock %}
