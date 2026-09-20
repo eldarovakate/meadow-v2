@@ -357,3 +357,29 @@ def favorite_toggle_view(request, page_id):
 
     next_url = request.POST.get("next") or "/"
     return redirect(next_url)
+
+
+def design_lab_home_blocks_view(request):
+    """Internal, non-CMS showcase of 10 alternative homepage image-section
+    layouts. Not linked from navigation, not a Wagtail page — pure dev route
+    for comparing composition ideas before any of them are considered for
+    the real homepage."""
+    from wagtail.images.models import Image as WagtailImage
+
+    def img(title):
+        return WagtailImage.objects.filter(title=title).first()
+
+    context = {
+        "hero_image": img("PsuGkckF-ND-VxnaQdfUhUR35BIpCEETnXUuhR163Qdl0qhOz8oba4GxStPptuksTIQPFciaSKiEzRfIdUlV6Gj2"),
+        "sunset_image": img("Закат в лесу, макро"),
+        "fabric_detail_image": img("DSC06505"),
+        "hanging_shirt_image": img("DSC06487"),
+        "bird_embroidery_image": img("DSC06385"),
+        "bird_on_garment_image": img("Певчая птица_вышивка_молочная_дома"),
+        "bird_embroidery_flat_image": img("Вышивка. 04. Птица певчая_Вышивка_2.jpg"),
+        "model_field_image": img("DSC09128.jpg"),
+        "model_back_squirrel_image": img("DSC09147.jpg"),
+        "model_back_squirrel_close_image": img("DSC09171.jpg"),
+        "model_bird_portrait_image": img("DSC09196.jpg"),
+    }
+    return render(request, "website/design_lab_home_blocks.html", context)

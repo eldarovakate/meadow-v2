@@ -1,0 +1,28 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Prototype 06 — Magazine spread.
+  Props: image_left, image_right, eyebrow, title_line_1, title_line_2, body.
+  Composition: two photos of different sizes at different vertical offsets,
+  a heading that sits off to the side rather than centered between them,
+  and body text placed independently — not a symmetric 50/50 grid.
+{% endcomment %}
+<section class="proto proto-magazine">
+  <div class="container">
+    <div class="proto-magazine__grid">
+      <div class="proto-magazine__photo proto-magazine__photo--left">
+        {% image image_left fill-700x950 class="proto-magazine__img" loading="lazy" decoding="async" alt="Лес, утренний туман" %}
+      </div>
+
+      <div class="proto-magazine__heading reveal">
+        <h2 class="proto-magazine__title">{% firstof title_line_1 "ТИХИЙ" %}<br>{% firstof title_line_2 "ЛЕС" %}</h2>
+        <p class="proto-magazine__eyebrow">{% firstof eyebrow "MEADOW SHORE · КОЛЛЕКЦИЯ 01" %}</p>
+      </div>
+
+      <div class="proto-magazine__photo proto-magazine__photo--right">
+        {% image image_right fill-800x1150 class="proto-magazine__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore в лесу" %}
+      </div>
+
+      <p class="proto-magazine__body">{% firstof body "Лес не задаёт вопросов и не требует ответов. В этом молчании и держится вся коллекция «Лесные жители» — тихая, но не пустая." %}</p>
+    </div>
+  </div>
+</section>

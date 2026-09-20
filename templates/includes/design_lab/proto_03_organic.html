@@ -1,0 +1,22 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Prototype 03 — Organic image mask.
+  Props: image, eyebrow, title, body.
+  Composition: a responsive CSS clip-path polygon approximates one softly
+  extended corner and one gently rounded corner — mostly rectangular, not a
+  2020-SaaS blob. Percentage-based points, so it stays correct at any size.
+{% endcomment %}
+<section class="proto proto-organic">
+  <div class="container">
+    <div class="proto-organic__grid">
+      <div class="proto-organic__visual">
+        {% image image fill-1000x1200 class="proto-organic__img" loading="lazy" decoding="async" alt="Вышивка «Певчая птица» на футболке Meadow Shore" %}
+      </div>
+      <div class="proto-organic__text reveal">
+        <p class="proto-organic__eyebrow">{% firstof eyebrow "Наблюдение № 01" %}</p>
+        <h2 class="proto-organic__title">{% firstof title "Лесная птица" %}</h2>
+        <p class="proto-organic__body">{% firstof body "Небольшую птицу среди ветвей можно не заметить сразу. Сначала взгляд цепляется за движение, затем за силуэт, и только потом — за цвет перьев среди хвои." %}</p>
+      </div>
+    </div>
+  </div>
+</section>

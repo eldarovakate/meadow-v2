@@ -1,0 +1,1108 @@
+/* ============================================================
+   DESIGN LAB — /design-lab/home-blocks/
+   Loaded only on this page (see extra_head block). Reuses every
+   custom property, font and .reveal/.container mechanism already
+   defined in style.css — no tokens are redefined here.
+   ============================================================ */
+
+.design-lab-page main#main-content {
+  background-color: var(--color-ivory);
+}
+
+/* --- Page intro + specimen labels (lab chrome, not part of any prototype) */
+
+.lab-intro {
+  padding: calc(var(--header-h) + var(--space-xl)) 0 var(--space-lg);
+  background-color: var(--color-beige);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.lab-intro__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-terracotta);
+  margin-bottom: var(--space-xs);
+}
+
+.lab-intro__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 1.4rem + 2vw, 2.75rem);
+  font-weight: 400;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.lab-intro__body {
+  max-width: 620px;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.lab-specimen {
+  position: relative;
+  margin-bottom: var(--space-2xl);
+}
+
+.lab-specimen__label {
+  margin: 0;
+  padding: var(--space-sm) var(--container-pad);
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-stone);
+  background-color: var(--color-white);
+}
+
+.proto {
+  overflow: hidden;
+}
+
+/* ============================================================
+   01 — FULL-BLEED PHOTO + TYPOGRAPHY OVERLAY
+   ============================================================ */
+
+.proto-bleed {
+  position: relative;
+  min-height: 560px;
+  height: 78vh;
+  max-height: 820px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.proto-bleed__media {
+  position: absolute;
+  inset: 0;
+}
+
+.proto-bleed__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.proto-bleed__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(21, 16, 10, 0.75) 0%, rgba(21, 16, 10, 0.34) 42%, transparent 68%);
+}
+
+.proto-bleed__content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-bottom: var(--space-xl);
+  max-width: 640px;
+  color: var(--color-ivory);
+}
+
+.proto-bleed__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-terracotta-light);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-bleed__title {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 1.9rem + 4.5vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: inherit;
+  margin-bottom: var(--space-sm);
+}
+
+.proto-bleed__body {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: rgba(248, 245, 239, 0.86);
+  max-width: 460px;
+  margin-bottom: var(--space-md);
+}
+
+.proto-bleed__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(248, 245, 239, 0.4);
+  padding-bottom: 0.3rem;
+  transition: border-color var(--transition-fast);
+}
+
+.proto-bleed__cta:hover {
+  border-color: var(--color-ivory);
+}
+
+.proto-bleed__cta span {
+  transition: transform var(--transition-fast);
+}
+
+.proto-bleed__cta:hover span {
+  transform: translateX(3px);
+}
+
+@media (min-width: 768px) {
+  .proto-bleed {
+    height: 88vh;
+  }
+}
+
+/* ============================================================
+   02 — EDITORIAL COLLAGE
+   ============================================================ */
+
+.proto-collage {
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-ivory);
+}
+
+.proto-collage__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+.proto-collage__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--radius-sm);
+}
+
+.proto-collage__detail {
+  aspect-ratio: 4 / 5;
+  max-width: 260px;
+}
+
+.proto-collage__main {
+  aspect-ratio: 4 / 5;
+}
+
+.proto-collage__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-collage__title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(2.75rem, 2.2rem + 3.5vw, 4.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.01em;
+  color: var(--color-brown-dark);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-collage__body {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-width: 360px;
+  margin-bottom: var(--space-sm);
+}
+
+.proto-collage__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-brown-dark);
+  text-decoration: none;
+}
+
+.proto-collage__cta:hover {
+  color: var(--color-terracotta);
+}
+
+.proto-collage__lifestyle {
+  aspect-ratio: 16 / 10;
+  max-width: 420px;
+}
+
+@media (min-width: 1024px) {
+  .proto-collage__grid {
+    grid-template-columns: 0.85fr 1.15fr 1fr;
+    grid-template-rows: auto auto;
+    column-gap: var(--space-lg);
+    row-gap: var(--space-lg);
+    align-items: start;
+  }
+
+  .proto-collage__detail {
+    grid-column: 1;
+    grid-row: 1;
+    margin-top: 4.5rem;
+    max-width: none;
+  }
+
+  .proto-collage__main {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-top: -2.5rem;
+    box-shadow: 0 30px 70px rgba(42, 31, 22, 0.16);
+  }
+
+  .proto-collage__text {
+    grid-column: 3;
+    grid-row: 1;
+    padding-top: 1.25rem;
+    margin-left: -0.5rem;
+  }
+
+  .proto-collage__lifestyle {
+    grid-column: 3;
+    grid-row: 2;
+    margin-top: var(--space-sm);
+    max-width: none;
+  }
+}
+
+/* ============================================================
+   03 — ORGANIC IMAGE MASK
+   ============================================================ */
+
+.proto-organic {
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-beige);
+}
+
+.proto-organic__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.proto-organic__visual {
+  aspect-ratio: 4 / 5;
+}
+
+.proto-organic__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Mostly rectangular; the top-right corner extends into a soft curve and
+     the bottom-left corner is gently rounded — a leaf/stone-adjacent
+     silhouette, not a decorative SaaS blob. Percentage points, so it holds
+     up at any size. */
+  clip-path: polygon(0% 0%, 66% 0%, 83% 3%, 94% 11%, 100% 25%, 100% 100%, 13% 100%, 4% 93%, 0% 81%);
+}
+
+.proto-organic__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-terracotta);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-organic__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 1.9rem + 2.5vw, 3.25rem);
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-organic__body {
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  max-width: 420px;
+}
+
+@media (min-width: 1024px) {
+  .proto-organic__grid {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--space-xl);
+  }
+}
+
+/* ============================================================
+   04 — FIELD NOTES / HERBARIUM
+   ============================================================ */
+
+.proto-notes {
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-ivory);
+}
+
+.proto-notes__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+}
+
+.proto-notes__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.proto-notes__main {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  margin-bottom: var(--space-md);
+}
+
+.proto-notes__tag {
+  position: absolute;
+  left: 0;
+  bottom: -1.75rem;
+  padding-left: 1.15rem;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+}
+
+.proto-notes__tag::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.8rem;
+  height: 1px;
+  background-color: var(--color-stone);
+}
+
+.proto-notes__number {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-terracotta);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-notes__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 1.9rem + 2.5vw, 3rem);
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-notes__body {
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  margin-bottom: var(--space-lg);
+}
+
+.proto-notes__detail {
+  position: relative;
+  width: 150px;
+  margin-bottom: var(--space-lg);
+}
+
+.proto-notes__meta {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (min-width: 1024px) {
+  .proto-notes__grid {
+    grid-template-columns: 1.3fr 1fr;
+    align-items: start;
+  }
+
+  .proto-notes__main {
+    margin-bottom: 0;
+  }
+
+  .proto-notes__side {
+    padding-left: var(--space-xl);
+    padding-top: 2rem;
+    border-left: 1px solid var(--color-border);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .proto-notes__meta {
+    margin-top: auto;
+  }
+}
+
+/* ============================================================
+   05 — DARK FOREST STAGE + ISOLATED PRODUCT
+   ============================================================ */
+
+.proto-stage {
+  position: relative;
+  background-color: var(--color-forest);
+  padding: var(--space-2xl) 0;
+}
+
+.proto-stage__big-word {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(5rem, 3rem + 13vw, 15rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: rgba(248, 245, 239, 0.055);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.proto-stage__container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.proto-stage__photo-wrap {
+  aspect-ratio: 4 / 5;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.proto-stage__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Fades the real photo's edges into the Forest Green background as a
+     stand-in for a true isolated cutout — see TODO in the include. */
+  mask-image: radial-gradient(ellipse 66% 76% at 50% 46%, black 58%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 66% 76% at 50% 46%, black 58%, transparent 100%);
+}
+
+.proto-stage__text {
+  position: relative;
+  text-align: center;
+  color: var(--color-ivory);
+}
+
+.proto-stage__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-terracotta-light);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-stage__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 1.9rem + 2.5vw, 3.25rem);
+  color: inherit;
+  margin-bottom: var(--space-sm);
+}
+
+.proto-stage__body {
+  color: rgba(248, 245, 239, 0.78);
+  line-height: 1.75;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .proto-stage__container {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .proto-stage__photo-wrap {
+    max-width: none;
+  }
+
+  .proto-stage__text {
+    text-align: left;
+    max-width: 420px;
+  }
+
+  .proto-stage__body {
+    margin: 0;
+  }
+}
+
+/* ============================================================
+   06 — MAGAZINE SPREAD
+   ============================================================ */
+
+.proto-magazine {
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-beige);
+}
+
+.proto-magazine__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+.proto-magazine__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.proto-magazine__photo--left {
+  aspect-ratio: 3 / 4;
+  order: 1;
+}
+
+.proto-magazine__heading {
+  order: 2;
+}
+
+.proto-magazine__photo--right {
+  aspect-ratio: 2 / 3;
+  order: 3;
+}
+
+.proto-magazine__body {
+  order: 4;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  max-width: 360px;
+}
+
+.proto-magazine__title {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(3rem, 2.3rem + 5vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  color: var(--color-brown-dark);
+  margin: 0;
+}
+
+.proto-magazine__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin-top: var(--space-sm);
+}
+
+@media (min-width: 1024px) {
+  .proto-magazine__grid {
+    grid-template-columns: 0.85fr 0.7fr 1fr;
+    grid-template-rows: auto auto;
+    column-gap: var(--space-lg);
+    row-gap: 0;
+  }
+
+  .proto-magazine__photo--left {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .proto-magazine__heading {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    margin-top: 5.5rem;
+  }
+
+  .proto-magazine__photo--right {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: start;
+    margin-top: 7rem;
+  }
+
+  .proto-magazine__body {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    align-self: end;
+    margin-top: var(--space-lg);
+  }
+}
+
+/* ============================================================
+   07 — COLLECTION WORLDS
+   ============================================================ */
+
+.proto-worlds {
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-ivory);
+}
+
+.proto-worlds__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+.proto-worlds__scene {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.proto-worlds__scene--active {
+  background-color: var(--color-sand);
+}
+
+.proto-worlds__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.proto-worlds__scene--future {
+  background-color: var(--color-beige);
+  align-items: center;
+  justify-content: center;
+}
+
+.proto-worlds__scene--future:nth-of-type(3) {
+  background-color: #ddd3c4;
+}
+
+.proto-worlds__ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: clamp(2rem, 1.4rem + 5vw, 3.5rem);
+  letter-spacing: 0.03em;
+  color: rgba(61, 46, 34, 0.09);
+}
+
+.proto-worlds__caption {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: var(--space-md);
+}
+
+.proto-worlds__scene--active .proto-worlds__caption {
+  background: linear-gradient(0deg, rgba(21, 16, 10, 0.68) 0%, transparent 100%);
+  color: var(--color-ivory);
+}
+
+.proto-worlds__scene--future .proto-worlds__caption {
+  text-align: center;
+  color: var(--color-text);
+}
+
+.proto-worlds__number {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--color-terracotta-light);
+  margin-bottom: 0.35rem;
+}
+
+.proto-worlds__scene--future .proto-worlds__number {
+  color: var(--color-terracotta);
+}
+
+.proto-worlds__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 1.75rem;
+  color: inherit;
+  margin: 0 0 0.35rem;
+}
+
+.proto-worlds__state {
+  font-size: 0.8125rem;
+  color: inherit;
+  margin: 0;
+  opacity: 0.85;
+}
+
+.proto-worlds__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-ivory);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(248, 245, 239, 0.45);
+  padding-bottom: 0.2rem;
+}
+
+@media (min-width: 900px) {
+  .proto-worlds__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================================================
+   08 — NATURAL ARCH / PORTAL
+   ============================================================ */
+
+.proto-arch {
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-ivory);
+}
+
+.proto-arch__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.proto-arch__visual {
+  aspect-ratio: 3 / 5;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.proto-arch__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Elliptical arch on the top edge only — a wide horizontal radius (auto
+     clamped to 50% of the width) plus a fixed vertical depth. */
+  border-radius: 999px 999px 0 0 / 90px 90px 0 0;
+}
+
+.proto-arch__text {
+  text-align: center;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.proto-arch__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-terracotta);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-arch__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 2rem + 3vw, 3.5rem);
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-arch__body {
+  color: var(--color-text-muted);
+  line-height: 1.75;
+}
+
+@media (min-width: 1024px) {
+  .proto-arch__grid {
+    grid-template-columns: 0.65fr 1fr;
+    gap: var(--space-xl);
+  }
+
+  .proto-arch__visual {
+    max-width: none;
+    aspect-ratio: 3 / 5.4;
+  }
+
+  .proto-arch__img {
+    border-radius: 999px 999px 0 0 / 140px 140px 0 0;
+  }
+
+  .proto-arch__text {
+    text-align: left;
+    margin: 0;
+  }
+}
+
+/* ============================================================
+   09 — FASHION POSTER
+   ============================================================ */
+
+.proto-poster {
+  position: relative;
+  min-height: 640px;
+  height: 92vh;
+  max-height: 980px;
+  background-color: var(--color-brown-dark);
+  display: flex;
+  align-items: flex-end;
+}
+
+.proto-poster__media {
+  position: absolute;
+  inset: 0;
+}
+
+.proto-poster__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.92;
+}
+
+.proto-poster__type {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 0 var(--container-pad) var(--space-xl);
+}
+
+.proto-poster__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 0.84;
+}
+
+.proto-poster__line {
+  display: block;
+  font-size: clamp(3.25rem, 1.5rem + 12vw, 9rem);
+}
+
+.proto-poster__line--solid {
+  color: var(--color-ivory);
+}
+
+.proto-poster__line--textured {
+  color: transparent;
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.proto-poster__corner {
+  position: absolute;
+  z-index: 2;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  text-decoration: none;
+}
+
+.proto-poster__corner--tl {
+  top: var(--space-lg);
+  left: var(--container-pad);
+}
+
+.proto-poster__corner--br {
+  bottom: var(--space-lg);
+  right: var(--container-pad);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-bottom: 1px solid rgba(248, 245, 239, 0.4);
+  padding-bottom: 0.25rem;
+  transition: border-color var(--transition-fast);
+}
+
+.proto-poster__corner--br:hover {
+  border-color: var(--color-ivory);
+}
+
+/* ============================================================
+   10 — FOREST TRAIL / STORYTELLING TIMELINE
+   ============================================================ */
+
+.proto-trail {
+  position: relative;
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-ivory);
+}
+
+.proto-trail__container {
+  position: relative;
+}
+
+.proto-trail__intro {
+  text-align: center;
+  max-width: 460px;
+  margin: 0 auto var(--space-xl);
+}
+
+.proto-trail__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin-bottom: var(--space-sm);
+}
+
+.proto-trail__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 1.9rem + 2.5vw, 3rem);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.proto-trail__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.proto-trail__line path {
+  fill: none;
+  stroke: var(--color-terracotta-light);
+  stroke-width: 0.4;
+  opacity: 0.6;
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  transition: stroke-dashoffset 1.8s ease;
+}
+
+.proto-trail.is-revealed .proto-trail__line path {
+  stroke-dashoffset: 0;
+}
+
+.proto-trail__list {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.proto-trail__stop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 300px;
+}
+
+.proto-trail__stop--left {
+  align-self: flex-start;
+  text-align: left;
+}
+
+.proto-trail__stop--right {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.proto-trail__stop--center {
+  align-self: center;
+  text-align: center;
+}
+
+.proto-trail__media {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.proto-trail__media--small {
+  max-width: 200px;
+}
+
+.proto-trail__stop--right .proto-trail__media--small {
+  margin-left: auto;
+}
+
+.proto-trail__stop--center .proto-trail__media--small {
+  margin-inline: auto;
+}
+
+.proto-trail__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.proto-trail__caption {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.proto-trail__caption span {
+  font-weight: 600;
+  color: var(--color-terracotta);
+  margin-right: 0.4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proto-trail__line path {
+    stroke-dashoffset: 0 !important;
+    transition: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .proto-trail__stop {
+    max-width: 340px;
+  }
+}

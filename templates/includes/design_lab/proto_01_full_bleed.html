@@ -1,0 +1,19 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Prototype 01 — Full-bleed photo + typography overlay.
+  Props: image (required), eyebrow, title, body, link_text, link_url.
+  Composition: one cinematic photo fills the section; text sits directly on
+  top inside a soft local gradient (bottom-left), never in its own card.
+{% endcomment %}
+<section class="proto proto-bleed">
+  <div class="proto-bleed__media">
+    {% image image fill-1920x1300 class="proto-bleed__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore в поле" %}
+  </div>
+  <div class="proto-bleed__scrim" aria-hidden="true"></div>
+  <div class="proto-bleed__content container reveal">
+    <p class="proto-bleed__eyebrow">{% firstof eyebrow "КОЛЛЕКЦИЯ 01" %}</p>
+    <h2 class="proto-bleed__title">{% firstof title "Лесные жители" %}</h2>
+    <p class="proto-bleed__body">{% firstof body "Первая коллекция Meadow Shore появилась из тихих наблюдений за лесом — за тем, что происходит в нём, когда рядом нет человека." %}</p>
+    <a href="{% firstof link_url '/catalog/' %}" class="proto-bleed__cta">{% firstof link_text "Смотреть коллекцию" %}<span aria-hidden="true">&rarr;</span></a>
+  </div>
+</section>

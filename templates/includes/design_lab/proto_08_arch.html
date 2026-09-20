@@ -1,0 +1,22 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Prototype 08 — Natural arch / portal.
+  Props: image, eyebrow, title, body.
+  Composition: a very tall photo with a soft elliptical arch at the top
+  edge only (border-radius trick, not a drawn window frame) — a quiet
+  "window" into the forest, with generous negative space beside it.
+{% endcomment %}
+<section class="proto proto-arch">
+  <div class="container">
+    <div class="proto-arch__grid">
+      <div class="proto-arch__visual">
+        {% image image fill-900x1500 class="proto-arch__img" loading="lazy" decoding="async" alt="Лесной склон в тумане" %}
+      </div>
+      <div class="proto-arch__text reveal">
+        <p class="proto-arch__eyebrow">{% firstof eyebrow "Коллекция 01" %}</p>
+        <h2 class="proto-arch__title">{% firstof title "Туда, где тише" %}</h2>
+        <p class="proto-arch__body">{% firstof body "Для нас лес — место, куда мы приходим. Для тех, кто в нём живёт, — дом. Первая коллекция Meadow Shore родилась из этой тишины." %}</p>
+      </div>
+    </div>
+  </div>
+</section>

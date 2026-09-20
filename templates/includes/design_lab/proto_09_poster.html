@@ -1,0 +1,23 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Prototype 09 — Fashion poster.
+  Props: image, title_line_1, title_line_2, corner_label, link_text, link_url.
+  Composition: the photo IS the design; type is a second visual layer, not
+  a caption. The second heading line is filled with the photo itself via
+  background-clip: text — a real "text as texture" layer, not image
+  segmentation (no attempt to cut type behind the model's silhouette).
+{% endcomment %}
+{% image image fill-800x500 as poster_texture %}
+<section class="proto proto-poster">
+  <div class="proto-poster__media">
+    {% image image fill-1600x2000 class="proto-poster__img" loading="lazy" decoding="async" alt="Модель со спины в футболке Meadow Shore, принт «Белка»" %}
+  </div>
+  <div class="proto-poster__type reveal">
+    <h2 class="proto-poster__title">
+      <span class="proto-poster__line proto-poster__line--solid">{% firstof title_line_1 "ЛЕСНЫЕ" %}</span>
+      <span class="proto-poster__line proto-poster__line--textured" style="background-image: url('{{ poster_texture.url }}');">{% firstof title_line_2 "ЖИТЕЛИ" %}</span>
+    </h2>
+  </div>
+  <p class="proto-poster__corner proto-poster__corner--tl">{% firstof corner_label "Коллекция 01 · Meadow Shore" %}</p>
+  <a href="{% firstof link_url '/catalog/futbolka-belka-v-tsvetah-vyshivka/' %}" class="proto-poster__corner proto-poster__corner--br">{% firstof link_text "История принта" %}<span aria-hidden="true">&rarr;</span></a>
+</section>

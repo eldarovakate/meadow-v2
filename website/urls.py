@@ -14,4 +14,5 @@ urlpatterns = [
     path("checkout/success/<int:order_id>/", views.order_success_view, name="order_success"),
     path("checkout/success/<int:order_id>/retry/", views.order_payment_retry_view, name="order_payment_retry"),
     path("payments/yookassa/webhook/", views.yookassa_webhook_view, name="yookassa_webhook"),
+    path("design-lab/home-blocks/", views.design_lab_home_blocks_view, name="design_lab_home_blocks"),
 ]

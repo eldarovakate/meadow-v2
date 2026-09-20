@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Design Lab — Homepage Blocks{% endblock %}
+{% block body_class %}design-lab-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/design-lab.css' %}">
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block content %}
+
+<section class="lab-intro">
+  <div class="container">
+    <p class="lab-intro__eyebrow">Meadow Shore · Internal</p>
+    <h1 class="lab-intro__title">Design Lab — Homepage Blocks</h1>
+    <p class="lab-intro__body">
+      10 самостоятельных вариантов имиджевых секций для главной страницы. Ничего с этой
+      страницы ещё не перенесено на production — выбор блоков для главной будет
+      отдельным шагом.
+    </p>
+  </div>
+</section>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">01 · FULL-BLEED PHOTO + TYPOGRAPHY OVERLAY</p>
+  {% include "includes/design_lab/proto_01_full_bleed.html" with image=model_field_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">02 · EDITORIAL COLLAGE</p>
+  {% include "includes/design_lab/proto_02_collage.html" with image_main=model_field_image image_detail=bird_embroidery_image image_lifestyle=model_back_squirrel_close_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">03 · ORGANIC IMAGE MASK</p>
+  {% include "includes/design_lab/proto_03_organic.html" with image=bird_on_garment_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">04 · FIELD NOTES / HERBARIUM</p>
+  {% include "includes/design_lab/proto_04_field_notes.html" with image_main=bird_embroidery_image image_detail=bird_embroidery_flat_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">05 · DARK FOREST STAGE</p>
+  {% include "includes/design_lab/proto_05_dark_stage.html" with image=model_bird_portrait_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">06 · MAGAZINE SPREAD</p>
+  {% include "includes/design_lab/proto_06_magazine.html" with image_left=hero_image image_right=model_field_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">07 · COLLECTION WORLDS</p>
+  {% include "includes/design_lab/proto_07_worlds.html" with image_forest=fabric_detail_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">08 · NATURAL ARCH / PORTAL</p>
+  {% include "includes/design_lab/proto_08_arch.html" with image=hero_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">09 · FASHION POSTER</p>
+  {% include "includes/design_lab/proto_09_poster.html" with image=model_back_squirrel_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">10 · FOREST TRAIL / STORYTELLING TIMELINE</p>
+  {% include "includes/design_lab/proto_10_trail.html" with image_forest=hero_image image_detail=sunset_image image_print=bird_embroidery_flat_image image_fabric=hanging_shirt_image image_garment=model_field_image %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/design-lab.js' %}" defer></script>
+{% endblock %}
