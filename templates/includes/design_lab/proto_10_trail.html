@@ -1,58 +1,60 @@
 {% load wagtailimages_tags %}
 {% comment %}
   Prototype 10 — Forest trail / storytelling timeline.
-  Props: image_forest, image_detail, image_print, image_fabric, image_garment.
-  Composition: five stops alternate left / right / center rather than a
-  grid; one delicate S-curve line (SVG, path-based, not a progress bar)
-  drifts behind them. Line reveal is a scroll-triggered stroke-dashoffset
-  animation, skipped entirely under prefers-reduced-motion.
+  Props: image_forest, image_detail, image_print, image_garment.
+  Composition (desktop): one compact stage (~1060x450) — four stops of
+  different sizes on a gentle horizontal wave (top / low / top / low),
+  a thin S-curve SVG connecting their centres behind them. Stops and path
+  share one coordinate system (stage aspect-ratio = viewBox), so the line
+  always lands on the photos. Mobile falls back to a natural vertical flow
+  with the original tall S-line.
+  Line reveal is a scroll-triggered stroke-dashoffset animation, skipped
+  entirely under prefers-reduced-motion.
 {% endcomment %}
 <section class="proto proto-trail" data-trail>
-  <div class="container proto-trail__container">
+  <div class="proto-trail__container">
     <div class="proto-trail__intro reveal">
       <p class="proto-trail__eyebrow">Как появляется коллекция</p>
       <h2 class="proto-trail__title">Из леса в вещь</h2>
     </div>
 
-    <svg class="proto-trail__line" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <path data-trail-path d="M 20 40 C 20 160, 78 160, 78 280 C 78 400, 30 400, 30 520 C 30 640, 75 640, 75 760 C 75 860, 25 860, 25 960" />
-    </svg>
+    <div class="proto-trail__stage">
+      <svg class="proto-trail__line proto-trail__line--mobile" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path data-trail-path d="M 16 70 C 16 210, 82 210, 82 350 C 82 500, 50 500, 50 640 C 50 790, 82 790, 82 940" />
+      </svg>
+      <svg class="proto-trail__line proto-trail__line--desktop" viewBox="0 0 1060 450" aria-hidden="true" focusable="false">
+        <path data-trail-path pathLength="1" d="M 95 105 C 220 105, 255 300, 380 300 C 505 300, 525 110, 650 110 C 775 110, 825 277, 950 277" />
+      </svg>
 
-    <ol class="proto-trail__list">
-      <li class="proto-trail__stop proto-trail__stop--left reveal reveal--stagger" style="--stagger: 0">
-        <div class="proto-trail__media">
-          {% image image_forest fill-500x600 class="proto-trail__img" loading="lazy" decoding="async" alt="Лесной склон в тумане" %}
-        </div>
-        <p class="proto-trail__caption"><span>01</span> Лес — источник вдохновения</p>
-      </li>
+      <ol class="proto-trail__list">
+        <li class="proto-trail__stop proto-trail__stop--left proto-trail__stop--01 reveal reveal--stagger" style="--stagger: 0">
+          <div class="proto-trail__media proto-trail__media--forest">
+            {% image image_forest fill-720x720 class="proto-trail__img" loading="lazy" decoding="async" alt="Лесной склон в тумане" %}
+          </div>
+          <p class="proto-trail__caption"><span>01</span> Лес — источник вдохновения</p>
+        </li>
 
-      <li class="proto-trail__stop proto-trail__stop--right reveal reveal--stagger" style="--stagger: 1">
-        <div class="proto-trail__media proto-trail__media--small">
-          {% image image_detail fill-420x520 class="proto-trail__img" loading="lazy" decoding="async" alt="Лист крупным планом, закатный свет" %}
-        </div>
-        <p class="proto-trail__caption"><span>02</span> Деталь: свет между листьями</p>
-      </li>
+        <li class="proto-trail__stop proto-trail__stop--right proto-trail__stop--02 reveal reveal--stagger" style="--stagger: 1">
+          <div class="proto-trail__media proto-trail__media--detail">
+            {% image image_detail fill-460x560 class="proto-trail__img" loading="lazy" decoding="async" alt="Лист крупным планом, закатный свет" %}
+          </div>
+          <p class="proto-trail__caption"><span>02</span> Деталь: свет между листьями</p>
+        </li>
 
-      <li class="proto-trail__stop proto-trail__stop--center reveal reveal--stagger" style="--stagger: 2">
-        <div class="proto-trail__media proto-trail__media--small">
-          {% image image_print fill-460x460 class="proto-trail__img" loading="lazy" decoding="async" alt="Принт «Певчая птица» на ткани" %}
-        </div>
-        <p class="proto-trail__caption"><span>03</span> Наблюдение становится принтом</p>
-      </li>
+        <li class="proto-trail__stop proto-trail__stop--center proto-trail__stop--03 reveal reveal--stagger" style="--stagger: 2">
+          <div class="proto-trail__media proto-trail__media--print">
+            {% image image_print fill-560x560 class="proto-trail__img" loading="lazy" decoding="async" alt="Принт «Заяц» на ткани" %}
+          </div>
+          <p class="proto-trail__caption"><span>03</span> Наблюдение становится принтом</p>
+        </li>
 
-      <li class="proto-trail__stop proto-trail__stop--right reveal reveal--stagger" style="--stagger: 3">
-        <div class="proto-trail__media">
-          {% image image_fabric fill-500x600 class="proto-trail__img" loading="lazy" decoding="async" alt="Футболка Meadow Shore на плечиках" %}
-        </div>
-        <p class="proto-trail__caption"><span>04</span> Принт переносится на ткань</p>
-      </li>
-
-      <li class="proto-trail__stop proto-trail__stop--left reveal reveal--stagger" style="--stagger: 4">
-        <div class="proto-trail__media">
-          {% image image_garment fill-560x680 class="proto-trail__img" loading="lazy" decoding="async" alt="Готовая футболка Meadow Shore на модели" %}
-        </div>
-        <p class="proto-trail__caption"><span>05</span> Готовая вещь</p>
-      </li>
-    </ol>
+        <li class="proto-trail__stop proto-trail__stop--right proto-trail__stop--04 reveal reveal--stagger" style="--stagger: 3">
+          <div class="proto-trail__media proto-trail__media--garment">
+            {% image image_garment fill-800x980 class="proto-trail__img" loading="lazy" decoding="async" alt="Готовая футболка Meadow Shore на модели" %}
+          </div>
+          <p class="proto-trail__caption"><span>04</span> Готовая вещь</p>
+        </li>
+      </ol>
+    </div>
   </div>
 </section>

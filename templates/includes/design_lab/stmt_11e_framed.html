@@ -1,0 +1,40 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Variant 11E — Typographic frame.
+  Props: image_a, image_b, image_c, image_d, eyebrow, title, meta, link_text, link_url.
+  Composition: photos stay as plain as possible and are held to a narrower,
+  quieter grid; the character comes entirely from the system around the
+  title — one restrained inline-SVG botanical mark (a simple twig, not a
+  leaf-shaped card), thin rules framing the header block above and below,
+  and a small collection line underneath. Deliberately NOT the reference's
+  circle-and-dash motif.
+{% endcomment %}
+<section class="stmt stmt-framed">
+  <div class="container">
+    <div class="stmt-framed__header reveal">
+      <svg class="stmt-framed__mark" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true" focusable="false">
+        <path d="M15 28 C15 20 15 12 15 3" />
+        <path d="M15 9 C11 7 8 9 6 13" />
+        <path d="M15 15 C19 13 22 15 24 19" />
+      </svg>
+      <p class="stmt__eyebrow">{% firstof eyebrow "Наблюдение · Коллекция 01" %}</p>
+      <h2 class="stmt__title stmt__title--giant">{% firstof title "Лесные жители" %}</h2>
+      <p class="stmt-framed__meta">{% firstof meta "Коллекция 01 / Meadow Shore" %}</p>
+    </div>
+    <div class="stmt-framed__grid">
+      <div class="stmt__cell">
+        {% image image_a fill-600x600 class="stmt__img" loading="lazy" decoding="async" alt="Плакучая ива, золотой час" %}
+      </div>
+      <div class="stmt__cell">
+        {% image image_b fill-600x600 class="stmt__img" loading="lazy" decoding="async" alt="Ива над водой" %}
+      </div>
+      <div class="stmt__cell">
+        {% image image_c fill-600x600 class="stmt__img" loading="lazy" decoding="async" alt="Таволга розовая" %}
+      </div>
+      <div class="stmt__cell">
+        {% image image_d fill-600x600 class="stmt__img" loading="lazy" decoding="async" alt="Мох на стволе дерева" %}
+      </div>
+    </div>
+    <a href="{% firstof link_url '/catalog/' %}" class="stmt__cta stmt-framed__cta">{% firstof link_text "Смотреть коллекцию" %}<span aria-hidden="true">&rarr;</span></a>
+  </div>
+</section>

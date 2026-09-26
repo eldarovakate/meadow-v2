@@ -1,22 +1,28 @@
 {% load wagtailimages_tags %}
 {% comment %}
   Prototype 08 — Natural arch / portal.
-  Props: image, eyebrow, title, body.
-  Composition: a very tall photo with a soft elliptical arch at the top
-  edge only (border-radius trick, not a drawn window frame) — a quiet
-  "window" into the forest, with generous negative space beside it.
+  Props: image, eyebrow, title, body, link_text, link_url.
+  Composition: three quiet columns — a short stacked uppercase note with a
+  thin rule on the left, a tall photo whose top edge is a true semicircle
+  (radius = half the width, straight bottom) in the centre, and the
+  editorial text column with a small arrow link on the right.
 {% endcomment %}
 <section class="proto proto-arch">
-  <div class="container">
-    <div class="proto-arch__grid">
-      <div class="proto-arch__visual">
-        {% image image fill-900x1500 class="proto-arch__img" loading="lazy" decoding="async" alt="Лесной склон в тумане" %}
-      </div>
-      <div class="proto-arch__text reveal">
-        <p class="proto-arch__eyebrow">{% firstof eyebrow "Коллекция 01" %}</p>
-        <h2 class="proto-arch__title">{% firstof title "Туда, где тише" %}</h2>
-        <p class="proto-arch__body">{% firstof body "Для нас лес — место, куда мы приходим. Для тех, кто в нём живёт, — дом. Первая коллекция Meadow Shore родилась из этой тишины." %}</p>
-      </div>
+  <div class="proto-arch__grid">
+    <div class="proto-arch__note reveal">
+      <p class="proto-arch__note-text">
+        <span>Одежда</span> <span>для тех,</span> <span>кто</span> <span>замечает</span> <span>тишину</span>
+      </p>
+      <span class="proto-arch__note-rule" aria-hidden="true"></span>
+    </div>
+    <div class="proto-arch__visual">
+      {% image image width-1200 class="proto-arch__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore на лесной поляне" %}
+    </div>
+    <div class="proto-arch__text reveal">
+      <p class="proto-arch__eyebrow">{% firstof eyebrow "Meadow Shore" %}</p>
+      <h2 class="proto-arch__title">{% firstof title "Туда, где тише" %}</h2>
+      <p class="proto-arch__body">{% firstof body "Для нас лес — место, куда мы приходим. Для тех, кто в нём живёт, — дом. Первая коллекция Meadow Shore родилась из этой тишины." %}</p>
+      <a href="{% firstof link_url '/about/' %}" class="proto-arch__link">{% firstof link_text "О бренде" %}<span aria-hidden="true">&rarr;</span></a>
     </div>
   </div>
 </section>

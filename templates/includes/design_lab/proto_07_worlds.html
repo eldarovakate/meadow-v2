@@ -2,41 +2,41 @@
 {% comment %}
   Prototype 07 — Collection worlds.
   Props: image_forest.
-  Composition: three large scenes, not a horizontal-scroll carousel (a plain
-  responsive grid is more robust and needs no extra JS). Лес has a real
-  photo and a working link; Море/Горы are deliberately abstract — no fake
-  product content, no dates, no promises.
+  Composition: three large scenes at an unequal, expressive ratio
+  (Лес 45% / Море 27.5% / Горы 27.5%) rather than three identical cards,
+  filling almost the full available width and a genuine section height
+  (not an aspect-ratio thumbnail). Лес has a real photo and a working link;
+  Море/Горы are deliberately abstract — no fake product content, no dates,
+  no promises.
 {% endcomment %}
 <section class="proto proto-worlds">
-  <div class="container">
-    <div class="proto-worlds__grid">
-      <article class="proto-worlds__scene proto-worlds__scene--active reveal reveal--stagger" style="--stagger: 0">
-        {% image image_forest fill-700x900 class="proto-worlds__img" loading="lazy" decoding="async" alt="Лес, вышивка на ткани Meadow Shore" %}
-        <div class="proto-worlds__caption">
-          <span class="proto-worlds__number">01</span>
-          <h2 class="proto-worlds__title">Лес</h2>
-          <p class="proto-worlds__state">Текущая коллекция</p>
-          <a href="/catalog/" class="proto-worlds__link">Смотреть коллекцию<span aria-hidden="true">&rarr;</span></a>
-        </div>
-      </article>
+  <div class="proto-worlds__grid">
+    <article class="proto-worlds__scene proto-worlds__scene--active proto-worlds__scene--forest reveal reveal--stagger" style="--stagger: 0">
+      {% image image_forest fill-1400x1900 class="proto-worlds__img" loading="lazy" decoding="async" alt="Модель в лесу, футболка Meadow Shore" %}
+      <div class="proto-worlds__caption">
+        <span class="proto-worlds__number">01</span>
+        <h2 class="proto-worlds__title">Лес</h2>
+        <p class="proto-worlds__state">Текущая коллекция</p>
+        <a href="/catalog/" class="proto-worlds__link">Смотреть коллекцию<span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </article>
 
-      <article class="proto-worlds__scene proto-worlds__scene--future reveal reveal--stagger" style="--stagger: 1">
-        <p class="proto-worlds__ghost" aria-hidden="true">МОРЕ</p>
-        <div class="proto-worlds__caption">
-          <span class="proto-worlds__number">02</span>
-          <h2 class="proto-worlds__title">Море</h2>
-          <p class="proto-worlds__state">Будущая глава мира Meadow Shore</p>
-        </div>
-      </article>
+    <article class="proto-worlds__scene proto-worlds__scene--future proto-worlds__scene--sea reveal reveal--stagger" style="--stagger: 1">
+      <p class="proto-worlds__ghost" aria-hidden="true">МОРЕ</p>
+      <div class="proto-worlds__caption">
+        <span class="proto-worlds__number">02</span>
+        <h2 class="proto-worlds__title">Море</h2>
+        <p class="proto-worlds__state">Будущая глава мира Meadow Shore</p>
+      </div>
+    </article>
 
-      <article class="proto-worlds__scene proto-worlds__scene--future reveal reveal--stagger" style="--stagger: 2">
-        <p class="proto-worlds__ghost" aria-hidden="true">ГОРЫ</p>
-        <div class="proto-worlds__caption">
-          <span class="proto-worlds__number">03</span>
-          <h2 class="proto-worlds__title">Горы</h2>
-          <p class="proto-worlds__state">Будущая глава мира Meadow Shore</p>
-        </div>
-      </article>
-    </div>
+    <article class="proto-worlds__scene proto-worlds__scene--future proto-worlds__scene--mountains reveal reveal--stagger" style="--stagger: 2">
+      <p class="proto-worlds__ghost" aria-hidden="true">ГОРЫ</p>
+      <div class="proto-worlds__caption">
+        <span class="proto-worlds__number">03</span>
+        <h2 class="proto-worlds__title">Горы</h2>
+        <p class="proto-worlds__state">Будущая глава мира Meadow Shore</p>
+      </div>
+    </article>
   </div>
 </section>

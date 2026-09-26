@@ -24,13 +24,13 @@
 </section>
 
 <div class="lab-specimen">
-  <p class="lab-specimen__label">01 · FULL-BLEED PHOTO + TYPOGRAPHY OVERLAY</p>
-  {% include "includes/design_lab/proto_01_full_bleed.html" with image=model_field_image %}
+  <p class="lab-specimen__label">01 · CINEMATIC HERO</p>
+  {% include "includes/design_lab/proto_01_full_bleed.html" with image=hero_image %}
 </div>
 
 <div class="lab-specimen">
   <p class="lab-specimen__label">02 · EDITORIAL COLLAGE</p>
-  {% include "includes/design_lab/proto_02_collage.html" with image_main=model_field_image image_detail=bird_embroidery_image image_lifestyle=model_back_squirrel_close_image %}
+  {% include "includes/design_lab/proto_02_collage.html" with image_main=model_field_image image_detail=fabric_detail_image image_lifestyle=model_back_squirrel_close_image %}
 </div>
 
 <div class="lab-specimen">
@@ -40,7 +40,7 @@
 
 <div class="lab-specimen">
   <p class="lab-specimen__label">04 · FIELD NOTES / HERBARIUM</p>
-  {% include "includes/design_lab/proto_04_field_notes.html" with image_main=bird_embroidery_image image_detail=bird_embroidery_flat_image %}
+  {% include "includes/design_lab/proto_04_field_notes.html" with image_main=bird_embroidery_image image_detail=bird_embroidery_flat_image image_fragment=hedgehog_print_image image_botanical=sunset_image %}
 </div>
 
 <div class="lab-specimen">
@@ -50,17 +50,17 @@
 
 <div class="lab-specimen">
   <p class="lab-specimen__label">06 · MAGAZINE SPREAD</p>
-  {% include "includes/design_lab/proto_06_magazine.html" with image_left=hero_image image_right=model_field_image %}
+  {% include "includes/design_lab/proto_06_magazine.html" with image_left=model_forest_wide_image image_right=hanging_shirt_image %}
 </div>
 
 <div class="lab-specimen">
   <p class="lab-specimen__label">07 · COLLECTION WORLDS</p>
-  {% include "includes/design_lab/proto_07_worlds.html" with image_forest=fabric_detail_image %}
+  {% include "includes/design_lab/proto_07_worlds.html" with image_forest=model_forest_world_image %}
 </div>
 
 <div class="lab-specimen">
   <p class="lab-specimen__label">08 · NATURAL ARCH / PORTAL</p>
-  {% include "includes/design_lab/proto_08_arch.html" with image=hero_image %}
+  {% include "includes/design_lab/proto_08_arch.html" with image=model_arch_image %}
 </div>
 
 <div class="lab-specimen">
@@ -70,7 +70,42 @@
 
 <div class="lab-specimen">
   <p class="lab-specimen__label">10 · FOREST TRAIL / STORYTELLING TIMELINE</p>
-  {% include "includes/design_lab/proto_10_trail.html" with image_forest=hero_image image_detail=sunset_image image_print=bird_embroidery_flat_image image_fabric=hanging_shirt_image image_garment=model_field_image %}
+  {% include "includes/design_lab/proto_10_trail.html" with image_forest=hero_image image_detail=sunset_image image_print=hare_print_image image_garment=garment_trail_image %}
+</div>
+
+<section class="lab-study-intro">
+  <div class="container">
+    <p class="lab-study-intro__eyebrow">Дополнительное исследование</p>
+    <h2 class="lab-study-intro__title">Collection Statement Grid</h2>
+    <p class="lab-study-intro__body">
+      Дополнительное исследование: строгая квадратная сетка + крупная editorial typography.
+    </p>
+  </div>
+</section>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">11A · PURE STATEMENT GRID</p>
+  {% include "includes/design_lab/stmt_11a_classic.html" with image_a=stmt_model_meadow_image image_b=stmt_model_hedgehog_gold_image image_c=bird_embroidery_flat_image image_d=stmt_moss_trunk_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">11B · HEADLINE OVERLAP</p>
+  {% include "includes/design_lab/stmt_11b_overlap.html" with image_a=stmt_model_forest_34_image image_b=stmt_fern_detail_image image_c=stmt_autumn_lake_image image_d=stmt_model_hedgehog_gold_alt_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">11C · VISUAL RHYTHM</p>
+  {% include "includes/design_lab/stmt_11c_rhythm.html" with image_model=stmt_model_backlit_image image_thing=stmt_model_arm_raised_image image_print=hedgehog_print_image image_forest=stmt_pine_branch_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">11D · ASYMMETRIC GRID</p>
+  {% include "includes/design_lab/stmt_11d_asymmetric.html" with image_main=stmt_autumn_forest_image image_b=stmt_geranium_image image_c=stmt_moss_mushroom_image image_d=stmt_model_hedgehog_gold_side_image %}
+</div>
+
+<div class="lab-specimen">
+  <p class="lab-specimen__label">11E · TYPOGRAPHIC FRAME</p>
+  {% include "includes/design_lab/stmt_11e_framed.html" with image_a=stmt_willow_golden_image image_b=stmt_willow_water_image image_c=stmt_spiraea_image image_d=stmt_moss_trunk_image %}
 </div>
 
 {% endblock %}

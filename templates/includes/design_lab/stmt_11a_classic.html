@@ -1,0 +1,33 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Variant 11A — Pure Statement Grid.
+  Props: image_a, image_b, image_c, image_d, eyebrow, title, subtitle, link_text, link_url.
+  Composition: centered eyebrow/title/subtitle/CTA, then four equal square
+  images in one dense row filling almost the full container — the plainest,
+  most literal geometric grid of the five Collection Statement Grid
+  variants. Simplicity is the point; no overlap, no asymmetry, no labels.
+{% endcomment %}
+<section class="stmt stmt-classic">
+  <div class="container">
+    <div class="stmt__header stmt__header--center reveal">
+      <p class="stmt__eyebrow">{% firstof eyebrow "КОЛЛЕКЦИЯ 01" %}</p>
+      <h2 class="stmt__title stmt__title--giant">{% firstof title "Лесные жители" %}</h2>
+      <p class="stmt__subtitle">{% firstof subtitle "Истории природы, которые остаются рядом." %}</p>
+      <a href="{% firstof link_url '/catalog/' %}" class="stmt__cta">{% firstof link_text "Смотреть коллекцию" %}<span aria-hidden="true">&rarr;</span></a>
+    </div>
+    <div class="stmt-classic__grid">
+      <div class="stmt__cell">
+        {% image image_a fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore на лесной тропе" %}
+      </div>
+      <div class="stmt__cell">
+        {% image image_b fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore с принтом «Ёж», золотой час" %}
+      </div>
+      <div class="stmt__cell">
+        {% image image_c fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Принт на ткани Meadow Shore" %}
+      </div>
+      <div class="stmt__cell">
+        {% image image_d fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Мох на стволе дерева" %}
+      </div>
+    </div>
+  </div>
+</section>

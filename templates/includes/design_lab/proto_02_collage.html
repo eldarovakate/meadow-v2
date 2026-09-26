@@ -1,32 +1,33 @@
 {% load wagtailimages_tags %}
 {% comment %}
   Prototype 02 — Editorial collage.
-  Props: image_main (large, vertical), image_detail (small), image_lifestyle
-  (medium), eyebrow, title_line_1, title_line_2, body, link_text, link_url.
-  Composition: three real photos at three different sizes on a hand-built
-  grid, deliberately misaligned rows — not a masonry gallery.
+  Props: image_main (large, vertical, ~42% of viewport width), image_detail
+  (small, ~18%), image_lifestyle (medium, ~26%), eyebrow, title_line_1,
+  title_line_2, body, link_text, link_url.
+  Composition: a fine 12-column grid lets the three photos and the heading
+  occupy overlapping row/column ranges — genuine magazine collage, not a
+  three-up gallery row. Sized against the viewport (not the 1280px reading
+  container) so the photos read at real scale on a 1440px desktop.
 {% endcomment %}
 <section class="proto proto-collage">
-  <div class="container">
-    <div class="proto-collage__grid reveal">
-      <div class="proto-collage__detail">
-        {% image image_detail fill-500x625 class="proto-collage__img" loading="lazy" decoding="async" alt="Вышивка крупным планом на футболке Meadow Shore" %}
-      </div>
+  <div class="proto-collage__stage">
+    <div class="proto-collage__main">
+      {% image image_main fill-1200x1500 class="proto-collage__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore в поле" %}
+    </div>
 
-      <div class="proto-collage__main">
-        {% image image_main fill-900x1150 class="proto-collage__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore в поле" %}
-      </div>
+    <div class="proto-collage__lifestyle">
+      {% image image_lifestyle fill-1400x1100 class="proto-collage__img" loading="lazy" decoding="async" alt="Модель со спины в лесу, футболка Meadow Shore" %}
+    </div>
 
-      <div class="proto-collage__text">
-        <p class="proto-collage__eyebrow">{% firstof eyebrow "MEADOW SHORE · КОЛЛЕКЦИЯ 01" %}</p>
-        <h2 class="proto-collage__title">{% firstof title_line_1 "ЛЕСНЫЕ" %}<br>{% firstof title_line_2 "ЖИТЕЛИ" %}</h2>
-        <p class="proto-collage__body">{% firstof body "Каждый рисунок начинается с наблюдения за лесным жителем и его средой — и только потом становится принтом или вышивкой." %}</p>
-        <a href="{% firstof link_url '/catalog/' %}" class="proto-collage__cta">{% firstof link_text "Смотреть коллекцию" %}<span aria-hidden="true">&rarr;</span></a>
-      </div>
+    <div class="proto-collage__detail">
+      {% image image_detail fill-620x780 class="proto-collage__img" loading="lazy" decoding="async" alt="Фактура ткани Meadow Shore крупным планом" %}
+    </div>
 
-      <div class="proto-collage__lifestyle">
-        {% image image_lifestyle fill-700x500 class="proto-collage__img" loading="lazy" decoding="async" alt="Деталь вышивки на футболке Meadow Shore" %}
-      </div>
+    <div class="proto-collage__text reveal">
+      <p class="proto-collage__eyebrow">{% firstof eyebrow "MEADOW SHORE · КОЛЛЕКЦИЯ 01" %}</p>
+      <h2 class="proto-collage__title">{% firstof title_line_1 "ЛЕСНЫЕ" %}<br>{% firstof title_line_2 "ЖИТЕЛИ" %}</h2>
+      <p class="proto-collage__body">{% firstof body "Каждый рисунок начинается с наблюдения за лесным жителем и его средой — и только потом становится принтом или вышивкой." %}</p>
+      <a href="{% firstof link_url '/catalog/' %}" class="proto-collage__cta">{% firstof link_text "Смотреть коллекцию" %}<span aria-hidden="true">&rarr;</span></a>
     </div>
   </div>
 </section>

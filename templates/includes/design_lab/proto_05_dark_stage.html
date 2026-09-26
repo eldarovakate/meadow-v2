@@ -1,25 +1,23 @@
 {% load wagtailimages_tags %}
 {% comment %}
   Prototype 05 — Dark forest stage + isolated product.
-  Props: image, big_word, eyebrow, title, body.
-  Composition: huge low-opacity background type on Forest Green, a photo
-  panel whose edges dissolve into the background via a CSS mask (an
-  approximation of an isolated cutout without real image segmentation).
-
-  TODO (asset): replace `image` with a real studio cutout of the garment on
-  a transparent background once one exists — the mask-fade trick is a
-  stand-in, a true cutout will read even cleaner here.
+  Props: image, big_word, eyebrow, title, body, link_text, link_url.
+  Composition: giant low-opacity background type spans nearly the full
+  block width on Forest Green; a tall photo panel overlaps the word. The
+  photo is shown clean — no mask, vignette or edge fade. A terracotta CTA
+  grounds the campaign feel.
 {% endcomment %}
 <section class="proto proto-stage">
-  <p class="proto-stage__big-word" aria-hidden="true">{% firstof big_word "ПТИЦА" %}</p>
-  <div class="container proto-stage__container">
+  <p class="proto-stage__big-word" aria-hidden="true">{% firstof big_word "ЛЕС" %}</p>
+  <div class="proto-stage__container">
     <div class="proto-stage__photo-wrap">
-      {% image image fill-1000x1250 class="proto-stage__photo" loading="lazy" decoding="async" alt="Футболка Meadow Shore с принтом «Певчая птица»" %}
+      {% image image fill-1400x1750 class="proto-stage__photo" loading="lazy" decoding="async" alt="Футболка Meadow Shore с принтом «Певчая птица»" %}
     </div>
     <div class="proto-stage__text reveal">
       <p class="proto-stage__eyebrow">{% firstof eyebrow "Наблюдение № 02" %}</p>
       <h2 class="proto-stage__title">{% firstof title "Лесная птица" %}</h2>
       <p class="proto-stage__body">{% firstof body "Не отдельный декоративный символ, а часть леса вокруг неё: ветви, хвоя, шишки и негромкое утреннее пение." %}</p>
+      <a href="{% firstof link_url '/catalog/' %}" class="btn btn--primary proto-stage__cta">{% firstof link_text "Смотреть коллекцию" %}</a>
     </div>
   </div>
 </section>

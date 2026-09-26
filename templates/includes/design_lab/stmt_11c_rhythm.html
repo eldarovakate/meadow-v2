@@ -1,0 +1,42 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Variant 11C — Same grid, different visual rhythm.
+  Props: image_model, image_thing, image_print, image_forest, eyebrow, title,
+  subtitle, link_text, link_url.
+  Composition: the outer grid is identical to 11A (four equal squares,
+  .stmt-classic__grid reused as-is), but each cell plays a distinct
+  narrative role — model / product / print detail / forest — with a quiet
+  corner label. The collection's story is told through image sequence
+  rather than more text; title is kept smaller than 11A/B/E so the images
+  carry the composition.
+{% endcomment %}
+<section class="stmt stmt-rhythm">
+  <div class="container">
+    <div class="stmt__header stmt__header--center reveal">
+      <p class="stmt__eyebrow">{% firstof eyebrow "КОЛЛЕКЦИЯ 01" %}</p>
+      <h2 class="stmt__title stmt__title--medium">{% firstof title "Лесные жители" %}</h2>
+      <p class="stmt__subtitle">{% firstof subtitle "Коллекция о тех, кого мы часто замечаем только на мгновение." %}</p>
+    </div>
+    <div class="stmt-classic__grid">
+      <div class="stmt__cell stmt__cell--labeled">
+        {% image image_model fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore в лесу" %}
+        <span class="stmt__cell-label">01 · МОДЕЛЬ</span>
+      </div>
+      <div class="stmt__cell stmt__cell--labeled">
+        {% image image_thing fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore с принтом «Певчая птица»" %}
+        <span class="stmt__cell-label">02 · ВЕЩЬ</span>
+      </div>
+      <div class="stmt__cell stmt__cell--labeled">
+        {% image image_print fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Принт «Ёж в яблоках» на ткани" %}
+        <span class="stmt__cell-label">03 · ПРИНТ</span>
+      </div>
+      <div class="stmt__cell stmt__cell--labeled">
+        {% image image_forest fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Еловая ветка крупным планом" %}
+        <span class="stmt__cell-label">04 · ЛЕС</span>
+      </div>
+    </div>
+    <div class="stmt-rhythm__footer">
+      <a href="{% firstof link_url '/catalog/' %}" class="stmt__cta">{% firstof link_text "Смотреть коллекцию" %}<span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</section>

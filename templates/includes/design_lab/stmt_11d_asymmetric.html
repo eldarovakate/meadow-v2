@@ -1,0 +1,40 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Variant 11D — Asymmetric statement grid.
+  Props: image_main, image_b, image_c, image_d, eyebrow, title, subtitle,
+  link_text, link_url.
+  Composition: header sits left-aligned above the grid (not centered). One
+  image (~48% of the grid width) anchors the composition; two equal
+  squares sit beside it; a fourth wide panel spans beneath those two.
+  Geometry stays simple rectangles throughout — no organic shapes — the
+  asymmetry comes from scale, not silhouette. .stmt-asymmetric__row is a
+  plain wrapper on mobile (3-across strip below the main image) and
+  switches to `display:contents` at desktop so b/c/d become direct grid
+  items again for the L-shaped layout.
+{% endcomment %}
+<section class="stmt stmt-asymmetric">
+  <div class="container">
+    <div class="stmt__header reveal">
+      <p class="stmt__eyebrow">{% firstof eyebrow "КОЛЛЕКЦИЯ 01" %}</p>
+      <h2 class="stmt__title stmt__title--medium">{% firstof title "Лесные жители" %}</h2>
+      <p class="stmt__subtitle">{% firstof subtitle "Истории природы, которые остаются рядом." %}</p>
+      <a href="{% firstof link_url '/catalog/' %}" class="stmt__cta">{% firstof link_text "Смотреть коллекцию" %}<span aria-hidden="true">&rarr;</span></a>
+    </div>
+    <div class="stmt-asymmetric__grid">
+      <div class="stmt__cell stmt-asymmetric__main">
+        {% image image_main fill-1000x500 class="stmt__img" loading="lazy" decoding="async" alt="Осенний лес" %}
+      </div>
+      <div class="stmt-asymmetric__row">
+        <div class="stmt__cell stmt-asymmetric__b">
+          {% image image_b fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Луговая герань крупным планом" %}
+        </div>
+        <div class="stmt__cell stmt-asymmetric__c">
+          {% image image_c fill-700x700 class="stmt__img" loading="lazy" decoding="async" alt="Мох и грибы на бревне" %}
+        </div>
+        <div class="stmt__cell stmt-asymmetric__d">
+          {% image image_d fill-1000x500 class="stmt__img" loading="lazy" decoding="async" alt="Модель в футболке Meadow Shore с принтом «Ёж», золотой час" %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

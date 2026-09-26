@@ -1,16 +1,27 @@
 {% load wagtailimages_tags %}
 {% comment %}
   Prototype 04 — Field Notes / herbarium composition.
-  Props: image_main, image_detail, number, title, body.
-  Composition: a modern editorial "field notebook" page — thin index lines,
-  small numbered annotations, micro-typography. No aged paper, no tape.
+  Props: image_main, image_detail, image_fragment, image_botanical, number,
+  title, body.
+  Composition: a modern editorial field-journal spread — one large photo,
+  three smaller fragments (print swatch, second animal motif, a botanical
+  macro shot) scattered around it with small rotations (±2–4deg) and real
+  overlap, plus numbered annotations and a handwritten-style accent. Not a
+  scrapbook: no aged paper, no tape, no drop shadows on everything.
 {% endcomment %}
 <section class="proto proto-notes">
   <div class="container">
     <div class="proto-notes__grid">
       <div class="proto-notes__main">
-        {% image image_main fill-900x1100 class="proto-notes__img" loading="lazy" decoding="async" alt="Вышивка «Певчая птица» крупным планом" %}
-        <span class="proto-notes__tag proto-notes__tag--main">01 · вышивка</span>
+        {% image image_main fill-1600x1240 class="proto-notes__img" loading="lazy" decoding="async" alt="Вышивка «Певчая птица» крупным планом" %}
+        <span class="proto-notes__tag proto-notes__tag--main">01 · вышивка «Певчая птица»</span>
+
+        <div class="proto-notes__fragment">
+          {% image image_fragment fill-560x700 class="proto-notes__img" loading="lazy" decoding="async" alt="Принт «Ёж в яблоках» на ткани" %}
+          <span class="proto-notes__tag">02 · принт «Ёж в яблоках»</span>
+        </div>
+
+        <p class="proto-notes__accent" aria-hidden="true">наблюдение, не иллюстрация</p>
       </div>
 
       <div class="proto-notes__side reveal">
@@ -18,9 +29,15 @@
         <h2 class="proto-notes__title">{% firstof title "Малиновка среди ветвей" %}</h2>
         <p class="proto-notes__body">{% firstof body "Она не самая яркая птица в лесу и не самая заметная. Но именно её пение чаще всего слышно первым — до того, как лес просыпается окончательно." %}</p>
 
-        <div class="proto-notes__detail">
-          {% image image_detail fill-360x360 class="proto-notes__img" loading="lazy" decoding="async" alt="Принт «Певчая птица» на ткани" %}
-          <span class="proto-notes__tag">02 · принт на ткани</span>
+        <div class="proto-notes__detail-row">
+          <div class="proto-notes__detail">
+            {% image image_detail fill-460x460 class="proto-notes__img" loading="lazy" decoding="async" alt="Принт «Певчая птица» на ткани" %}
+            <span class="proto-notes__tag">03 · принт на ткани</span>
+          </div>
+          <div class="proto-notes__botanical">
+            {% image image_botanical fill-520x520 class="proto-notes__img" loading="lazy" decoding="async" alt="Свет между ветвями, закат в лесу" %}
+            <span class="proto-notes__tag">04 · свет между ветвями</span>
+          </div>
         </div>
 
         <p class="proto-notes__meta">Meadow Shore · 95% хлопок / 5% лайкра</p>
