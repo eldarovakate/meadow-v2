@@ -97,9 +97,13 @@ class ProductSizeStock(models.Model):
 class ProductPage(Page):
     COLOR_MILK = 'milk'
     COLOR_OLIVE = 'olive'
+    COLOR_ORANGE = 'orange'
+    COLOR_TERRACOTTA = 'terracotta'
     COLOR_CHOICES = [
         (COLOR_MILK, 'Молочный'),
         (COLOR_OLIVE, 'Оливковый'),
+        (COLOR_ORANGE, 'Оранжевый'),
+        (COLOR_TERRACOTTA, 'Терракотовый'),
     ]
 
     PRINT_EMBROIDERY = 'embroidery'
@@ -148,7 +152,7 @@ class ProductPage(Page):
             FieldPanel('status'),
         ], heading="Основное"),
         FieldPanel('main_image'),
-        InlinePanel('gallery_images', max_num=4, label="Доп. фото (до 4, плюс главное = 5)"),
+        InlinePanel('gallery_images', max_num=5, label="Доп. фото (до 5, плюс главное = 6)"),
         InlinePanel('size_stocks', max_num=4, label="Остатки по размерам"),
         FieldPanel('body'),
         MultiFieldPanel([
