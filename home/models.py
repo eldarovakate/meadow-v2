@@ -76,6 +76,11 @@ class HeroSectionBlock(blocks.StructBlock):
         help_text="Внутренняя ссылка (например /catalog/) или полный URL",
     )
     image = ImageChooserBlock(required=False, label="Фоновое изображение")
+    side_label = blocks.CharBlock(
+        max_length=80, required=False, default="Meadow Shore — Коллекция 01",
+        label="Вертикальная подпись справа",
+        help_text="Тонкая подпись вдоль правого края (только desktop). Оставьте пустым, чтобы скрыть.",
+    )
 
     def clean(self, value):
         result = super().clean(value)
@@ -264,6 +269,107 @@ class ObservationSectionBlock(blocks.StructBlock):
         label = 'Наблюдение'
 
 
+class ArchSectionValue(blocks.StructValue):
+    def side_note_lines(self):
+        return [line.strip() for line in (self.get('side_note') or '').splitlines() if line.strip()]
+
+
+class ArchSectionBlock(blocks.StructBlock):
+    is_visible = blocks.BooleanBlock(
+        required=False, default=True, label="Показывать блок на сайте",
+        help_text="Снимите галочку, чтобы временно скрыть блок, не удаляя тексты и фото.",
+    )
+    side_note = blocks.TextBlock(
+        required=False, rows=5, label="Подпись слева (необязательно)",
+        help_text="Короткая фраза столбиком: каждая строка — с новой строки (Enter).",
+    )
+    eyebrow = blocks.CharBlock(max_length=100, required=False, label="Надпись над заголовком")
+    title = blocks.CharBlock(max_length=200, label="Заголовок")
+    body = blocks.TextBlock(required=False, label="Текст")
+    image = ImageChooserBlock(label="Фото в арке", help_text="Лучше вертикальное, с запасом над головой.")
+    cta_text = blocks.CharBlock(max_length=100, required=False, default="О бренде", label="Текст ссылки (необязательно)")
+    cta_url = blocks.CharBlock(
+        max_length=200, required=False, default="/about/", label="Ссылка (необязательно)",
+        help_text="Внутренняя ссылка (например /about/) или полный URL",
+    )
+
+    def clean(self, value):
+        result = super().clean(value)
+        try:
+            validate_cta_url(result.get('cta_url'))
+        except ValidationError as e:
+            raise blocks.StructBlockValidationError(block_errors={'cta_url': e})
+        return result
+
+    class Meta:
+        icon = 'image'
+        label = 'Фото в арке'
+        value_class = ArchSectionValue
+
+
+class CollectionStatementBlock(blocks.StructBlock):
+    is_visible = blocks.BooleanBlock(
+        required=False, default=True, label="Показывать блок на сайте",
+        help_text="Снимите галочку, чтобы временно скрыть блок, не удаляя тексты и фото.",
+    )
+    eyebrow = blocks.CharBlock(max_length=100, required=False, label="Надпись над заголовком")
+    title = blocks.CharBlock(max_length=100, label="Крупный заголовок", help_text="Лучше 2 коротких слова — они встанут в две строки.")
+    meta = blocks.CharBlock(max_length=100, required=False, label="Подпись под заголовком")
+    images = blocks.ListBlock(
+        ImageChooserBlock(label="Фото"), min_num=4, max_num=4,
+        label="Фото (ровно 4)", help_text="Показываются квадратами в один ряд.",
+    )
+    cta_text = blocks.CharBlock(max_length=100, required=False, default="Смотреть коллекцию", label="Текст ссылки (необязательно)")
+    cta_url = blocks.CharBlock(
+        max_length=200, required=False, default="/catalog/", label="Ссылка (необязательно)",
+        help_text="Внутренняя ссылка (например /catalog/) или полный URL",
+    )
+
+    def clean(self, value):
+        result = super().clean(value)
+        try:
+            validate_cta_url(result.get('cta_url'))
+        except ValidationError as e:
+            raise blocks.StructBlockValidationError(block_errors={'cta_url': e})
+        return result
+
+    class Meta:
+        icon = 'grip'
+        label = 'Заголовок коллекции + 4 фото'
+
+
+class DarkStageBlock(blocks.StructBlock):
+    is_visible = blocks.BooleanBlock(
+        required=False, default=True, label="Показывать блок на сайте",
+        help_text="Снимите галочку, чтобы временно скрыть блок, не удаляя тексты и фото.",
+    )
+    big_word = blocks.CharBlock(
+        max_length=20, required=False, default="ЛЕС", label="Крупное слово на фоне",
+        help_text="Едва заметное слово за текстом. Лучше короткое. Пусто — без слова.",
+    )
+    eyebrow = blocks.CharBlock(max_length=100, required=False, label="Надпись над заголовком")
+    title = blocks.CharBlock(max_length=200, label="Заголовок")
+    body = blocks.TextBlock(required=False, label="Текст")
+    image = ImageChooserBlock(label="Фото", help_text="Вертикальное фото.")
+    cta_text = blocks.CharBlock(max_length=100, required=False, default="Смотреть коллекцию", label="Текст кнопки (необязательно)")
+    cta_url = blocks.CharBlock(
+        max_length=200, required=False, default="/catalog/", label="Ссылка кнопки (необязательно)",
+        help_text="Внутренняя ссылка (например /catalog/) или полный URL",
+    )
+
+    def clean(self, value):
+        result = super().clean(value)
+        try:
+            validate_cta_url(result.get('cta_url'))
+        except ValidationError as e:
+            raise blocks.StructBlockValidationError(block_errors={'cta_url': e})
+        return result
+
+    class Meta:
+        icon = 'image'
+        label = 'Тёмная сцена (фото + текст на зелёном)'
+
+
 class HomePage(Page):
     body = StreamField([
         ('hero', HeroSectionBlock()),
@@ -277,6 +383,9 @@ class HomePage(Page):
         ('philosophy', PhilosophySectionBlock()),
         ('cta', CTASectionBlock()),
         ('observation', ObservationSectionBlock()),
+        ('arch', ArchSectionBlock()),
+        ('collection_statement', CollectionStatementBlock()),
+        ('dark_stage', DarkStageBlock()),
     ], use_json_field=True, blank=True)
 
     content_panels = Page.content_panels + [

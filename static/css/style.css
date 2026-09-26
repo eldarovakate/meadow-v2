@@ -596,18 +596,17 @@ body.has-announcement {
    9. HERO SECTION
    ============================================================ */
 
+/* Cinematic hero (ported from /design-lab/home-blocks/ block 01):
+   full-bleed photo that fills exactly one screen — the hero starts under
+   the fixed header, so its height is header + the visible part. Copy sits
+   low and wide against the left edge (not the reading container), body
+   and CTA share one row, a quiet vertical label runs along the right. */
 .home-page .hero {
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
-  min-height: clamp(680px, calc(100svh - var(--header-h)), 920px);
-}
-
-@media (max-width: 767px) {
-  .home-page .hero {
-    min-height: clamp(620px, calc(100svh - var(--header-h)), 700px);
-  }
+  height: calc(var(--header-h) + clamp(560px, calc(100svh - var(--header-h)), 860px));
 }
 
 .home-page .hero__bg {
@@ -624,28 +623,40 @@ body.has-announcement {
   display: block;
 }
 
-/* Mobile/tablet: darker toward the bottom, where the text sits */
+/* Darker toward the bottom, where the copy sits */
 .home-page .hero__overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   background: linear-gradient(
-    to top,
-    rgba(20, 30, 15, 0.7) 0%,
-    rgba(20, 30, 15, 0.34) 42%,
-    rgba(20, 30, 15, 0) 74%
+    0deg,
+    rgba(21, 16, 10, 0.82) 0%,
+    rgba(21, 16, 10, 0.4) 44%,
+    rgba(21, 16, 10, 0) 74%
   );
 }
 
-/* Desktop/tablet-landscape: darker toward the text (bottom-left), photo stays open on the right */
-@media (min-width: 768px) {
-  .home-page .hero__overlay {
-    background: linear-gradient(
-      115deg,
-      rgba(20, 30, 15, 0.72) 0%,
-      rgba(20, 30, 15, 0.4) 34%,
-      rgba(20, 30, 15, 0) 66%
-    );
+.home-page .hero__side-label {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .home-page .hero__side-label {
+    display: block;
+    position: absolute;
+    top: calc(var(--header-h) + (100% - var(--header-h)) / 2);
+    right: clamp(1.5rem, 3vw, 3rem);
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: right center;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(248, 245, 239, 0.55);
+    white-space: nowrap;
+    z-index: 2;
   }
 }
 
@@ -653,12 +664,11 @@ body.has-announcement {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding-top: calc(var(--header-h) + var(--space-sm));
-  padding-bottom: clamp(2.25rem, 6vw, 4.5rem);
+  padding: 0 var(--container-pad) var(--space-xl);
+  color: var(--color-ivory);
 }
 
 .home-page .hero__text {
-  max-width: clamp(560px, 62vw, 800px);
   animation: heroTextIn 0.8s ease both;
 }
 
@@ -675,61 +685,65 @@ body.has-announcement {
 
 .home-page .hero__eyebrow {
   font-family: var(--font-sans);
-  font-size: clamp(11px, 0.2vw + 10.6px, 12px);
-  font-weight: 400;
-  letter-spacing: 0.15em;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-ivory);
-  margin-bottom: 1rem;
+  color: var(--color-terracotta-light);
+  margin-bottom: var(--space-sm);
 }
 
 .home-page .hero__headline {
   font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: clamp(2.75rem, 1.5rem + 4vw, 5.25rem);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
+  font-weight: 300;
+  font-size: clamp(3.625rem, 6vw, 5.75rem);
+  line-height: 0.94;
+  letter-spacing: -0.015em;
   color: var(--color-ivory);
+  max-width: 21ch;
   text-wrap: balance;
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--space-md);
+}
+
+.home-page .hero__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-md) var(--space-lg);
+  max-width: 920px;
 }
 
 .home-page .hero__sub {
+  flex: 1 1 260px;
+  max-width: 420px;
+  margin: 0;
   font-family: var(--font-sans);
-  font-size: clamp(1rem, 0.5vw + 0.9rem, 1.125rem);
+  font-size: 1.0625rem;
   font-weight: 400;
-  line-height: 1.55;
-  max-width: 520px;
-  color: rgba(248, 245, 239, 0.82);
-  margin-bottom: 2rem;
+  line-height: 1.65;
+  color: rgba(248, 245, 239, 0.86);
 }
 
 .home-page .hero__cta {
-  position: relative;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   min-height: 44px;
-  padding: 0.7rem 1.4rem;
   font-family: var(--font-sans);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--color-ivory);
-  background-color: var(--color-terracotta);
-  border: 1px solid var(--color-terracotta);
-  border-radius: 2px;
   text-decoration: none;
-  transition: background-color var(--transition-base),
-              border-color var(--transition-base),
-              transform var(--transition-fast),
-              box-shadow var(--transition-base);
+  border-bottom: 1px solid rgba(248, 245, 239, 0.4);
+  padding-bottom: 0.3rem;
+  transition: border-color var(--transition-fast);
 }
 
 .home-page .hero__cta:hover {
-  background-color: var(--color-terracotta-light);
-  border-color: var(--color-terracotta-light);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(181, 97, 74, 0.3);
+  border-color: var(--color-ivory);
 }
 
 .home-page .hero__cta:focus-visible {
@@ -743,6 +757,19 @@ body.has-announcement {
 
 .home-page .hero__cta:hover .hero__cta-arrow {
   transform: translateX(3px);
+}
+
+@media (max-width: 767px) {
+  .home-page .hero__content {
+    padding-bottom: var(--space-lg);
+  }
+
+  .home-page .hero__headline {
+    font-size: clamp(2.75rem, 11vw, 3.625rem);
+    /* Greedy wrap on narrow screens keeps a dash at the end of a line
+       instead of balance pushing it to the start of the next one. */
+    text-wrap: pretty;
+  }
 }
 
 /* ============================================================
@@ -4168,6 +4195,412 @@ main#main-content > .catalog-section:first-child {
   .fabric__grid {
     grid-template-columns: 5fr 4fr;
     gap: var(--space-xl);
+  }
+}
+
+/* ============================================================
+   30b. ARCH SECTION (homepage StreamField block "arch")
+   Three quiet columns: stacked uppercase note + thin rule, a photo
+   with a true semicircular top, editorial text with an arrow link.
+   Ported from /design-lab/home-blocks/ block 08.
+   ============================================================ */
+
+.home-page .arch-section {
+  --arch-pad-y: clamp(3rem, 1.5rem + 3.5vw, 4.5rem);
+  /* Bottom is half the top: the arch photo closes the block sooner. */
+  padding: var(--arch-pad-y) 0 calc(var(--arch-pad-y) / 2);
+  background-color: var(--color-ivory);
+}
+
+.home-page .arch-section__grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0 var(--container-pad);
+}
+
+.home-page .arch-section__grid > div:empty {
+  display: none;
+}
+
+.home-page .arch-section__note {
+  text-align: center;
+}
+
+.home-page .arch-section__note-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  line-height: 1.9;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.home-page .arch-section__note-rule {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  margin: var(--space-sm) auto 0;
+  background-color: var(--color-stone);
+}
+
+.home-page .arch-section__visual {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 3 / 4;
+}
+
+.home-page .arch-section__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Anchored to the top so a head is never cropped — trim the bottom. */
+  object-position: 50% 0;
+  display: block;
+  /* True semicircle: equal oversized radii scale down to half the width. */
+  border-radius: 999px 999px 0 0;
+}
+
+.home-page .arch-section__text {
+  text-align: center;
+  max-width: 440px;
+}
+
+.home-page .arch-section__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.home-page .arch-section__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.875rem, 4.2vw, 4.5rem);
+  line-height: 1.05;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.home-page .arch-section__body {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+  white-space: pre-line;
+}
+
+.home-page .arch-section__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.home-page .arch-section__link span {
+  transition: transform var(--transition-fast);
+}
+
+.home-page .arch-section__link:hover {
+  color: var(--color-terracotta);
+}
+
+.home-page .arch-section__link:hover span {
+  transform: translateX(3px);
+}
+
+@media (min-width: 768px) {
+  .home-page .arch-section__note-text span {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-page .arch-section__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(340px, 30vw, 440px) minmax(0, 1.5fr);
+    align-items: center;
+    gap: clamp(2.5rem, 5vw, 5rem);
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 4rem);
+  }
+
+  .home-page .arch-section__grid > div:empty {
+    display: block;
+  }
+
+  .home-page .arch-section__note {
+    justify-self: end;
+    text-align: left;
+  }
+
+  .home-page .arch-section__note-rule {
+    margin-left: 0;
+  }
+
+  .home-page .arch-section__visual {
+    max-width: none;
+  }
+
+  .home-page .arch-section__text {
+    text-align: left;
+    max-width: 460px;
+  }
+}
+
+/* ============================================================
+   30c. COLLECTION STATEMENT (homepage block "collection_statement")
+   Framed centred header (twig mark, eyebrow, two-line giant title,
+   meta) between thin rules + one row of four square photos.
+   Ported from /design-lab/home-blocks/ variant 11E.
+   ============================================================ */
+
+.home-page .statement-section {
+  background-color: var(--color-ivory);
+  padding: clamp(3rem, 1.5rem + 2.5vw, 4rem) 0;
+}
+
+.home-page .statement-section__header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 1.75rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.home-page .statement-section__mark {
+  width: 28px;
+  height: 28px;
+  color: var(--color-terracotta);
+  margin-bottom: 0.75rem;
+}
+
+.home-page .statement-section__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-terracotta);
+  margin-bottom: 0.75rem;
+}
+
+.home-page .statement-section__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(3.625rem, 2rem + 4.5vw, 5.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--color-brown-dark);
+  /* Two short words stack into two lines at any width. */
+  max-width: 5em;
+  margin: 0 auto 0.75rem;
+}
+
+.home-page .statement-section__meta {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin: 0;
+}
+
+.home-page .statement-section__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.home-page .statement-section__cell {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.home-page .statement-section__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-base);
+}
+
+.home-page .statement-section__cell:hover .statement-section__img {
+  transform: scale(1.015);
+}
+
+.home-page .statement-section__cta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+  margin: 1.75rem auto 0;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-brown-dark);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.25rem;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.home-page .statement-section__cta:hover {
+  color: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+}
+
+.home-page .statement-section__cta span {
+  transition: transform var(--transition-fast);
+}
+
+.home-page .statement-section__cta:hover span {
+  transform: translateX(3px);
+}
+
+@media (min-width: 640px) {
+  .home-page .statement-section__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 860px;
+  }
+}
+
+/* ============================================================
+   30d. DARK STAGE (homepage block "dark_stage")
+   Forest-green stage: tall photo left, text + primary button right,
+   a barely visible giant word behind, starting at the photo's right
+   edge. Ported from /design-lab/home-blocks/ block 05.
+   ============================================================ */
+
+.home-page .stage-section {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-forest);
+  padding: clamp(3rem, 1.5rem + 3.5vw, 4.5rem) 0;
+}
+
+.home-page .stage-section__big-word {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(5.5rem, 3rem + 11vw, 13rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: rgba(248, 245, 239, 0.06);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.home-page .stage-section__container {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.home-page .stage-section__photo-wrap {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 5.2;
+  margin: 0 auto;
+}
+
+.home-page .stage-section__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.home-page .stage-section__text {
+  text-align: center;
+  color: var(--color-ivory);
+}
+
+.home-page .stage-section__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-terracotta-light);
+  margin-bottom: var(--space-sm);
+}
+
+.home-page .stage-section__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 2rem + 3vw, 3.75rem);
+  color: inherit;
+  margin-bottom: var(--space-sm);
+}
+
+.home-page .stage-section__body {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: rgba(248, 245, 239, 0.78);
+  max-width: 400px;
+  margin: 0 auto var(--space-md);
+}
+
+.home-page .stage-section__cta {
+  margin-top: var(--space-xs);
+}
+
+@media (min-width: 1024px) {
+  .home-page .stage-section__big-word {
+    /* Starts just inside the photo's right edge: only the first letter is
+       tucked behind the photo, the rest reads behind the text. */
+    left: calc(50% - 5rem);
+    transform: translateY(-50%);
+  }
+
+  .home-page .stage-section__container {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(3rem, 6vw, 6rem);
+  }
+
+  .home-page .stage-section__photo-wrap {
+    max-width: 440px;
+    margin: 0;
+    justify-self: end;
+  }
+
+  .home-page .stage-section__text {
+    text-align: left;
+    max-width: 440px;
+  }
+
+  .home-page .stage-section__body {
+    margin: 0 0 var(--space-md);
   }
 }
 

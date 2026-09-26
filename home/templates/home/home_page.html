@@ -27,18 +27,23 @@
     </div>
     {% endif %}
     <div class="hero__overlay"></div>
-    <div class="hero__content container">
+    {% if block.value.side_label %}
+    <p class="hero__side-label" aria-hidden="true">{{ block.value.side_label }}</p>
+    {% endif %}
+    <div class="hero__content">
       <div class="hero__text">
         {% if block.value.eyebrow %}
         <p class="hero__eyebrow">{{ block.value.eyebrow }}</p>
         {% endif %}
         <h1 class="hero__headline">{{ block.value.headline }}</h1>
-        {% if block.value.subheadline %}
-        <p class="hero__sub">{{ block.value.subheadline }}</p>
-        {% endif %}
-        <a href="{% firstof block.value.cta_url '/catalog/' %}" class="hero__cta">
-          {{ block.value.cta_text }}<span class="hero__cta-arrow" aria-hidden="true">&rarr;</span>
-        </a>
+        <div class="hero__bottom">
+          {% if block.value.subheadline %}
+          <p class="hero__sub">{{ block.value.subheadline }}</p>
+          {% endif %}
+          <a href="{% firstof block.value.cta_url '/catalog/' %}" class="hero__cta">
+            {{ block.value.cta_text }}<span class="hero__cta-arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -99,6 +104,99 @@
       </div>
     </div>
   </section>
+
+  {% elif block.block_type == 'arch' %}
+  {% if block.value.is_visible %}
+  <section class="arch-section">
+    <div class="arch-section__grid">
+      {% with note_lines=block.value.side_note_lines %}
+      {% if note_lines %}
+      <div class="arch-section__note reveal">
+        <p class="arch-section__note-text">
+          {% for line in note_lines %}<span>{{ line }}</span>{% if not forloop.last %} {% endif %}{% endfor %}
+        </p>
+        <span class="arch-section__note-rule" aria-hidden="true"></span>
+      </div>
+      {% else %}
+      <div aria-hidden="true"></div>
+      {% endif %}
+      {% endwith %}
+      <div class="arch-section__visual">
+        {% image block.value.image width-1200 class="arch-section__img" loading="lazy" decoding="async" alt=block.value.title %}
+      </div>
+      <div class="arch-section__text reveal">
+        {% if block.value.eyebrow %}
+        <p class="arch-section__eyebrow">{{ block.value.eyebrow }}</p>
+        {% endif %}
+        <h2 class="arch-section__title">{{ block.value.title }}</h2>
+        {% if block.value.body %}
+        <p class="arch-section__body">{{ block.value.body }}</p>
+        {% endif %}
+        {% if block.value.cta_text and block.value.cta_url %}
+        <a href="{{ block.value.cta_url }}" class="arch-section__link">{{ block.value.cta_text }}<span aria-hidden="true">&rarr;</span></a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% elif block.block_type == 'collection_statement' %}
+  {% if block.value.is_visible %}
+  <section class="statement-section">
+    <div class="container">
+      <div class="statement-section__header reveal">
+        <svg class="statement-section__mark" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true" focusable="false">
+          <path d="M15 28 C15 20 15 12 15 3" />
+          <path d="M15 9 C11 7 8 9 6 13" />
+          <path d="M15 15 C19 13 22 15 24 19" />
+        </svg>
+        {% if block.value.eyebrow %}
+        <p class="statement-section__eyebrow">{{ block.value.eyebrow }}</p>
+        {% endif %}
+        <h2 class="statement-section__title">{{ block.value.title }}</h2>
+        {% if block.value.meta %}
+        <p class="statement-section__meta">{{ block.value.meta }}</p>
+        {% endif %}
+      </div>
+      <div class="statement-section__grid">
+        {% for img in block.value.images %}
+        <div class="statement-section__cell">
+          {% image img fill-600x600 class="statement-section__img" loading="lazy" decoding="async" alt="" %}
+        </div>
+        {% endfor %}
+      </div>
+      {% if block.value.cta_text and block.value.cta_url %}
+      <a href="{{ block.value.cta_url }}" class="statement-section__cta">{{ block.value.cta_text }}<span aria-hidden="true">&rarr;</span></a>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% elif block.block_type == 'dark_stage' %}
+  {% if block.value.is_visible %}
+  <section class="stage-section">
+    {% if block.value.big_word %}
+    <p class="stage-section__big-word" aria-hidden="true">{{ block.value.big_word }}</p>
+    {% endif %}
+    <div class="container stage-section__container">
+      <div class="stage-section__photo-wrap">
+        {% image block.value.image fill-1400x1750 class="stage-section__photo" loading="lazy" decoding="async" alt=block.value.title %}
+      </div>
+      <div class="stage-section__text reveal">
+        {% if block.value.eyebrow %}
+        <p class="stage-section__eyebrow">{{ block.value.eyebrow }}</p>
+        {% endif %}
+        <h2 class="stage-section__title">{{ block.value.title }}</h2>
+        {% if block.value.body %}
+        <p class="stage-section__body">{{ block.value.body }}</p>
+        {% endif %}
+        {% if block.value.cta_text and block.value.cta_url %}
+        <a href="{{ block.value.cta_url }}" class="btn btn--primary stage-section__cta">{{ block.value.cta_text }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
 
   {% elif block.block_type == 'collections' %}
   <section class="collections">
