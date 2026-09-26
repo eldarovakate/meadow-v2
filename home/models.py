@@ -314,7 +314,11 @@ class CollectionStatementBlock(blocks.StructBlock):
     )
     eyebrow = blocks.CharBlock(max_length=100, required=False, label="Надпись над заголовком")
     title = blocks.CharBlock(max_length=100, label="Крупный заголовок", help_text="Лучше 2 коротких слова — они встанут в две строки.")
-    meta = blocks.CharBlock(max_length=100, required=False, label="Подпись под заголовком")
+    meta = blocks.CharBlock(max_length=100, required=False, label="Подпись под заголовком (мелко, капсом)")
+    body = blocks.TextBlock(
+        required=False, label="Текст под заголовком",
+        help_text="Обычный текст. Новая строка (Enter) сохраняется как перенос.",
+    )
     images = blocks.ListBlock(
         ImageChooserBlock(label="Фото"), min_num=4, max_num=4,
         label="Фото (ровно 4)", help_text="Показываются квадратами в один ряд.",
@@ -370,6 +374,22 @@ class DarkStageBlock(blocks.StructBlock):
         label = 'Тёмная сцена (фото + текст на зелёном)'
 
 
+class InspirationCollageBlock(blocks.StructBlock):
+    """Decorative paper collage. Tape, pin, dried twig and the two
+    handwritten notes are fixed PNG assets in static/img/site/collage/
+    (the note text is part of the artwork); only the photos are editable."""
+    is_visible = blocks.BooleanBlock(
+        required=False, default=True, label="Показывать блок на сайте",
+        help_text="Снимите галочку, чтобы временно скрыть блок, не удаляя фото.",
+    )
+    photo_left = ImageChooserBlock(label="Фото слева (под скотчем)", help_text="Вертикальное. Надпись рядом: «Папоротник у старого дерева.»")
+    photo_right = ImageChooserBlock(label="Фото справа (под кнопкой)", help_text="Вертикальное. Надпись рядом: «Тропа уходит в лес.»")
+
+    class Meta:
+        icon = 'image'
+        label = 'Коллаж: папоротник и тропа'
+
+
 class HomePage(Page):
     body = StreamField([
         ('hero', HeroSectionBlock()),
@@ -386,6 +406,7 @@ class HomePage(Page):
         ('arch', ArchSectionBlock()),
         ('collection_statement', CollectionStatementBlock()),
         ('dark_stage', DarkStageBlock()),
+        ('inspiration_collage', InspirationCollageBlock()),
     ], use_json_field=True, blank=True)
 
     content_panels = Page.content_panels + [

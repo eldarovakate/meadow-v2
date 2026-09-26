@@ -157,6 +157,9 @@
         {% if block.value.meta %}
         <p class="statement-section__meta">{{ block.value.meta }}</p>
         {% endif %}
+        {% if block.value.body %}
+        <p class="statement-section__body">{{ block.value.body }}</p>
+        {% endif %}
       </div>
       <div class="statement-section__grid">
         {% for img in block.value.images %}
@@ -194,6 +197,44 @@
         <a href="{{ block.value.cta_url }}" class="btn btn--primary stage-section__cta">{{ block.value.cta_text }}</a>
         {% endif %}
       </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% elif block.block_type == 'inspiration_collage' %}
+  {% if block.value.is_visible %}
+  <div class="section-divider" aria-hidden="true">
+    <span class="section-divider__line"></span>
+    <svg class="section-divider__mark" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.1" focusable="false">
+      <path d="M15 28 C15 20 15 12 15 3" />
+      <path d="M15 9 C11 7 8 9 6 13" />
+      <path d="M15 15 C19 13 22 15 24 19" />
+    </svg>
+    <span class="section-divider__line"></span>
+  </div>
+  <section class="inspiration-collage" aria-label="Папоротник у старого дерева. Тропа уходит в лес.">
+    <div class="inspiration-collage__inner">
+      <figure class="inspiration-collage__card inspiration-collage__card--left">
+        <div class="inspiration-collage__photo">
+          {% image block.value.photo_left fill-500x700 loading="lazy" decoding="async" alt="" %}
+        </div>
+        <img class="inspiration-collage__frame" src="{% static 'img/site/collage/polaroid-frame.webp' %}" alt="" width="700" height="948" loading="lazy">
+        <img class="inspiration-collage__tape" src="{% static 'img/site/collage/tape.webp' %}" alt="" width="500" height="216" loading="lazy">
+      </figure>
+
+      <img class="inspiration-collage__note inspiration-collage__note--center" src="{% static 'img/site/collage/note-fern.webp' %}" alt="Папоротник у старого дерева." width="800" height="577" loading="lazy">
+
+      <img class="inspiration-collage__flower" src="{% static 'img/site/collage/dried-flower.webp' %}" alt="" width="700" height="548" loading="lazy">
+
+      <figure class="inspiration-collage__card inspiration-collage__card--right">
+        <div class="inspiration-collage__photo">
+          {% image block.value.photo_right fill-500x700 loading="lazy" decoding="async" alt="" %}
+        </div>
+        <img class="inspiration-collage__frame" src="{% static 'img/site/collage/polaroid-frame.webp' %}" alt="" width="700" height="948" loading="lazy">
+        <img class="inspiration-collage__pin" src="{% static 'img/site/collage/pin.webp' %}" alt="" width="160" height="126" loading="lazy">
+      </figure>
+
+      <img class="inspiration-collage__note inspiration-collage__note--right" src="{% static 'img/site/collage/note-trail.webp' %}" alt="Тропа уходит в лес." width="800" height="582" loading="lazy">
     </div>
   </section>
   {% endif %}

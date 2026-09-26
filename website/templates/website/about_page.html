@@ -46,7 +46,7 @@
   </section>
 
   {% elif block.block_type == 'about' %}
-  <section class="collection-story">
+  <section class="collection-story{% if block.value.image %} collection-story--with-image{% endif %}">
     <div class="container">
       <div class="collection-story__grid">
         <div class="collection-story__text reveal">

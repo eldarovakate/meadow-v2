@@ -4419,6 +4419,15 @@ main#main-content > .catalog-section:first-child {
   margin: 0;
 }
 
+.home-page .statement-section__body {
+  max-width: 460px;
+  margin: 0.25rem auto 0;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  white-space: pre-line;
+}
+
 .home-page .statement-section__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -4602,6 +4611,306 @@ main#main-content > .catalog-section:first-child {
   .home-page .stage-section__body {
     margin: 0 0 var(--space-md);
   }
+}
+
+/* ============================================================
+   30e. INSPIRATION COLLAGE (homepage block "inspiration_collage")
+   Paper collage built from transparent PNG/WebP assets in
+   static/img/site/collage/. Desktop/tablet: one stage with a fixed
+   aspect ratio, every piece placed in % of it, so the composition
+   scales as a whole. Phones: a calm vertical stack.
+   Layers: photos < notes < tape/pin < dried twig.
+   ============================================================ */
+
+.home-page .inspiration-collage {
+  padding: clamp(3.5rem, 2rem + 4vw, 6rem) var(--container-pad);
+  background-color: #f1ebe2;
+  /* Barely-there paper grain */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  overflow: hidden;
+}
+
+.home-page .inspiration-collage__inner {
+  position: relative;
+  max-width: 1160px;
+  margin: 0 auto;
+  aspect-ratio: 1160 / 440;
+}
+
+.home-page .inspiration-collage__inner > * {
+  position: absolute;
+  margin: 0;
+}
+
+.home-page .inspiration-collage__card {
+  aspect-ratio: 700 / 948;
+  z-index: 1;
+}
+
+/* Photo sits in the frame's transparent window (measured from the asset),
+   inset a hair wider so no gap shows under the frame edge. */
+.home-page .inspiration-collage__photo {
+  position: absolute;
+  top: 3.5%;
+  right: 7.8%;
+  bottom: 6.2%;
+  left: 5%;
+  overflow: hidden;
+  background-color: var(--color-sand);
+}
+
+.home-page .inspiration-collage__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.home-page .inspiration-collage__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 10px 18px rgba(70, 52, 34, 0.12));
+}
+
+.home-page .inspiration-collage__tape {
+  position: absolute;
+  top: -6%;
+  left: 18%;
+  width: 46%;
+  height: auto;
+  transform: rotate(-5deg);
+  opacity: 0.94;
+  z-index: 3;
+}
+
+.home-page .inspiration-collage__pin {
+  position: absolute;
+  top: -2.5%;
+  left: 60%;
+  width: 17%;
+  height: auto;
+  z-index: 3;
+}
+
+.home-page .inspiration-collage__note,
+.home-page .inspiration-collage__flower {
+  height: auto;
+  filter: drop-shadow(0 8px 14px rgba(70, 52, 34, 0.1));
+}
+
+.home-page .inspiration-collage__card--left {
+  left: 5%;
+  top: 4%;
+  width: 21.5%;
+  transform: rotate(-2.5deg);
+}
+
+.home-page .inspiration-collage__note--center {
+  left: 24.5%;
+  top: 24%;
+  width: 26%;
+  transform: rotate(2deg);
+  z-index: 2;
+}
+
+.home-page .inspiration-collage__flower {
+  /* Secondary accent: grows from the lower-left of the composition and
+     lies UNDER both the photo card and the note, so it can only peek out
+     from beneath them — never cover the photo. */
+  left: 13.5%;
+  top: 74%;
+  width: 17.5%;
+  transform: rotate(-16deg);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.home-page .inspiration-collage__card--right {
+  left: 51%;
+  top: 1%;
+  width: 20.5%;
+  transform: rotate(1.5deg);
+}
+
+.home-page .inspiration-collage__note--right {
+  left: 69%;
+  top: 18%;
+  width: 24%;
+  transform: rotate(-3deg);
+  z-index: 2;
+}
+
+@media (max-width: 767px) {
+  .home-page .inspiration-collage__inner {
+    aspect-ratio: auto;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-page .inspiration-collage__inner > * {
+    position: relative;
+    left: auto;
+    top: auto;
+  }
+
+  .home-page .inspiration-collage__card--left {
+    order: 1;
+    width: 64%;
+    align-self: flex-start;
+    margin-left: 4%;
+  }
+
+  /* Twig lies across the bottom of the first photo, clear of the note text */
+  .home-page .inspiration-collage__flower {
+    order: 2;
+    width: 40%;
+    align-self: flex-start;
+    margin: -1% 0 -16% 10%;
+  }
+
+  .home-page .inspiration-collage__note--center {
+    order: 3;
+    width: 82%;
+    align-self: flex-end;
+  }
+
+  .home-page .inspiration-collage__card--right {
+    order: 4;
+  }
+
+  .home-page .inspiration-collage__note--right {
+    order: 5;
+  }
+
+  .home-page .inspiration-collage__card--right {
+    width: 62%;
+    align-self: flex-end;
+    margin-right: 4%;
+    margin-top: 6%;
+  }
+
+  .home-page .inspiration-collage__note--right {
+    width: 80%;
+    align-self: flex-start;
+    margin-top: -12%;
+  }
+}
+
+/* ============================================================
+   30e-2. SECTION DIVIDER — quiet editorial pause (hairline + twig)
+   Rendered before the inspiration collage so it never merges with the
+   light block above it. Decorative only (aria-hidden).
+   ============================================================ */
+
+.home-page .section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  height: 80px;
+  background-color: var(--color-ivory);
+}
+
+.home-page .section-divider__line {
+  flex: 0 1 290px;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.home-page .section-divider__mark {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--color-terracotta);
+}
+
+@media (max-width: 767px) {
+  .home-page .section-divider {
+    height: 56px;
+    gap: 0.75rem;
+  }
+
+  .home-page .section-divider__line {
+    flex-basis: calc(32vw - 1rem);
+  }
+
+  .home-page .section-divider__mark {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ============================================================
+   30f. ABOUT PAGE — COLOUR RHYTHM
+   The About page reuses the homepage section classes; these rules are
+   scoped to .about-page so the homepage is untouched. Rhythm:
+   hero → ivory → terracotta → beige → forest → ivory → dark terracotta
+   → chocolate footer. Both terracottas are the brand token deepened
+   with --color-brown-dark (no new hues) so ivory body text clears
+   WCAG AA: 4.9:1 and 5.6:1 (plain terracotta gives only 4.0:1).
+   ============================================================ */
+
+.about-page {
+  --about-terracotta: color-mix(in srgb, var(--color-terracotta) 85%, var(--color-brown-dark));
+  --about-terracotta-deep: color-mix(in srgb, var(--color-terracotta) 75%, var(--color-brown-dark));
+}
+
+/* «Почему Meadow Shore» — calm ivory continuation of the hero */
+.about-page .collection-story {
+  background-color: var(--color-ivory);
+}
+
+.about-page .collection-story__eyebrow {
+  color: var(--color-terracotta);
+}
+
+/* «Природу можно перенести…» — first strong colour turn */
+.about-page .collection-story--with-image {
+  background-color: var(--about-terracotta);
+}
+
+.about-page .collection-story--with-image .collection-story__eyebrow,
+.about-page .collection-story--with-image .collection-story__details span {
+  color: rgba(248, 245, 239, 0.72);
+}
+
+.about-page .collection-story--with-image .collection-story__title,
+.about-page .collection-story--with-image .collection-story__cta {
+  color: var(--color-ivory);
+}
+
+.about-page .collection-story--with-image .collection-story__body p {
+  color: var(--color-ivory);
+}
+
+.about-page .collection-story--with-image .collection-story__cta:hover {
+  color: var(--color-beige);
+}
+
+/* «Мир Meadow Shore» — warm beige, distinct from both ivory blocks */
+.about-page .collections {
+  background-color: var(--color-beige);
+}
+
+/* «Сначала вещь» — clear light step after the forest section */
+.about-page .fabric {
+  background-color: var(--color-ivory);
+}
+
+/* Final statement — terracotta finale before the chocolate footer */
+.about-page .philosophy {
+  background-color: var(--about-terracotta-deep);
+}
+
+.about-page .philosophy__attr {
+  color: rgba(248, 245, 239, 0.72);
+}
+
+.about-page .philosophy__body p {
+  color: rgba(248, 245, 239, 0.88);
 }
 
 /* ============================================================
