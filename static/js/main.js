@@ -219,12 +219,8 @@ document.querySelectorAll('[data-gallery]').forEach((gallery) => {
   });
 
   if (thumbs.length) {
-    const viewport = gallery.querySelector('[data-thumb-viewport]');
-    const prevBtn = gallery.querySelector('[data-thumb-prev]');
-    const nextBtn = gallery.querySelector('[data-thumb-next]');
-
     const goTo = (index) => {
-      setActive((index + thumbs.length) % thumbs.length);
+      setActive((index + slides.length) % slides.length);
       thumbs[current].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     };
 
@@ -232,19 +228,19 @@ document.querySelectorAll('[data-gallery]').forEach((gallery) => {
       thumb.addEventListener('click', () => goTo(Number(thumb.dataset.index)));
     });
 
-    prevBtn?.addEventListener('click', () => goTo(current - 1));
-    nextBtn?.addEventListener('click', () => goTo(current + 1));
+    gallery.querySelector('[data-gallery-prev]')?.addEventListener('click', () => goTo(current - 1));
+    gallery.querySelector('[data-gallery-next]')?.addEventListener('click', () => goTo(current + 1));
 
-    if (viewport) {
-      const updateThumbArrows = () => {
-        const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-        if (prevBtn) prevBtn.disabled = viewport.scrollLeft <= 4;
-        if (nextBtn) nextBtn.disabled = maxScroll <= 4 || viewport.scrollLeft >= maxScroll - 4;
-      };
-      viewport.addEventListener('scroll', updateThumbArrows, { passive: true });
-      window.addEventListener('resize', updateThumbArrows);
-      updateThumbArrows();
-    }
+    // Swipe on the main photo (phones)
+    const mainImage = gallery.querySelector('.product-detail__main-image');
+    let touchStartX = null;
+    mainImage?.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    mainImage?.addEventListener('touchend', (e) => {
+      if (touchStartX === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      touchStartX = null;
+      if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+    });
   } else {
     gallery.addEventListener('mousemove', (e) => {
       const rect = gallery.getBoundingClientRect();

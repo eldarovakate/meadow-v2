@@ -3081,38 +3081,58 @@ main#main-content > .catalog-section:first-child {
   border-color: var(--color-terracotta);
 }
 
-.thumb-arrow {
-  flex-shrink: 0;
+/* Prev/next arrows over the main product photo */
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-white);
+  border: none;
+  background-color: rgba(248, 245, 239, 0.85);
   color: var(--color-text);
   cursor: pointer;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   transition: background-color var(--transition-fast),
               color var(--transition-fast),
-              border-color var(--transition-fast),
               opacity var(--transition-fast);
 }
 
-.thumb-arrow svg {
-  width: 15px;
-  height: 15px;
+.gallery-arrow--prev { left: var(--space-sm); }
+.gallery-arrow--next { right: var(--space-sm); }
+
+.gallery-arrow svg {
+  width: 20px;
+  height: 20px;
 }
 
-.thumb-arrow:hover:not(:disabled) {
+.gallery-arrow:hover {
   background-color: var(--color-terracotta);
-  border-color: var(--color-terracotta);
   color: var(--color-ivory);
 }
 
-.thumb-arrow:disabled {
-  opacity: 0.35;
-  cursor: default;
+.gallery-arrow:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 2px;
+}
+
+/* Mouse devices: arrows hidden until the photo is hovered (like Avito);
+   touch devices keep them visible since there is no hover */
+@media (hover: hover) {
+  .gallery-arrow {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .product-detail__main-image:hover .gallery-arrow,
+  .gallery-arrow:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 .add-to-cart-form {
