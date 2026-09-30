@@ -1,46 +1,66 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}product-page{% endblock %}
 
 {% block content %}
 
+{% with images=page.all_images sections=section_images %}
+
 <section class="product-detail">
   <div class="container">
+
+    <nav class="breadcrumbs" aria-label="Навигация по разделам">
+      <ol class="breadcrumbs__list">
+        <li class="breadcrumbs__item"><a href="/">Главная</a></li>
+        {% with parent=page.get_parent %}
+        <li class="breadcrumbs__item"><a href="{% pageurl parent %}">{% if page.collection_name %}{{ page.collection_name }}{% else %}{{ parent.title }}{% endif %}</a></li>
+        {% endwith %}
+        <li class="breadcrumbs__item" aria-current="page">{{ page.title }}</li>
+      </ol>
+    </nav>
+
     <div class="product-detail__grid">
 
-      <div class="product-detail__gallery reveal" data-gallery>
+      {# ---------- Галерея ---------- #}
+      <div class="product-detail__gallery reveal" data-gallery data-product-gallery>
         <div class="product-detail__main-image">
-          {% for img in page.all_images %}
-          {% if forloop.first %}
-          {% image img width-900 class="product-detail__img gallery-slide is-active" %}
-          {% else %}
-          {% image img width-900 class="product-detail__img gallery-slide" %}
-          {% endif %}
+          {% for img in images %}
+          {% image img width-900 as slide %}
+          <img src="{{ slide.url }}" width="{{ slide.width }}" height="{{ slide.height }}"
+               alt="{{ page.title }} — фото {{ forloop.counter }}"
+               class="product-detail__img gallery-slide{% if forloop.first %} is-active{% endif %}"
+               {% if not forloop.first %}loading="lazy" {% endif %}decoding="async" data-lightbox-open="{{ forloop.counter0 }}">
           {% empty %}
           <div class="product-gallery-placeholder">
             <span>{{ page.title }}</span>
           </div>
           {% endfor %}
           {% if page.discount_percent %}
-          <span class="product-card__tag product-card__tag--discount product-detail__discount">-{{ page.discount_percent }}%</span>
+          <span class="product-card__tag product-card__tag--discount product-detail__discount">−{{ page.discount_percent }}%</span>
           {% endif %}
-          {% if page.all_images|length > 1 %}
+          {% if images %}
+          <button type="button" class="gallery-zoom" data-lightbox-open-current aria-label="Открыть фото крупно">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4M11 8.5v5M8.5 11h5"/></svg>
+          </button>
+          {% endif %}
+          {% if images|length > 1 %}
           <button type="button" class="gallery-arrow gallery-arrow--prev" data-gallery-prev aria-label="Предыдущее фото">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
           </button>
           <button type="button" class="gallery-arrow gallery-arrow--next" data-gallery-next aria-label="Следующее фото">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           </button>
+          <span class="gallery-counter" aria-live="polite"><span data-gallery-current>1</span> / {{ images|length }}</span>
           {% endif %}
         </div>
-        {% if page.all_images|length > 1 %}
+        {% if images|length > 1 %}
         <div class="product-detail__thumbs">
           <div class="product-detail__thumb-viewport" data-thumb-viewport>
             <div class="product-detail__thumb-track">
-              {% for img in page.all_images %}
-              <button type="button" class="product-detail__thumb gallery-thumb{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Фото {{ forloop.counter }}">
-                {% image img fill-120x150 %}
+              {% for img in images %}
+              <button type="button" class="product-detail__thumb gallery-thumb{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Показать фото {{ forloop.counter }}"{% if forloop.first %} aria-current="true"{% endif %}>
+                {% image img fill-160x200 alt="" %}
               </button>
               {% endfor %}
             </div>
@@ -49,122 +69,372 @@
         {% endif %}
       </div>
 
+      {# ---------- Покупка ---------- #}
       <div class="product-detail__info reveal reveal--delay">
-        <div class="product-detail__meta-row">
-          {% if page.collection_name %}
-          <span class="label">{{ page.collection_name }}</span>
-          {% endif %}
-          <span class="product-detail__sku">Артикул {{ page.sku }}</span>
-        </div>
+        {% if page.collection_name %}
+        <span class="label product-detail__collection">{{ page.collection_name }}</span>
+        {% endif %}
         <h1 class="product-detail__title">{{ page.title }}</h1>
         {% if page.short_description %}
         <p class="product-detail__short-desc">{{ page.short_description }}</p>
         {% endif %}
+        {% if page.quick_specs %}
+        <p class="product-detail__specs-line">{{ page.quick_specs|join:" · " }}</p>
+        {% endif %}
 
         <div class="product-detail__price-row">
           {% if page.price %}<span class="product-detail__price">{{ page.price }}</span>{% endif %}
-          {% if page.old_price %}<span class="product-detail__old-price">{{ page.old_price }}</span>{% endif %}
-          {% if page.discount_percent %}<span class="product-detail__discount-percent">-{{ page.discount_percent }}%</span>{% endif %}
+          {% if page.discount_percent %}
+          <span class="product-detail__old-price"><span class="sr-only">Цена без скидки: </span>{{ page.old_price }}</span>
+          <span class="product-detail__discount-percent">−{{ page.discount_percent }}%</span>
+          {% endif %}
         </div>
 
-        <div class="product-detail__status product-status--{{ page.status }}">
-          {% if page.status == 'available' %}В наличии{% elif page.status == 'coming_soon' %}Скоро в продаже{% else %}Нет в наличии{% endif %}
-        </div>
+        <p class="product-detail__status product-status--{{ purchase_state }}">
+          {% if purchase_state == 'preorder' %}Предзаказ{% elif purchase_state == 'available' %}В наличии{% elif purchase_state == 'coming_soon' %}Скоро в продаже{% else %}Нет в наличии{% endif %}
+        </p>
 
-        {% if page.status == 'available' %}
-        <form id="add-to-cart" action="{% url 'cart_add' page.id %}" method="post" class="add-to-cart-form" data-cart-form novalidate>
+        {% if purchase_state == 'available' or purchase_state == 'preorder' %}
+        <form id="add-to-cart" action="{% url 'cart_add' page.id %}" method="post" class="add-to-cart-form" data-cart-form data-cart-toggle data-remove-url="{% url 'cart_remove' page.id '__size__' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.path }}">
 
           {% if page.sorted_size_stocks %}
-          <div class="size-selector">
-            <label class="size-selector__label" for="size-select">Размер</label>
-            <div class="size-select-wrap">
-              <select name="size" id="size-select" class="size-select" required>
-                <option value="" disabled selected>Выбрать размер</option>
-                {% for stock in page.sorted_size_stocks %}
-                <option value="{{ stock.size }}"{% if not stock.quantity %} disabled{% endif %}>
-                  {{ stock.size }}{% if not stock.quantity %} — нет в наличии{% elif stock.quantity <= 2 %} — осталось {{ stock.quantity }}{% endif %}
-                </option>
-                {% endfor %}
-              </select>
+          <fieldset class="size-selector" data-size-group>
+            <div class="size-selector__head">
+              <legend class="size-selector__label">Размер</legend>
+              <button type="button" class="text-link size-selector__chart" data-dialog-open="size-chart">Таблица размеров</button>
             </div>
-            <p class="size-selector__error" data-size-error hidden>
+            <div class="size-options">
+              {% for stock in page.sorted_size_stocks %}
+              <label class="size-option{% if not stock.quantity %} is-disabled{% endif %}">
+                <input type="radio" name="size" value="{{ stock.size }}" class="size-option__input"{% if not stock.quantity %} disabled{% endif %}>
+                <span class="size-option__box">{{ stock.size }}</span>
+                {% if not stock.quantity %}
+                <span class="size-option__note">нет</span>
+                {% elif stock.quantity <= 2 %}
+                <span class="size-option__note">осталось {{ stock.quantity }}</span>
+                {% endif %}
+              </label>
+              {% endfor %}
+            </div>
+            <p class="size-selector__error" data-size-error role="alert" hidden>
               <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.5v4.2M8 11.2h.01" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
               Пожалуйста, выберите размер
             </p>
-          </div>
+            {% if page.model_size or page.model_height %}
+            <p class="size-selector__model">На модели{% if page.model_size %} размер {{ page.model_size }}{% endif %}{% if page.model_size and page.model_height %} · {% endif %}{% if page.model_height %}рост {{ page.model_height }} см{% endif %}</p>
+            {% endif %}
+          </fieldset>
           {% endif %}
 
-          <button type="submit" class="btn btn--primary btn--lg add-to-cart-form__submit">{% if is_preorder %}Добавить в предзаказ{% else %}Добавить в корзину{% endif %}</button>
+          <button type="submit" class="btn btn--primary btn--lg add-to-cart-form__submit" data-cart-submit
+                  data-label-add="{% if purchase_state == 'preorder' %}Добавить в предзаказ{% else %}Добавить в корзину{% endif %}"
+                  data-label-in-cart="{% if purchase_state == 'preorder' %}В предзаказе ✓{% else %}В корзине ✓{% endif %}">{% if purchase_state == 'preorder' %}Добавить в предзаказ{% else %}Добавить в корзину{% endif %}</button>
+          <p class="add-to-cart-form__in-cart" data-in-cart-note hidden>
+            Нажмите ещё раз, чтобы убрать · <a href="{% url 'cart' %}">Перейти в корзину</a>
+          </p>
         </form>
+        {{ in_cart_sizes|json_script:"in-cart-sizes" }}
         {% endif %}
+
+        <dl class="purchase-notes">
+          {% if purchase_state == 'preorder' %}
+          <div class="purchase-notes__row">
+            <dt>Предзаказ</dt>
+            <dd>Отправка заказов начнётся с {{ preorder_ship_date_short_ru }}</dd>
+          </div>
+          {% endif %}
+          {% with lines=settings.website.sitesettings.delivery_summary_lines %}{% if lines %}
+          <div class="purchase-notes__row">
+            <dt>{{ lines.0 }}</dt>
+            {% for line in lines|slice:"1:" %}<dd>{{ line }}</dd>{% endfor %}
+          </div>
+          {% endif %}{% endwith %}
+          {% with lines=settings.website.sitesettings.payment_summary_lines %}{% if lines %}
+          <div class="purchase-notes__row">
+            <dt>{{ lines.0 }}</dt>
+            {% for line in lines|slice:"1:" %}<dd>{{ line }}</dd>{% endfor %}
+          </div>
+          {% endif %}{% endwith %}
+        </dl>
 
         <div class="product-detail__favorite">
           {% include "includes/favorite_button.html" with product_id=page.id is_favorite=is_favorite %}
           <span class="product-detail__favorite-label">{% if is_favorite %}В избранном{% else %}Добавить в избранное{% endif %}</span>
         </div>
-
-        {% if page.body %}
-        <div class="product-detail__info-block">
-          <button type="button" class="accordion__header" aria-expanded="false">
-            <h4>Описание</h4>
-            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion__panel">
-            <div class="accordion__panel-inner richtext">{{ page.body|richtext }}</div>
-          </div>
-        </div>
-        {% endif %}
-
-        {% if page.fabric_info %}
-        <div class="product-detail__info-block">
-          <button type="button" class="accordion__header" aria-expanded="false">
-            <h4>Состав</h4>
-            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion__panel">
-            <div class="accordion__panel-inner"><p>{{ page.fabric_info }}</p></div>
-          </div>
-        </div>
-        {% endif %}
-        {% if page.care_info %}
-        <div class="product-detail__info-block">
-          <button type="button" class="accordion__header" aria-expanded="false">
-            <h4>Уход</h4>
-            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion__panel">
-            <div class="accordion__panel-inner"><p>{{ page.care_info }}</p></div>
-          </div>
-        </div>
-        {% endif %}
-        {% if settings.website.sitesettings.delivery_info %}
-        <div class="product-detail__info-block">
-          <button type="button" class="accordion__header" aria-expanded="false">
-            <h4>Доставка и возврат</h4>
-            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion__panel">
-            <div class="accordion__panel-inner richtext">{{ settings.website.sitesettings.delivery_info|richtext }}</div>
-          </div>
-        </div>
-        {% endif %}
-        {% if settings.website.sitesettings.payment_info %}
-        <div class="product-detail__info-block">
-          <button type="button" class="accordion__header" aria-expanded="false">
-            <h4>Оплата</h4>
-            <svg class="accordion__icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion__panel">
-            <div class="accordion__panel-inner richtext">{{ settings.website.sitesettings.payment_info|richtext }}</div>
-          </div>
-        </div>
-        {% endif %}
       </div>
 
     </div>
   </div>
 </section>
+
+{# ---------- Навигация по странице ---------- #}
+<nav class="pd-anchors" aria-label="Разделы страницы товара">
+  <div class="container">
+    <ul class="pd-anchors__list">
+      {% if page.fabric_info %}<li><a href="#o-veshchi">О вещи</a></li>{% endif %}
+      {% if page.fit_lines or page.model_size or page.model_height %}<li><a href="#posadka">Посадка</a></li>{% endif %}
+      {% if page.body %}<li><a href="#istoriya-printa">История принта</a></li>{% endif %}
+      <li><a href="#harakteristiki">Характеристики</a></li>
+      {% if page.care_items %}<li><a href="#uhod">Уход</a></li>{% endif %}
+      {% if settings.website.sitesettings.delivery_info or settings.website.sitesettings.payment_info %}<li><a href="#dostavka">Доставка</a></li>{% endif %}
+    </ul>
+  </div>
+</nav>
+
+{# ---------- О вещи: асимметричная композиция production-блока «Туда, где тише» ---------- #}
+{% if page.fabric_info %}
+<section class="arch-section arch-section--product" id="o-veshchi">
+  <div class="arch-section__grid">
+    {% if page.about_note_lines %}
+    <div class="arch-section__note reveal">
+      <p class="arch-section__note-text">
+        {% for line in page.about_note_lines %}<span>{{ line }}</span>{% if not forloop.last %} {% endif %}{% endfor %}
+      </p>
+      <span class="arch-section__note-rule" aria-hidden="true"></span>
+      {# Веточка в пустой левой колонке — не добавляет высоты секции #}
+      <img class="arch-section__sprig" src="{% static 'img/site/botanical/leaves-branch.webp' %}" width="480" height="496" alt="" aria-hidden="true" loading="lazy" decoding="async">
+    </div>
+    {% else %}
+    <div aria-hidden="true"></div>
+    {% endif %}
+    {% if sections.detail %}
+    <div class="arch-section__visual">
+      {% image sections.detail width-1200 as about_img %}
+      <img src="{{ about_img.url }}" width="{{ about_img.width }}" height="{{ about_img.height }}" class="arch-section__img" alt="{{ page.title }}: вещь крупнее" loading="lazy" decoding="async">
+    </div>
+    {% endif %}
+    <div class="arch-section__text reveal">
+      {% if page.collection_name %}<p class="arch-section__eyebrow">{{ page.collection_name }}</p>{% endif %}
+      <h2 class="arch-section__title">О вещи</h2>
+      {% for paragraph in page.about_paragraphs %}
+      <p class="arch-section__body">{{ paragraph }}</p>
+      {% endfor %}
+      {% if page.key_facts %}
+      <dl class="arch-facts">
+        {% for value, caption in page.key_facts %}
+        <div class="arch-facts__item">
+          <dt class="arch-facts__caption">{{ caption }}</dt>
+          <dd class="arch-facts__value">{{ value }}</dd>
+        </div>
+        {% endfor %}
+      </dl>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- Как сидит ---------- #}
+{% if page.fit_lines or page.model_size or page.model_height %}
+<section class="pd-section pd-fit" id="posadka">
+  <div class="container">
+    <h2 class="pd-heading reveal">Как сидит</h2>
+    <div class="pd-fit__grid">
+      {% if sections.fit %}
+      <div class="pd-fit__photos reveal">
+        {% for img in sections.fit %}
+        {% image img fill-600x750 as fit_img %}
+        <img src="{{ fit_img.url }}" width="{{ fit_img.width }}" height="{{ fit_img.height }}" alt="{{ page.title }}: посадка, фото {{ forloop.counter }}" loading="lazy" decoding="async">
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="pd-fit__notes reveal reveal--delay">
+        {% if page.fit_lines %}
+        <ul class="pd-list">
+          {% for line in page.fit_lines %}<li>{{ line }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% if page.model_size or page.model_height %}
+        <p class="pd-text">
+          {% if page.model_size %}На модели размер {{ page.model_size }}{% endif %}{% if page.model_size and page.model_height %}<br>{% endif %}{% if page.model_height %}Рост {{ page.model_height }} см{% endif %}
+        </p>
+        {% endif %}
+        <button type="button" class="text-link" data-dialog-open="size-chart">Таблица размеров</button>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- История принта: тёмная сцена production-блока «Наблюдение / Лесная птица» ---------- #}
+{% if page.body %}
+<section class="stage-section stage-section--product" id="istoriya-printa">
+  {# Персонаж принта полупрозрачным слоем — вместо огромного слова, как на главной #}
+  <img class="stage-section__motif" src="{% static 'img/site/botanical/'|add:page.story_motif|add:'.webp' %}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+  <div class="container stage-section__container">
+    {% if sections.story %}
+    <div class="stage-section__photo-wrap">
+      {% image sections.story fill-1000x1300 as story_img %}
+      <img src="{{ story_img.url }}" width="{{ story_img.width }}" height="{{ story_img.height }}" class="stage-section__photo" alt="{{ page.title }}: принт крупным планом" loading="lazy" decoding="async">
+    </div>
+    {% endif %}
+    <div class="stage-section__text reveal">
+      <p class="stage-section__eyebrow">Наблюдение</p>
+      <h2 class="stage-section__title">{{ page.print_name }}</h2>
+      <div class="stage-section__body stage-section__richtext">{{ page.body|richtext }}</div>
+      {% if page.collection_name %}
+      <p class="stage-section__caption">Коллекция «{{ page.collection_name }}»</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- Характеристики + уход: техническая секция на втором фоне сайта ---------- #}
+<section class="pd-tech">
+  <div class="container">
+    <div class="pd-tech__head reveal" id="harakteristiki">
+      <img class="pd-tech__accent" src="{% static 'img/site/botanical/pine-cone.webp' %}" width="360" height="436" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <p class="pd-tech__eyebrow">Из чего сделана вещь</p>
+      <h2 class="pd-tech__title">Характеристики</h2>
+    </div>
+    {% if page.tech_facts %}
+    <dl class="pd-tech__facts reveal">
+      {% for value, caption, is_word in page.tech_facts %}
+      <div class="pd-tech__fact{% if is_word %} pd-tech__fact--word{% endif %}">
+        <dt class="pd-tech__fact-caption">{{ caption }}</dt>
+        <dd class="pd-tech__fact-value">{{ value }}</dd>
+      </div>
+      {% endfor %}
+    </dl>
+    {% endif %}
+    <div class="pd-tech__columns">
+      <dl class="spec-list reveal">
+        {% for label, value in page.spec_rows %}
+        <div class="spec-list__row">
+          <dt>{{ label }}</dt>
+          <dd>{{ value }}</dd>
+        </div>
+        {% endfor %}
+      </dl>
+      {% if page.care_items %}
+      <div class="pd-tech__care reveal reveal--delay" id="uhod">
+        <h3 class="pd-tech__subtitle">Уход за вещью</h3>
+        <ol class="pd-tech__care-list">
+          {% for item in page.care_items %}<li>{{ item }}</li>{% endfor %}
+        </ol>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{# ---------- Доставка и оплата: компактная служебная строка ---------- #}
+{% with site_settings=settings.website.sitesettings %}
+{% if site_settings.delivery_info or site_settings.payment_info %}
+<section class="pd-service" id="dostavka">
+  <div class="container">
+    <div class="pd-service__grid">
+      {% if site_settings.delivery_info %}
+      <div class="pd-service__col">
+        <h2 class="pd-service__label">Доставка и возврат</h2>
+        <div class="pd-service__text">{{ site_settings.delivery_info|richtext }}</div>
+      </div>
+      {% endif %}
+      {% if site_settings.payment_info %}
+      <div class="pd-service__col">
+        <h2 class="pd-service__label">Оплата</h2>
+        <div class="pd-service__text">{{ site_settings.payment_info|richtext }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endwith %}
+
+{# ---------- Блоки главной, которые владелец ставит сам: Настройки → «Товары: доставка и оплата» ---------- #}
+{% with extra_blocks=settings.website.sitesettings.product_page_blocks %}
+{% if extra_blocks %}
+{# класс home-page: блоки выглядят ровно как на главной (их стили привязаны к нему) #}
+<div class="home-page product-extra-blocks">
+  {% for block in extra_blocks %}
+  {% include "home/includes/stream_block.html" %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{# ---------- Другие вещи коллекции: шапка production-блока «По дороге» ---------- #}
+{% if related_products %}
+<section class="statement-section statement-section--related">
+  <div class="container">
+    <div class="statement-section__header reveal">
+      <svg class="statement-section__mark" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true" focusable="false">
+        <path d="M15 28 C15 20 15 12 15 3" />
+        <path d="M15 9 C11 7 8 9 6 13" />
+        <path d="M15 15 C19 13 22 15 24 19" />
+      </svg>
+      <p class="statement-section__eyebrow">{% if page.collection_name %}Коллекция «{{ page.collection_name }}»{% else %}Meadow Shore{% endif %}</p>
+      <h2 class="statement-section__title">{% if page.collection_name %}Другие {{ page.collection_name|lower }}{% else %}Другие вещи{% endif %}</h2>
+    </div>
+    {% include "includes/product_carousel.html" with products=related_products favorite_ids=favorite_ids %}
+  </div>
+</section>
+{% endif %}
+
+{# ---------- Мобильная панель покупки ---------- #}
+{% if purchase_state == 'available' or purchase_state == 'preorder' %}
+<div class="pd-buybar" data-buybar aria-hidden="true">
+  {% if page.price %}<span class="pd-buybar__price">{{ page.price }}</span>{% endif %}
+  <button type="button" class="btn btn--primary pd-buybar__btn" data-buybar-btn tabindex="-1">{% if purchase_state == 'preorder' %}В предзаказ{% else %}В корзину{% endif %}</button>
+</div>
+{% endif %}
+
+{# ---------- Таблица размеров ---------- #}
+<dialog class="pd-dialog" id="size-chart" aria-labelledby="size-chart-title">
+  <div class="pd-dialog__head">
+    <h2 class="pd-dialog__title" id="size-chart-title">Таблица размеров</h2>
+    <button type="button" class="pd-dialog__close" data-dialog-close aria-label="Закрыть">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="size-table-wrap">
+    <table class="size-table">
+      <thead>
+        <tr><th scope="col">Международный</th>{% for size in size_chart.sizes %}<th scope="col">{{ size }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for label, values in size_chart.rows %}
+        <tr><th scope="row">{{ label }}</th>{% for value in values %}<td>{{ value }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <h3 class="pd-dialog__subtitle">Как определить свой размер</h3>
+  <p class="pd-text">{{ size_chart.intro }}</p>
+  <ul class="pd-list">
+    {% for item in size_chart.how_to %}<li>{{ item }}</li>{% endfor %}
+  </ul>
+  <p class="pd-dialog__note">{{ size_chart.tolerance }}</p>
+</dialog>
+
+{# ---------- Просмотр фото ---------- #}
+{% if images %}
+<dialog class="lightbox" id="product-lightbox" aria-label="Фотографии товара" data-lightbox>
+  <button type="button" class="lightbox__close" data-dialog-close aria-label="Закрыть">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+  <div class="lightbox__stage">
+    {% for img in images %}
+    {% image img width-1600 as big %}
+    <img src="{{ big.url }}" width="{{ big.width }}" height="{{ big.height }}" alt="{{ page.title }} — фото {{ forloop.counter }}" class="lightbox__img" loading="lazy" decoding="async" hidden data-lightbox-slide>
+    {% endfor %}
+  </div>
+  {% if images|length > 1 %}
+  <button type="button" class="lightbox__arrow lightbox__arrow--prev" data-lightbox-prev aria-label="Предыдущее фото">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+  </button>
+  <button type="button" class="lightbox__arrow lightbox__arrow--next" data-lightbox-next aria-label="Следующее фото">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+  </button>
+  <span class="lightbox__counter"><span data-lightbox-current>1</span> / {{ images|length }}</span>
+  {% endif %}
+</dialog>
+{% endif %}
+
+{% endwith %}
 
 {% endblock %}

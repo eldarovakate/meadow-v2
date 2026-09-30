@@ -1,0 +1,33 @@
+{# Мини-корзина: после «Добавить в корзину» из любого места сайта. Заполняется JS из JSON ответа cart_add. #}
+<dialog class="mini-cart" id="mini-cart" aria-labelledby="mini-cart-title" data-mini-cart>
+  <div class="mini-cart__head">
+    <h2 class="mini-cart__title" id="mini-cart-title" data-mc-heading>Добавлено в корзину</h2>
+    <button type="button" class="mini-cart__close" data-dialog-close aria-label="Закрыть">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+
+  <div class="mini-cart__item">
+    <a class="mini-cart__thumb" data-mc-link tabindex="-1" aria-hidden="true">
+      <img src="" alt="" width="240" height="300" data-mc-img>
+    </a>
+    <div class="mini-cart__info">
+      <p class="mini-cart__name"><a data-mc-link data-mc-title></a></p>
+      <p class="mini-cart__meta" data-mc-meta></p>
+      <p class="mini-cart__qty" data-mc-qty hidden></p>
+      <p class="mini-cart__price">
+        <span data-mc-price></span>
+        <s class="mini-cart__old" data-mc-old hidden></s>
+      </p>
+    </div>
+  </div>
+
+  <p class="mini-cart__note" data-mc-note hidden></p>
+
+  <p class="mini-cart__summary">В корзине <span data-mc-count></span> на <span data-mc-sum></span></p>
+
+  <div class="mini-cart__actions">
+    <a href="{% url 'cart' %}" class="btn btn--primary mini-cart__go">Перейти в корзину</a>
+    <button type="button" class="mini-cart__continue" data-dialog-close>Продолжить покупки</button>
+  </div>
+</dialog>

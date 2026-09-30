@@ -126,6 +126,8 @@ SITE_URL = config('SITE_URL', default='http://localhost:8000')
 # это backend-проверка в website.views.checkout_view, а не текст на кнопках.
 SALES_MODE = config('SALES_MODE', default='sales')
 SALES_OPEN_DATE = date.fromisoformat(config('SALES_OPEN_DATE', default='2026-10-01'))
+# С какой даты начнётся отправка предзаказов (показывается на странице товара в режиме preorder).
+PREORDER_SHIP_DATE = date.fromisoformat(config('PREORDER_SHIP_DATE', default=SALES_OPEN_DATE.isoformat()))
 
 # Показывать ли кнопку "Оформить заказ/предзаказ" в корзине. По умолчанию включено
 # (нужно на локальной/тестовой среде, чтобы продолжать дорабатывать checkout);

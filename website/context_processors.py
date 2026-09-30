@@ -19,4 +19,5 @@ def sales_mode(request):
         'sales_open_date_ru': format_date_ru(settings.SALES_OPEN_DATE),
         'sales_open_date_short_ru': format_date_ru_short(settings.SALES_OPEN_DATE),
         'checkout_enabled': settings.CHECKOUT_ENABLED,
+        'preorder_ship_date_short_ru': format_date_ru_short(settings.PREORDER_SHIP_DATE),
     }

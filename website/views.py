@@ -16,7 +16,19 @@ from django.views.decorators.http import require_POST
 from accounts.forms import AddressForm, ProfileForm
 from accounts.models import Profile
 
-from .cart import add_item, clear_cart, get_cart_count, get_cart_lines, get_cart_total, remove_item, update_quantity
+from .cart import (
+    add_item,
+    clear_cart,
+    find_line,
+    get_cart,
+    get_cart_count,
+    get_cart_lines,
+    get_cart_summary,
+    get_cart_total,
+    line_payload,
+    remove_item,
+    update_quantity,
+)
 from .favorites import get_favorite_count, get_favorite_ids, toggle_favorite
 from .forms import CheckoutForm
 from .models import Order, OrderItem, ProductPage
@@ -110,13 +122,30 @@ def account_view(request):
     })
 
 
+def _cart_json(request, product_id=None, size=None, **extra):
+    """Общий JSON-ответ корзины: счётчик, итоги и (если есть) изменённая позиция."""
+    lines = get_cart_lines(request)
+    line = find_line(lines, product_id, size) if product_id is not None else None
+    return JsonResponse({
+        "ok": True,
+        "cart_count": get_cart_count(request),
+        "summary": get_cart_summary(lines),
+        "item": line_payload(line) if line else None,
+        **extra,
+    })
+
+
 def cart_view(request):
     lines = get_cart_lines(request)
     total = get_cart_total(request)
-    context = {"lines": lines, "total": total}
+    context = {
+        "lines": lines,
+        "total": total,
+        "summary": get_cart_summary(lines),
+        "favorite_ids": get_favorite_ids(request),
+    }
     if not lines:
         context["catalog_products"] = ProductPage.objects.live().order_by('-first_published_at')
-        context["favorite_ids"] = get_favorite_ids(request)
     return render(request, "website/cart_page.html", context)
 
 
@@ -346,11 +375,12 @@ def cart_add_view(request, page_id):
                 return JsonResponse({"ok": False, "error": "Выберите доступный размер"}, status=400)
             return redirect(request.POST.get("next") or product.url)
 
-    add_item(request, product.id, size, quantity=1, max_quantity=max_quantity)
-    cart_count = get_cart_count(request)
+    before = get_cart(request).get(f"{product.id}:{size or '-'}", 0)
+    new_quantity = add_item(request, product.id, size, quantity=1, max_quantity=max_quantity)
 
     if is_ajax:
-        return JsonResponse({"ok": True, "cart_count": cart_count})
+        # capped: количество упёрлось в остаток — мини-корзина скажет об этом, а не сделает вид, что добавила
+        return _cart_json(request, product.id, size, capped=new_quantity == before)
 
     next_url = request.POST.get("next") or "/cart/"
     return redirect(next_url)
@@ -359,6 +389,8 @@ def cart_add_view(request, page_id):
 @require_POST
 def cart_remove_view(request, page_id, size):
     remove_item(request, page_id, None if size == "-" else size)
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return _cart_json(request)
     return redirect(request.POST.get("next") or "cart")
 
 
@@ -377,6 +409,8 @@ def cart_update_view(request, page_id, size):
         max_quantity = stock.quantity if stock else 0
 
     update_quantity(request, page_id, size_value, quantity, max_quantity=max_quantity)
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return _cart_json(request, page_id, size_value)
     return redirect("cart")
 
 

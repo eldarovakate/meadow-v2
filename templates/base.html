@@ -30,6 +30,10 @@
 
   {% include "includes/footer.html" %}
 
+  {% include "includes/mini_cart.html" %}
+  {# Уведомления (избранное, ошибки): JS добавляет сюда тосты #}
+  <div class="toast-region" data-toast-region aria-live="polite" aria-relevant="additions"></div>
+
   <script src="{% static 'js/main.js' %}" defer></script>
   {% block extra_js %}{% endblock %}
 </body>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailimages_tags %}
+{% load static wagtailimages_tags %}
 
 {% block title %}Избранное — Meadow Shore{% endblock %}
 {% block body_class %}favorites-page{% endblock %}
@@ -23,9 +23,11 @@
       {% endfor %}
     </div>
     {% else %}
-    <div class="empty-state reveal">
-      <p class="empty-state__text">Здесь пока пусто. Добавляйте товары в избранное, чтобы вернуться к ним позже.</p>
-      <a href="/catalog/" class="btn btn--outline">Смотреть каталог</a>
+    <div class="empty-state empty-state--botanical reveal" data-favorites-empty>
+      <img class="empty-state__sprig" src="{% static 'img/site/botanical/flower.webp' %}" width="400" height="400" alt="" aria-hidden="true">
+      <h2 class="empty-state__title">В избранном пока ничего нет</h2>
+      <p class="empty-state__text">Сохраняйте вещи, к которым хочется вернуться.</p>
+      <a href="/catalog/" class="btn btn--primary">Смотреть коллекцию</a>
     </div>
     {% endif %}
   </div>

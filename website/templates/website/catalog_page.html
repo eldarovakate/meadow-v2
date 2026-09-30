@@ -1,12 +1,15 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags favorite_tags %}
+{% load static wagtailcore_tags wagtailimages_tags favorite_tags %}
 
 {% block body_class %}catalog-page{% endblock %}
 
 {% block content %}
 
 {% if page.intro_title %}
-<section class="page-hero">
+<section class="page-hero page-hero--collection">
+  {# Один ботанический угол + один персонаж коллекции — без венков и открыточной симметрии #}
+  <img class="page-hero__corner" src="{% static 'img/site/botanical/corner-floral.webp' %}" width="560" height="570" alt="" aria-hidden="true" decoding="async">
+  <img class="page-hero__motif" src="{% static 'img/site/botanical/bird-branch-sm.webp' %}" width="440" height="564" alt="" aria-hidden="true" decoding="async">
   <div class="container">
     <div class="page-hero__inner reveal">
       <span class="label">Коллекция</span>

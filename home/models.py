@@ -390,24 +390,33 @@ class InspirationCollageBlock(blocks.StructBlock):
         label = 'Коллаж: папоротник и тропа'
 
 
+# Блоки главной, которые можно ставить и внизу страницы товара
+# (Настройки → «Товары: доставка и оплата» → «Блоки внизу страницы товара»).
+# Hero сюда не входит: он рассчитан только на верх страницы.
+EDITORIAL_BLOCKS = [
+    ('about', AboutSectionBlock()),
+    ('collections', CollectionSectionBlock()),
+    ('marquee', MarqueeSectionBlock()),
+    ('features', FeaturesSectionBlock()),
+    ('fabric', FabricSectionBlock()),
+    ('featured_products', FeaturedProductsSectionBlock()),
+    ('usp_strip', USPStripSectionBlock()),
+    ('philosophy', PhilosophySectionBlock()),
+    ('cta', CTASectionBlock()),
+    ('observation', ObservationSectionBlock()),
+    ('arch', ArchSectionBlock()),
+    ('collection_statement', CollectionStatementBlock()),
+    ('dark_stage', DarkStageBlock()),
+    ('inspiration_collage', InspirationCollageBlock()),
+]
+
+
 class HomePage(Page):
-    body = StreamField([
-        ('hero', HeroSectionBlock()),
-        ('about', AboutSectionBlock()),
-        ('collections', CollectionSectionBlock()),
-        ('marquee', MarqueeSectionBlock()),
-        ('features', FeaturesSectionBlock()),
-        ('fabric', FabricSectionBlock()),
-        ('featured_products', FeaturedProductsSectionBlock()),
-        ('usp_strip', USPStripSectionBlock()),
-        ('philosophy', PhilosophySectionBlock()),
-        ('cta', CTASectionBlock()),
-        ('observation', ObservationSectionBlock()),
-        ('arch', ArchSectionBlock()),
-        ('collection_statement', CollectionStatementBlock()),
-        ('dark_stage', DarkStageBlock()),
-        ('inspiration_collage', InspirationCollageBlock()),
-    ], use_json_field=True, blank=True)
+    body = StreamField(
+        [('hero', HeroSectionBlock())] + EDITORIAL_BLOCKS,
+        use_json_field=True,
+        blank=True,
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('body'),

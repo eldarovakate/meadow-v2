@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.db import models
 from wagtail.models import Orderable, Page
@@ -12,6 +14,7 @@ from wagtail.contrib.forms.models import AbstractFormField, AbstractEmailForm
 from wagtail.contrib.forms.panels import FormSubmissionsPanel
 
 from home.models import (
+    EDITORIAL_BLOCKS,
     AboutSectionBlock,
     CollectionSectionBlock,
     FabricSectionBlock,
@@ -20,7 +23,17 @@ from home.models import (
     PhilosophySectionBlock,
 )
 
+from .cart import get_product_cart_sizes
 from .favorites import get_favorite_ids
+from .product_facts import (
+    SIZE_CHART,
+    about_paragraphs,
+    care_items,
+    parse_composition,
+    parse_density,
+    parse_fabric,
+    split_lines,
+)
 from .slugs import LatinSlugMixin
 from .utils import parse_price_to_int
 
@@ -131,6 +144,23 @@ class ProductPage(LatinSlugMixin, Page):
     old_price = models.CharField(max_length=50, blank=True, verbose_name="Цена до скидки")
     fabric_info = models.TextField(blank=True, verbose_name="Состав")
     care_info = models.TextField(blank=True, verbose_name="Уход")
+    fit_notes = models.TextField(
+        blank=True,
+        verbose_name="Посадка",
+        help_text="По одному пункту на строку, например: «Свободная посадка», «Спущенное плечо». "
+                  "Первая строка попадает в краткие характеристики. Пусто — блок «Как сидит» не показывается.",
+    )
+    model_size = models.CharField(
+        max_length=4,
+        blank=True,
+        choices=[('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')],
+        verbose_name="Размер на модели",
+    )
+    model_height = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Рост модели, см",
+    )
 
     AVAILABLE = 'available'
     COMING_SOON = 'coming_soon'
@@ -160,12 +190,158 @@ class ProductPage(LatinSlugMixin, Page):
             FieldPanel('fabric_info'),
             FieldPanel('care_info'),
         ], heading="О товаре"),
+        MultiFieldPanel([
+            FieldPanel('fit_notes'),
+            FieldPanel('model_size'),
+            FieldPanel('model_height'),
+        ], heading="Посадка и модель (необязательно)"),
     ]
 
     def get_context(self, request):
         context = super().get_context(request)
         context['is_favorite'] = self.id in get_favorite_ids(request)
+        context['purchase_state'] = self.purchase_state(settings.SALES_MODE == 'preorder')
+        context['section_images'] = self.section_images()
+        context['related_products'] = self.related_products()
+        context['size_chart'] = SIZE_CHART
+        context['favorite_ids'] = get_favorite_ids(request)
+        context['in_cart_sizes'] = get_product_cart_sizes(request, self.id)
         return context
+
+    # --- Данные для страницы товара (всё из существующих полей) ---
+
+    def purchase_state(self, is_preorder):
+        """Одно согласованное состояние: preorder / available / coming_soon / sold_out."""
+        if self.status == self.COMING_SOON:
+            return 'coming_soon'
+        stocks = self.sorted_size_stocks
+        if self.status != self.AVAILABLE or (stocks and not any(s.quantity for s in stocks)):
+            return 'sold_out'
+        return 'preorder' if is_preorder else 'available'
+
+    @property
+    def composition(self):
+        return parse_composition(self.fabric_info)
+
+    @property
+    def density(self):
+        return parse_density(self.fabric_info)
+
+    @property
+    def fabric(self):
+        return parse_fabric(self.fabric_info)
+
+    @property
+    def fit_lines(self):
+        return split_lines(self.fit_notes)
+
+    @property
+    def quick_specs(self):
+        """Строка под заголовком: состав · плотность · посадка · техника."""
+        specs = [self.composition, self.density]
+        if self.fit_lines:
+            specs.append(self.fit_lines[0].lower())
+        specs.append(self.get_print_type_display().lower())
+        return [s for s in specs if s]
+
+    @property
+    def print_name(self):
+        """Название принта так, как оно записано у товара: текст в «ёлочках» из заголовка."""
+        match = re.search(r"«([^»]+)»", self.title)
+        return match.group(1) if match else self.title
+
+    # Персонаж принта для полупрозрачного слоя в «Истории принта»: только если он
+    # действительно есть в названии товара; иначе — нейтральная хвойная ветка.
+    STORY_MOTIFS = [('птиц', 'bird-branch'), ('ёж', 'hedgehog'), ('белк', 'squirrel')]
+
+    @property
+    def story_motif(self):
+        name = self.print_name.lower()
+        for keyword, motif in self.STORY_MOTIFS:
+            if keyword in name:
+                return motif
+        return 'pine-branch'
+
+    @property
+    def material_word(self):
+        """Основной материал из состава: «95% хлопок, 5% лайкра» → «хлопок»."""
+        match = re.search(r"%\s*([а-яё]+)", self.composition, re.IGNORECASE)
+        return match.group(1) if match else ""
+
+    @property
+    def about_note_lines(self):
+        """Вертикальная подпись блока «О вещи»: цвет, материал, техника — только реальные значения."""
+        lines = [self.get_color_display(), self.material_word, self.get_print_type_display()]
+        return [line for line in lines if line]
+
+    @property
+    def tech_facts(self):
+        """Крупные факты технической секции: (значение, подпись, это слово, а не число)."""
+        facts = []
+        density = re.match(r"(\d+)\s*(.+)", self.density)
+        if density:
+            facts.append((density.group(1), density.group(2), False))
+        for part in self.composition.split(","):
+            match = re.match(r"\s*(\d+\s*%)\s*(.+)", part)
+            if match:
+                facts.append((match.group(1).replace(" ", ""), match.group(2).strip(), False))
+        if self.fit_lines:
+            facts.append((self.fit_lines[0], "посадка", True))
+        facts.append((self.get_print_type_display(), "техника нанесения", True))
+        return facts
+
+    @property
+    def key_facts(self):
+        """Крупные характеристики блока «О вещи»: (значение, подпись)."""
+        facts = []
+        if self.density:
+            facts.append((self.density, "плотность трикотажа"))
+        if self.composition:
+            facts.append((self.composition, "состав"))
+        if self.fit_lines:
+            facts.append((self.fit_lines[0], "посадка"))
+        facts.append((self.get_print_type_display(), "техника нанесения"))
+        return facts[:4]
+
+    @property
+    def spec_rows(self):
+        rows = [
+            ("Материал", self.composition),
+            ("Плотность", self.density),
+            ("Полотно", self.fabric),
+            ("Посадка", ", ".join(self.fit_lines)),
+            ("Цвет", self.get_color_display()),
+            ("Техника нанесения", self.get_print_type_display()),
+            ("Коллекция", self.collection_name),
+            ("Артикул", self.sku),
+        ]
+        return [(label, value) for label, value in rows if value]
+
+    @property
+    def about_paragraphs(self):
+        return about_paragraphs(self.fabric_info)
+
+    @property
+    def care_items(self):
+        return care_items(self.care_info)
+
+    def section_images(self):
+        """Фото для блоков ниже первого экрана — без повторов одного кадра между блоками."""
+        images = self.all_images
+        pool = images[1:]
+        story = pool[2] if len(pool) > 2 else (pool[-1] if pool else None)
+        rest = [img for img in pool if img is not story]
+        detail = pool[1] if len(pool) > 1 and pool[1] is not story else (rest[0] if rest else None)
+        fit = [img for img in images if img is not story and img is not detail][:3]
+        return {'story': story, 'detail': detail, 'fit': fit}
+
+    def related_products(self, limit=4):
+        qs = ProductPage.objects.live().exclude(id=self.id)
+        if self.collection_name:
+            qs = qs.filter(collection_name=self.collection_name)
+        products = list(qs.order_by('-first_published_at'))
+        products.sort(key=lambda p: p.status != self.AVAILABLE)
+        return products[:limit]
 
     @property
     def all_images(self):
@@ -269,11 +445,43 @@ class LegalPage(LatinSlugMixin, Page):
 class SiteSettings(BaseSiteSetting):
     delivery_info = RichTextField(blank=True, verbose_name="Доставка и возврат")
     payment_info = RichTextField(blank=True, verbose_name="Оплата")
+    delivery_summary = models.TextField(
+        blank=True,
+        default="Доставка по России\nСДЭК · Яндекс Доставка · Почта России\nСтоимость рассчитывается при оформлении",
+        verbose_name="Доставка — коротко (под кнопкой)",
+        help_text="Первая строка — заголовок, остальные — пояснения. Пусто — строка не показывается.",
+    )
+    payment_summary = models.TextField(
+        blank=True,
+        default="Оплата\nБанковской картой на сайте",
+        verbose_name="Оплата — коротко (под кнопкой)",
+        help_text="Первая строка — заголовок, остальные — пояснения. Пусто — строка не показывается.",
+    )
+
+    product_page_blocks = StreamField(
+        EDITORIAL_BLOCKS,
+        use_json_field=True,
+        blank=True,
+        verbose_name="Блоки внизу страницы товара",
+        help_text="Показываются на всех страницах товаров перед «Другими лесными жителями». "
+                  "Те же блоки, что на главной: «По дороге», «Туда, где тише», тёмная сцена и другие.",
+    )
 
     panels = [
         FieldPanel('delivery_info'),
         FieldPanel('payment_info'),
+        FieldPanel('delivery_summary'),
+        FieldPanel('payment_summary'),
+        FieldPanel('product_page_blocks'),
     ]
+
+    @property
+    def delivery_summary_lines(self):
+        return split_lines(self.delivery_summary)
+
+    @property
+    def payment_summary_lines(self):
+        return split_lines(self.payment_summary)
 
     class Meta:
         verbose_name = 'Товары: доставка и оплата'
