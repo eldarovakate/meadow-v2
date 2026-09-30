@@ -2,7 +2,7 @@
 
 Главный актуальный документ состояния проекта. Если новый разработчик или новая сессия Claude Code открывает проект — начинать нужно отсюда, а не с нового аудита с нуля.
 
-Последнее обновление: 2026-09-30 (только раздел Production; остальные разделы — см. предупреждение ниже).
+Последнее обновление: 2026-10-01 (только раздел Production; остальные разделы — см. предупреждение ниже).
 
 > ⚠️ **Этот файл устарел.** `git log` на 2026-09-26 показывает минимум 19 коммитов после последнего обновления этого файла — About-страница переделана, на главной появился prelaunch-баннер и launch-блоки, в каталоге фильтры, добавлен флаг `CHECKOUT_ENABLED` (похоже, оплата сейчас может быть выключена — проверить перед тем, как полагаться на раздел «ЮKassa» ниже). Ни один из этих коммитов здесь не отражён. Перед тем как доверять секциям Production/ЮKassa — перечитай `git log` заново.
 >
@@ -15,10 +15,10 @@
 | | |
 |---|---|
 | URL | https://meadowshore.ru/ |
-| Production commit | `60b21de` — "Pre-launch hardening for checkout, payments and production settings" |
-| Дата последнего release | 2026-09-30 |
+| Production commit | `889df76` — "Product page redesign, botanical accents, editable blocks, cart UX" |
+| Дата последнего release | 2026-10-01 |
 | Статус | работает; latin slugs + 301 со старых адресов, галерея со стрелками, pre-launch hardening (см. CHANGELOG) |
-| Django check | `System check identified no issues (0 silenced).` (2026-09-30, 59 тестов OK) |
+| Django check | `System check identified no issues (0 silenced).` (2026-10-01, 84 теста OK) |
 
 Применённые миграции (production, по состоянию на текущий production commit):
 - `home.0010_alter_homepage_body`
@@ -29,6 +29,7 @@
 - `website.0009_order_payment_idempotence_key`
 - … (0010–0015 — см. `git log`)
 - `website.0016_order_checkout_token` (2026-09-30)
+- `website.0017`–`0019`: поля посадки/модели, `SiteSettings.product_page_blocks` (2026-10-01)
 
 **Важно для production-конфигурации (с 2026-09-30):**
 - `ALLOWED_HOSTS` больше не `*`: meadowshore.ru, www.meadowshore.ru + дополнительные из `ALLOWED_HOSTS` в `.env`.
