@@ -29,6 +29,7 @@
 
         <form class="contact-form" method="post" novalidate data-checkout-form>
           {% csrf_token %}
+          {{ form.checkout_token }}
 
           <div class="form-group">
             <label for="{{ form.full_name.id_for_label }}" class="form-label">ФИО</label>

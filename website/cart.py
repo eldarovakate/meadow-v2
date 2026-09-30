@@ -37,6 +37,10 @@ def remove_item(request, product_id, size):
 def update_quantity(request, product_id, size, quantity, max_quantity=None):
     cart = get_cart(request)
     key = _make_key(product_id, size)
+    if key not in cart:
+        # Только изменение существующей строки: новые позиции (в т.ч. «без размера»)
+        # попадают в корзину исключительно через add_item с проверками в cart_add_view.
+        return
     if quantity <= 0:
         cart.pop(key, None)
     else:

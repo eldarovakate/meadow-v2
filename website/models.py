@@ -316,6 +316,15 @@ class Order(models.Model):
     total = models.PositiveIntegerField(default=0, verbose_name="Сумма заказа")
     payment_id = models.CharField(max_length=64, blank=True, verbose_name="ID платежа ЮKassa")
     payment_idempotence_key = models.CharField(max_length=64, blank=True, verbose_name="Idempotence-Key платежа")
+    checkout_token = models.CharField(
+        max_length=64,
+        unique=True,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name="Ключ отправки формы",
+        help_text="Уникален: повторный POST той же формы checkout не создаёт второй заказ.",
+    )
     is_preorder = models.BooleanField(
         default=False,
         verbose_name="Предзаказ",

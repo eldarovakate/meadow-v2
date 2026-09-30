@@ -2,8 +2,11 @@ from .base import *
 import dj_database_url
 
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-ALLOWED_HOSTS = ["*"]
+# Основной домен разрешён всегда; дополнительные хосты — через ALLOWED_HOSTS в .env.
+# Без "*": иначе Host-заголовок запроса мог бы подставлять чужой домен в абсолютные ссылки.
+ALLOWED_HOSTS = ['meadowshore.ru', 'www.meadowshore.ru'] + [
+    h for h in config('ALLOWED_HOSTS', default='', cast=Csv()) if h and h != '*'
+]
 
 DATABASES = {
     'default': dj_database_url.config(
@@ -19,15 +22,16 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = False
 # nginx перед этим сервером передаёт proxy_set_header X-Forwarded-Proto $scheme
 # (подтверждено вручную на 89.104.71.175) — без этого Django строит
 # return_url для ЮKassa (request.build_absolute_uri) с http:// вместо https://.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-CSRF_TRUSTED_ORIGINS = ['https://meadowshore.ru', 'http://meadowshore.ru', 'http://194.67.101.156:8000']
+CSRF_TRUSTED_ORIGINS = ['https://meadowshore.ru', 'https://www.meadowshore.ru']
 WAGTAILADMIN_BASE_URL = 'https://meadowshore.ru'
+SITE_URL = config('SITE_URL', default='https://meadowshore.ru')
 
 # Email (SMTP через рег.ру)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -49,6 +53,11 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
+    },
+    # Ошибки внешних сервисов (ЮKassa, SMTP, Telegram) из website/accounts — в journald.
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
     },
     'loggers': {
         'django.request': {

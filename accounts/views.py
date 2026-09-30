@@ -1,3 +1,6 @@
+import logging
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.forms import SetPasswordForm
@@ -11,6 +14,7 @@ from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_de
 from .forms import EmailLoginForm, PasswordResetRequestForm, RegistrationForm
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def _safe_next_url(request, next_url):
@@ -83,22 +87,27 @@ def password_reset_view(request):
                     continue
                 uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
                 token = default_token_generator.make_token(user)
-                reset_url = request.build_absolute_uri(
-                    reverse("password_reset_confirm", args=[uidb64, token])
+                # Домен берётся из настроек, а не из Host-заголовка запроса —
+                # иначе поддельный Host мог бы подменить домен в ссылке из письма.
+                reset_url = settings.SITE_URL.rstrip("/") + reverse(
+                    "password_reset_confirm", args=[uidb64, token]
                 )
-                send_mail(
-                    subject="Восстановление пароля — Meadow Shore",
-                    message=(
-                        "Здравствуйте!\n\n"
-                        "Вы запросили восстановление пароля на сайте Meadow Shore.\n"
-                        "Перейдите по ссылке, чтобы задать новый пароль:\n"
-                        f"{reset_url}\n\n"
-                        "Ссылка действительна в течение ограниченного времени. "
-                        "Если вы не запрашивали восстановление пароля — просто проигнорируйте это письмо."
-                    ),
-                    from_email=None,
-                    recipient_list=[user.email],
-                )
+                try:
+                    send_mail(
+                        subject="Восстановление пароля — Meadow Shore",
+                        message=(
+                            "Здравствуйте!\n\n"
+                            "Вы запросили восстановление пароля на сайте Meadow Shore.\n"
+                            "Перейдите по ссылке, чтобы задать новый пароль:\n"
+                            f"{reset_url}\n\n"
+                            "Ссылка действительна в течение ограниченного времени. "
+                            "Если вы не запрашивали восстановление пароля — просто проигнорируйте это письмо."
+                        ),
+                        from_email=None,
+                        recipient_list=[user.email],
+                    )
+                except Exception:
+                    logger.exception("Не удалось отправить письмо восстановления пароля пользователю id=%s", user.pk)
             return render(request, "accounts/password_reset.html", {"form": PasswordResetRequestForm(), "sent": True})
     else:
         form = PasswordResetRequestForm()

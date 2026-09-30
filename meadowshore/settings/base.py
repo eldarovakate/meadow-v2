@@ -112,6 +112,14 @@ TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID', default='')
 # ЮKassa
 YOOKASSA_SHOP_ID = config('YOOKASSA_SHOP_ID', default='')
 YOOKASSA_SECRET_KEY = config('YOOKASSA_SECRET_KEY', default='')
+# (connect, read) секунд на один HTTP-запрос к API ЮKassa
+YOOKASSA_TIMEOUT = (5, 15)
+
+# Таймаут SMTP: без него зависший почтовый сервер держит запрос покупателя
+EMAIL_TIMEOUT = 10
+
+# Публичный адрес сайта для ссылок в письмах (сброс пароля) — не из Host-заголовка запроса
+SITE_URL = config('SITE_URL', default='http://localhost:8000')
 
 # Режим продаж сайта: 'preorder' (оплата не запрашивается, только сбор предзаказов)
 # или 'sales' (обычный flow с оплатой через ЮKassa). Единственный источник истины —

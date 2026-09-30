@@ -1,11 +1,12 @@
 import logging
+import uuid
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -28,7 +29,7 @@ from .payments import (
     process_webhook_event,
     sync_order_payment,
 )
-from .stock import InsufficientStockError, reserve_stock_for_lines
+from .stock import InsufficientStockError, is_product_sellable, reserve_stock_for_lines
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +122,14 @@ def cart_view(request):
 
 @login_required
 def checkout_view(request):
+    # Повторный POST той же формы (двойной клик / повторная отправка после того,
+    # как первый запрос уже создал заказ и очистил корзину) — ведём на уже созданный заказ.
+    checkout_token = request.POST.get("checkout_token", "") if request.method == "POST" else ""
+    if checkout_token:
+        existing = Order.objects.filter(user=request.user, checkout_token=checkout_token).first()
+        if existing:
+            return redirect("order_success", order_id=existing.id)
+
     lines = get_cart_lines(request)
     if not lines:
         return redirect("cart")
@@ -144,15 +153,21 @@ def checkout_view(request):
             # Единственный источник истины для preorder/sales — server-side settings.SALES_MODE,
             # а не что-либо в request. Ниже это единственная развилка, решающая, вызывать ли ЮKassa.
             is_preorder = settings.SALES_MODE == "preorder"
+            order_data = dict(form.cleaned_data)
+            checkout_token = order_data.pop("checkout_token") or uuid.uuid4().hex
 
             try:
                 with transaction.atomic():
                     reserve_stock_for_lines(lines)
+                    # checkout_token уникален: если параллельный POST той же формы уже
+                    # создал заказ, здесь будет IntegrityError и вся транзакция
+                    # (включая резерв остатка выше) откатится.
                     order = Order.objects.create(
                         user=request.user,
                         total=total,
                         is_preorder=is_preorder,
-                        **form.cleaned_data,
+                        checkout_token=checkout_token,
+                        **order_data,
                     )
                     for line in lines:
                         OrderItem.objects.create(
@@ -166,6 +181,11 @@ def checkout_view(request):
             except InsufficientStockError as exc:
                 messages.error(request, str(exc))
                 return render(request, "website/checkout_page.html", {"form": form, "lines": lines, "total": total})
+            except IntegrityError:
+                existing = Order.objects.filter(user=request.user, checkout_token=checkout_token).first()
+                if existing:
+                    return redirect("order_success", order_id=existing.id)
+                raise
 
             clear_cart(request)
             send_order_notifications(order)
@@ -185,7 +205,7 @@ def checkout_view(request):
 
             return redirect(payment_url)
     else:
-        form = CheckoutForm(initial=initial)
+        form = CheckoutForm(initial={**initial, "checkout_token": uuid.uuid4().hex})
 
     return render(request, "website/checkout_page.html", {"form": form, "lines": lines, "total": total})
 
@@ -201,23 +221,31 @@ def order_success_view(request, order_id):
         })
 
     payment_state = None
+    payment = None
     if order.status == Order.STATUS_NEW and order.payment_id:
         try:
-            order, _payment = sync_order_payment(order)
+            order, payment = sync_order_payment(order)
         except PaymentAPIUnavailable:
             payment_state = "unavailable"
 
     if payment_state is None:
-        if order.status == Order.STATUS_PAID:
+        if order.status in (Order.STATUS_PAID, Order.STATUS_SHIPPED, Order.STATUS_COMPLETED):
             payment_state = "paid"
         elif order.status == Order.STATUS_CANCELLED:
             payment_state = "cancelled" if order.payment_id else "create_failed"
         else:
             payment_state = "pending"
 
+    # Покупатель вернулся из ЮKassa, не оплатив: даём вернуться к ТОМУ ЖЕ платежу
+    # (confirmation_url из verified-ответа API) — без нового заказа и нового резерва.
+    payment_url = None
+    if payment_state == "pending" and payment is not None and getattr(payment, "status", None) == "pending":
+        payment_url = getattr(getattr(payment, "confirmation", None), "confirmation_url", None)
+
     return render(request, "website/order_success_page.html", {
         "order": order,
         "payment_state": payment_state,
+        "payment_url": payment_url,
     })
 
 
@@ -302,6 +330,11 @@ def cart_add_view(request, page_id):
     product = get_object_or_404(ProductPage, id=page_id)
     size = request.POST.get("size") or None
     is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
+
+    if not is_product_sellable(product):
+        if is_ajax:
+            return JsonResponse({"ok": False, "error": "Товар сейчас недоступен для заказа"}, status=400)
+        return redirect(product.url or "/catalog/")
 
     size_stocks = list(product.size_stocks.all())
     max_quantity = None

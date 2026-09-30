@@ -25,6 +25,30 @@ class WebhookMalformed(Exception):
     """Тело webhook-запроса не является валидным JSON."""
 
 
+def _install_request_timeout():
+    """
+    SDK `yookassa` не передаёт timeout в requests (его Configuration.timeout —
+    это backoff между повторами, а не таймаут запроса), поэтому зависший ответ
+    ЮKassa мог бы держать воркер бесконечно. Подменяем HTTPAdapter в модуле SDK
+    на вариант с timeout по умолчанию: (connect, read) из settings.YOOKASSA_TIMEOUT.
+    """
+    from requests.adapters import HTTPAdapter
+    from yookassa import client as yookassa_http
+
+    if getattr(yookassa_http.HTTPAdapter, "_meadow_timeout", False):
+        return
+
+    class TimeoutHTTPAdapter(HTTPAdapter):
+        _meadow_timeout = True
+
+        def send(self, request, **kwargs):
+            if kwargs.get("timeout") is None:
+                kwargs["timeout"] = settings.YOOKASSA_TIMEOUT
+            return super().send(request, **kwargs)
+
+    yookassa_http.HTTPAdapter = TimeoutHTTPAdapter
+
+
 class YooKassaClient:
     """
     Единственная точка соприкосновения с пакетом `yookassa`.
@@ -40,6 +64,10 @@ class YooKassaClient:
 
         Configuration.account_id = settings.YOOKASSA_SHOP_ID
         Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
+        # Не больше одного автоповтора внутри SDK: с timeout ~15 с это держит
+        # худший случай в разумных пределах (повтор безопасен — Idempotence-Key).
+        Configuration.max_attempts = 1
+        _install_request_timeout()
 
     def create_payment(self, payload, idempotence_key):
         from yookassa import Payment
@@ -95,7 +123,10 @@ def _fetch_verified_payment(payment_id):
     try:
         return yookassa_client.find_payment(payment_id)
     except Exception as exc:
-        logger.error("ЮKassa: API недоступно при проверке платежа %s (%s)", payment_id, exc.__class__.__name__)
+        logger.error(
+            "ЮKassa: API недоступно при проверке платежа %s (%s: %s)",
+            payment_id, exc.__class__.__name__, exc,
+        )
         raise PaymentAPIUnavailable(payment_id) from exc
 
 

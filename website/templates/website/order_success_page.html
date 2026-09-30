@@ -25,8 +25,13 @@
       <p class="empty-state__text">Заказ №{{ order.id }} оплачен на сумму {{ order.total }} ₽.<br>Мы свяжемся с вами по телефону {{ order.phone }}, чтобы подтвердить детали доставки.</p>
 
       {% elif payment_state == "pending" %}
-      <h1 class="order-success__title">Проверяем оплату</h1>
+      <h1 class="order-success__title">Заказ ожидает оплаты</h1>
+      {% if payment_url %}
+      <p class="empty-state__text">Заказ №{{ order.id }} на сумму {{ order.total }} ₽ создан, но ещё не оплачен. Товар зарезервирован за вами — завершите оплату, чтобы мы начали собирать заказ.</p>
+      <a href="{{ payment_url }}" class="btn btn--primary">Перейти к оплате</a>
+      {% else %}
       <p class="empty-state__text">Заказ №{{ order.id }} на сумму {{ order.total }} ₽ создан. Платёж обрабатывается — обновите страницу через минуту, если статус ещё не изменился.</p>
+      {% endif %}
 
       {% elif payment_state == "cancelled" %}
       <h1 class="order-success__title">Платёж отменён</h1>

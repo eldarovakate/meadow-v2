@@ -7,9 +7,9 @@ from django.core.mail import send_mail
 logger = logging.getLogger(__name__)
 
 
-def _build_order_summary(order):
+def _build_order_summary(order, headline):
     lines = [
-        f"Новый заказ №{order.id}",
+        headline,
         f"Сумма: {order.total} руб.",
         "",
         f"ФИО: {order.full_name}",
@@ -29,11 +29,16 @@ def _build_order_summary(order):
 
 
 def send_order_notifications(order):
-    summary = _build_order_summary(order)
+    """Первое уведомление: заказ создан, но НЕ оплачен (оплата подтверждается отдельным сообщением)."""
+    if order.is_preorder:
+        headline = f"Предзаказ №{order.id} создан, оплата не запрашивалась"
+    else:
+        headline = f"Заказ №{order.id} создан, ожидает оплаты"
+    summary = _build_order_summary(order, headline)
 
     try:
         send_mail(
-            subject=f"Новый заказ №{order.id} — Meadow Shore",
+            subject=f"{headline} — Meadow Shore",
             message=summary,
             from_email=None,
             recipient_list=[settings.ORDER_NOTIFICATION_EMAIL],
@@ -55,8 +60,7 @@ def send_order_notifications(order):
 
 def send_payment_confirmed_notification(order):
     """Отправляется ровно один раз — вызывается только из идемпотентного перехода NEW -> PAID."""
-    summary = _build_order_summary(order)
-    message = f"Оплата подтверждена.\n\n{summary}"
+    message = _build_order_summary(order, f"Оплата подтверждена: заказ №{order.id}")
 
     try:
         send_mail(
