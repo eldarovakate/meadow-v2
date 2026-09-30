@@ -2,7 +2,11 @@
 
 Главный актуальный документ состояния проекта. Если новый разработчик или новая сессия Claude Code открывает проект — начинать нужно отсюда, а не с нового аудита с нуля.
 
-Последнее обновление: 2026-08-23.
+Последнее обновление: 2026-09-30 (только раздел Production; остальные разделы — см. предупреждение ниже).
+
+> ⚠️ **Этот файл устарел.** `git log` на 2026-09-26 показывает минимум 19 коммитов после последнего обновления этого файла — About-страница переделана, на главной появился prelaunch-баннер и launch-блоки, в каталоге фильтры, добавлен флаг `CHECKOUT_ENABLED` (похоже, оплата сейчас может быть выключена — проверить перед тем, как полагаться на раздел «ЮKassa» ниже). Ни один из этих коммитов здесь не отражён. Перед тем как доверять секциям Production/ЮKassa — перечитай `git log` заново.
+>
+> Отдельно: сессия 2026-09-26 сделала редизайн `/design-lab/home-blocks/` (10 существующих блоков + новая группа 11A–11E Collection Statement Grid, оба этапа с реальными фото бренда). Работа полностью локальная, не в production, не влияет на реальную главную. Подробности — [docs/handoffs/MEADOW_SHORE_HANDOFF_2026-09-26_design-lab.md](handoffs/MEADOW_SHORE_HANDOFF_2026-09-26_design-lab.md).
 
 ---
 
@@ -11,16 +15,25 @@
 | | |
 |---|---|
 | URL | https://meadowshore.ru/ |
-| Production commit | `0465819` — "Redesign Meadow Shore homepage" |
-| Дата последнего release | 2026-08-23 |
-| Статус | работает |
-| Django check | `System check identified no issues (0 silenced).` |
+| Production commit | `60b21de` — "Pre-launch hardening for checkout, payments and production settings" |
+| Дата последнего release | 2026-09-30 |
+| Статус | работает; latin slugs + 301 со старых адресов, галерея со стрелками, pre-launch hardening (см. CHANGELOG) |
+| Django check | `System check identified no issues (0 silenced).` (2026-09-30, 59 тестов OK) |
 
-Применённые миграции (production):
+Применённые миграции (production, по состоянию на текущий production commit):
 - `home.0010_alter_homepage_body`
 - `home.0011_alter_homepage_body`
 - `home.0012_alter_homepage_body`
 - `website.0007_order_orderitem`
+- `website.0008_order_payment_id`
+- `website.0009_order_payment_idempotence_key`
+- … (0010–0015 — см. `git log`)
+- `website.0016_order_checkout_token` (2026-09-30)
+
+**Важно для production-конфигурации (с 2026-09-30):**
+- `ALLOWED_HOSTS` больше не `*`: meadowshore.ru, www.meadowshore.ru + дополнительные из `ALLOWED_HOSTS` в `.env`.
+- Wagtail `Site` (Настройки → Сайты) должен иметь hostname `meadowshore.ru`, port 443. С `localhost` Wagtail строит внутренние запросы на недопустимый host — падают автосоздание редиректов при смене slug и превью страниц.
+- Все slug страниц латинские (`LatinSlugMixin`); `latinize_slugs --apply` в `deploy.yml` идемпотентен.
 
 Деплой описан в [DEPLOYMENT.md](DEPLOYMENT.md).
 
@@ -109,19 +122,17 @@ Editorial-Hero вместо e-commerce-версии. Утверждённые т
 
 ---
 
-## Приоритетная незавершённая задача: ЮKassa
+## ЮKassa — завершено и в production
 
-Работа начата, но **не закончена**. Отдельные локальные изменения существуют в working tree (`website/payments.py`, `website/models.py`, `website/views.py`, `website/urls.py`, `website/admin.py`, `website/migrations/0008_order_payment_id.py`, `.env.example`, `requirements.txt`, `meadowshore/settings/base.py`) и **намеренно не входят** в homepage release `0465819`.
+Оплата картой через ЮKassa задеплоена в составе commit `47afaea` (2026-08-26) и подтверждена владельцем проекта как рабочая на production (реальная оплата на сайте проверена вручную, 2026-09-05).
 
-Следующий рекомендуемый шаг проекта:
-1. Закончить ЮKassa.
-2. Проверить payment flow end-to-end.
-3. Webhook/callback.
-4. Обновление статуса заказа.
-5. Обработка ошибок/отмены.
-6. Отдельный commit (только платёжные изменения).
-7. Отдельный production release.
-8. После этого продолжить HOME-05.
+Реализовано (см. `website/payments.py`, `website/models.py`, `website/views.py`, `website/urls.py`, `website/admin.py`, `website/notifications.py`, `website/stock.py`, миграции `0008_order_payment_id`, `0009_order_payment_idempotence_key`, тесты `website/tests/test_payments.py`):
+- Создание платежа и редирект пользователя на оплату.
+- Webhook/callback от ЮKassa, обновление статуса заказа.
+- Idempotence key для защиты от повторной обработки.
+- Уведомления о заказе (`website/notifications.py`).
+
+Следующая приоритетная задача проекта — продолжение редизайна главной, **HOME-05** (см. раздел «Следующие задачи главной» выше).
 
 ---
 
