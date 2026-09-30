@@ -21,10 +21,11 @@ from home.models import (
 )
 
 from .favorites import get_favorite_ids
+from .slugs import LatinSlugMixin
 from .utils import parse_price_to_int
 
 
-class AboutPage(Page):
+class AboutPage(LatinSlugMixin, Page):
     body = StreamField([
         ('hero', HeroSectionBlock()),
         ('about', AboutSectionBlock()),
@@ -42,7 +43,7 @@ class AboutPage(Page):
         verbose_name = 'Страница о бренде'
 
 
-class CatalogPage(Page):
+class CatalogPage(LatinSlugMixin, Page):
     intro_title = models.CharField(max_length=200, default="Коллекция", blank=True)
     intro_body = RichTextField(blank=True)
 
@@ -94,7 +95,7 @@ class ProductSizeStock(models.Model):
     panels = [FieldPanel('size'), FieldPanel('quantity')]
 
 
-class ProductPage(Page):
+class ProductPage(LatinSlugMixin, Page):
     COLOR_MILK = 'milk'
     COLOR_OLIVE = 'olive'
     COLOR_ORANGE = 'orange'
@@ -203,7 +204,7 @@ class FormField(AbstractFormField):
     page = ParentalKey('ContactPage', on_delete=models.CASCADE, related_name='form_fields')
 
 
-class ContactPage(AbstractEmailForm):
+class ContactPage(LatinSlugMixin, AbstractEmailForm):
     intro_title = models.CharField(max_length=200, default="Связаться с нами")
     intro_body = RichTextField(blank=True)
     thank_you_title = models.CharField(max_length=200, default="Спасибо")
@@ -229,7 +230,7 @@ class ContactPage(AbstractEmailForm):
         verbose_name = 'Страница контактов'
 
 
-class DeliveryPage(Page):
+class DeliveryPage(LatinSlugMixin, Page):
     headline = models.CharField(max_length=200, default="Доставка и возврат")
     intro = RichTextField(blank=True, verbose_name="Первый абзац")
     body = RichTextField(blank=True, verbose_name="Второй абзац")
@@ -253,7 +254,7 @@ class DeliveryPage(Page):
         verbose_name = 'Доставка и возврат'
 
 
-class LegalPage(Page):
+class LegalPage(LatinSlugMixin, Page):
     body = RichTextField(verbose_name="Текст документа")
 
     content_panels = Page.content_panels + [

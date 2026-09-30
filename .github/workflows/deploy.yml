@@ -22,5 +22,6 @@ jobs:
             export DJANGO_SETTINGS_MODULE=meadowshore.settings.production
             git pull
             python manage.py migrate --noinput
+            python manage.py latinize_slugs --apply
             python manage.py collectstatic --noinput
             sudo systemctl restart meadowshore
